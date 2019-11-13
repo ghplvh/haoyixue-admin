@@ -4,8 +4,11 @@ import router from "./router";
 import store from "./store";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
+import { api } from "./api/api.js";
 
 Vue.config.productionTip = false;
+Vue.prototype.$api = api;
+
 Vue.use(Antd);
 
 new Vue({

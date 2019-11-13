@@ -8,7 +8,7 @@
   >
     <div :class="['logo', theme]">
       <router-link to="/dashboard/workplace">
-        <img src="static/img/vue-antd-logo.png" />
+        <img src="../../assets/logo.png" />
         <h1>{{ systemName }}</h1>
       </router-link>
     </div>

@@ -3,81 +3,52 @@
     <div class="content">
       <div class="top">
         <div class="header">
-          <img alt="logo" class="logo" src="static/img/vue-antd-logo.png" />
+          <img alt="logo" class="logo" src="../../assets/logo.png" />
           <span class="title">{{ systemName }}</span>
         </div>
-        <div class="desc">Ant Design 是西湖区最具影响力的 Web 设计规范</div>
       </div>
       <div class="login">
-        <a-form @submit="onSubmit" :autoFormCreate="form => (this.form = form)">
-          <a-tabs
-            size="large"
-            :tabBarStyle="{ textAlign: 'center' }"
-            style="padding: 0 2px;"
+        <a-form
+          class="login-form"
+          @submit="onSubmit"
+          :autoFormCreate="form => (this.form = form)"
+        >
+          <a-alert
+            type="error"
+            :closable="true"
+            v-show="error"
+            :message="error"
+            showIcon
+            style="margin-bottom: 24px;"
+          />
+          <a-form-item
+            fieldDecoratorId="account"
+            :fieldDecoratorOptions="{
+              rules: [
+                {
+                  required: true,
+                  message: '请输入账户名',
+                  whitespace: true
+                }
+              ]
+            }"
           >
-            <a-tab-pane tab="账户密码登录" key="1">
-              <a-alert
-                type="error"
-                :closable="true"
-                v-show="error"
-                :message="error"
-                showIcon
-                style="margin-bottom: 24px;"
-              />
-              <a-form-item
-                fieldDecoratorId="name"
-                :fieldDecoratorOptions="{
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入账户名',
-                      whitespace: true
-                    }
-                  ]
-                }"
-              >
-                <a-input size="large" placeholder="admin">
-                  <a-icon slot="prefix" type="user" />
-                </a-input>
-              </a-form-item>
-              <a-form-item
-                fieldDecoratorId="password"
-                :fieldDecoratorOptions="{
-                  rules: [
-                    { required: true, message: '请输入密码', whitespace: true }
-                  ]
-                }"
-              >
-                <a-input size="large" placeholder="888888" type="password">
-                  <a-icon slot="prefix" type="lock" />
-                </a-input>
-              </a-form-item>
-            </a-tab-pane>
-            <a-tab-pane tab="手机号登录" key="2">
-              <a-form-item>
-                <a-input size="large" placeholder="mobile number">
-                  <a-icon slot="prefix" type="mobile" />
-                </a-input>
-              </a-form-item>
-              <a-form-item>
-                <a-row :gutter="8" style="margin: 0 -4px">
-                  <a-col :span="16">
-                    <a-input size="large" placeholder="captcha">
-                      <a-icon slot="prefix" type="mail" />
-                    </a-input>
-                  </a-col>
-                  <a-col :span="8" style="padding-left: 4px">
-                    <a-button
-                      style="width: 100%"
-                      class="captcha-button"
-                      size="large"
-                      >获取验证码</a-button
-                    >
-                  </a-col>
-                </a-row>
-              </a-form-item>
-            </a-tab-pane>
-          </a-tabs>
+            <a-input size="large" placeholder="请输入账户名称">
+              <a-icon slot="prefix" type="user" />
+            </a-input>
+          </a-form-item>
+          <a-form-item
+            fieldDecoratorId="password"
+            :fieldDecoratorOptions="{
+              rules: [
+                { required: true, message: '请输入密码', whitespace: true }
+              ]
+            }"
+          >
+            <a-input size="large" placeholder="请输入密码" type="password">
+              <a-icon slot="prefix" type="lock" />
+            </a-input>
+          </a-form-item>
           <div>
             <a-checkbox :checked="true">自动登录</a-checkbox>
             <a style="float: right">忘记密码</a>
@@ -92,15 +63,6 @@
               >登录</a-button
             >
           </a-form-item>
-          <div>
-            其他登录方式
-            <a-icon class="icon" type="alipay-circle" />
-            <a-icon class="icon" type="taobao-circle" />
-            <a-icon class="icon" type="weibo-circle" />
-            <router-link style="float: right" to="/dashboard/workplace"
-              >注册账户</router-link
-            >
-          </div>
         </a-form>
       </div>
     </div>
@@ -135,24 +97,26 @@ export default {
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields(err => {
+        console.log("this.form", this.form);
         if (!err) {
           this.logging = true;
-          this.$axios
-            .post("/login", {
-              name: this.form.getFieldValue("name"),
+          this.$api
+            .loginV2({
+              account: this.form.getFieldValue("account"),
               password: this.form.getFieldValue("password")
             })
             .then(res => {
               this.logging = false;
               const result = res.data;
-              if (result.code >= 0) {
-                const user = result.data.user;
-                this.$router.push("/dashboard/workplace");
-                this.$store.commit("account/setuser", user);
-                this.$message.success(result.message, 3);
-              } else {
-                this.error = result.message;
-              }
+              console.log(result);
+              // if (result.code >= 0) {
+              //   const user = result.data.user;
+              //   this.$router.push("/dashboard/workplace");
+              //   this.$store.commit("account/setuser", user);
+              //   this.$message.success(result.message, 3);
+              // } else {
+              //   this.error = result.message;
+              // }
             });
         }
       });
@@ -200,12 +164,6 @@ export default {
           top: 2px;
         }
       }
-      .desc {
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.45);
-        margin-top: 12px;
-        margin-bottom: 40px;
-      }
     }
     .login {
       width: 368px;
@@ -230,6 +188,18 @@ export default {
           color: #1890ff;
         }
       }
+    }
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+@import "../../style/mixin.scss";
+.container {
+  .login {
+    &-form {
+      background-color: $bgc;
+      margin-top: 20px;
     }
   }
 }

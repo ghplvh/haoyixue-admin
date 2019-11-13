@@ -4,7 +4,7 @@ export default {
     isMobile: false,
     theme: "dark",
     layout: "side",
-    systemName: "Vue Antd Admin",
+    systemName: "好易学后台管理系统",
     copyright: "2018 ICZER 工作室出品",
     footerLinks: [
       { link: "https://pro.ant.design", name: "Pro首页" },

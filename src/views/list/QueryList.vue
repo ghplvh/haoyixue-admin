@@ -181,6 +181,11 @@ export default {
         this.remove();
       }
     }
+  },
+  mounted() {
+    this.$api.findSchoolList().then(res => {
+      console.log(res);
+    });
   }
 };
 </script>
