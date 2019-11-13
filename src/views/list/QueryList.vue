@@ -93,18 +93,11 @@
           <a-button> 更多操作 <a-icon type="down" /> </a-button>
         </a-dropdown>
       </div>
-      <standard-table
-        :columns="columns"
-        :dataSource="dataSource"
-        :selectedRows="selectedRows"
-        @change="onchange"
-      />
     </div>
   </a-card>
 </template>
 
 <script>
-import StandardTable from "../../components/table/StandardTable";
 const columns = [
   {
     title: "规则编号",
@@ -148,7 +141,6 @@ for (let i = 0; i < 100; i++) {
 
 export default {
   name: "QueryList",
-  components: { StandardTable },
   data() {
     return {
       advanced: true,
