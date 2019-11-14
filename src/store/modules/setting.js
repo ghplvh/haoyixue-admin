@@ -5,12 +5,8 @@ export default {
     theme: "dark",
     layout: "side",
     systemName: "好易学后台管理系统",
-    copyright: "2018 ICZER 工作室出品",
-    footerLinks: [
-      { link: "https://pro.ant.design", name: "Pro首页" },
-      { link: "https://github.com/iczer/vue-antd-admin", icon: "github" },
-      { link: "https://ant.design", name: "Ant Design" }
-    ],
+    copyright: "2019 湖南都成科技",
+    footerLinks: [],
     multipage: true
   },
   mutations: {

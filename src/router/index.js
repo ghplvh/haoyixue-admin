@@ -21,8 +21,14 @@ const routes = [
     invisible: true,
     children: [
       {
+        path: "/userManager",
+        name: "用户管理",
+        component: () => import("@/views/userManager/userManager"),
+        icon: "table"
+      },
+      {
         path: "/list",
-        name: "列表页",
+        name: "列表",
         component: PageView,
         icon: "table",
         children: [
