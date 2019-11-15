@@ -1,5 +1,5 @@
 <template>
   <div>
-    权限测试, 当前role: 3
+    权限测试, 当前roles: [0]
   </div>
 </template>

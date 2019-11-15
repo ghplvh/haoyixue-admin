@@ -77,7 +77,7 @@ export const asyncRouterMap = [
     name: "路由测试",
     component: () => import("@/views/permissionTest/test1"),
     meta: {
-      roles: [0]
+      roles: [0, 1, 2]
     }
   },
   {
@@ -93,10 +93,10 @@ export const asyncRouterMap = [
     name: "路由测试",
     component: () => import("@/views/permissionTest/test3"),
     meta: {
-      roles: [0, 1, 2]
+      roles: [0]
     }
   },
-  { path: "*", redirect: "/404", hidden: true } // 404配置需放到路由配置最后
+  { path: "*", redirect: "/exception/403", hidden: true } // 404配置需放到路由配置最后
 ];
 
 const router = new VueRouter({

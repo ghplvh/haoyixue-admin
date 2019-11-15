@@ -83,12 +83,15 @@ export default {
     };
   },
   computed: {
+    //系统名称(左上角)
     systemName() {
       return this.$store.state.setting.systemName;
     },
+    // foot栏信息
     linkList() {
       return this.$store.state.setting.footerLinks;
     },
+    // copyright
     copyright() {
       return this.$store.state.setting.copyright;
     }
@@ -198,7 +201,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-@import "../../style/mixin.scss";
+@import "../../assets/style/mixin.scss";
 .container {
   .login {
     &-form {

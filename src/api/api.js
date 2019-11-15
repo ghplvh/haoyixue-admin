@@ -1,4 +1,4 @@
-import fetch from "../config/fetch.js";
+import fetch from "./fetch.js";
 
 export const api = {
   //login
