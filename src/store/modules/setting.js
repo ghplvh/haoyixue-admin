@@ -4,7 +4,7 @@ export default {
     isMobile: false,
     theme: "dark",
     layout: "side",
-    systemName: "好易学后台管理系统",
+    systemName: "好易学后台管理",
     copyright: "2019 湖南都成科技",
     footerLinks: [],
     multipage: true

@@ -7,9 +7,9 @@
         class="avatar"
         size="small"
         shape="circle"
-        :src="currUser.avatar"
+        src="../assets/logo.png"
       />
-      <span>{{ currUser.name }}</span>
+      <span>用户姓名</span>
     </span>
     <a-menu style="width: 150px" slot="overlay">
       <a-menu-item>

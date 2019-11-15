@@ -5,7 +5,7 @@ export const api = {
   loginV2: ({ account, password }) =>
     fetch("ws-study/app/user/loginV2", { account, password }, "POST"),
   //获取用户
-  getUsers: ({ pageSize = 10, orgNo, pageNum, role }) =>
+  getUsers: ({ pageSize, orgNo, pageNum, role }) =>
     fetch(
       "ws-study/app/user/getUsers",
       {

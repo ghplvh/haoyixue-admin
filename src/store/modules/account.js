@@ -1,11 +1,14 @@
 export default {
   namespaced: true,
   state: {
-    user: {}
+    userInfo: {},
+    isLogin: false
   },
   mutations: {
-    setuser(state, user) {
-      state.user = user;
+    setUser(state) {
+      let userInfo = JSON.parse(sessionStorage.getItem("user"));
+      state.userInfo = userInfo;
+      state.isLogin = !!userInfo.userId;
     }
   }
 };

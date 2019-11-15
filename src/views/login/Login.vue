@@ -109,15 +109,19 @@ export default {
               this.logging = false;
               const result = res.data;
               console.log(result);
-              // if (result.code >= 0) {
-              //   const user = result.data.user;
-              //   this.$router.push("/dashboard/workplace");
-              //   this.$store.commit("account/setuser", user);
-              //   this.$message.success(result.message, 3);
-              // } else {
-              //   this.error = result.message;
-              // }
+              if (res.code >= 0) {
+                // const user = result.user;
+                this.$router.push("/userManager");
+                sessionStorage.setItem("user", JSON.stringify(result));
+                this.$store.commit("account/setUser");
+                this.$message.success(res.message, 3);
+                this.$router.push("/");
+              } else {
+                this.error = res.message;
+              }
             });
+        } else {
+          console.log(err);
         }
       });
     }
