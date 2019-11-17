@@ -39,7 +39,6 @@ import GlobalHeader from "./GlobalHeader";
 import GlobalFooter from "./GlobalFooter";
 import Drawer from "../components/tool/Drawer";
 import SiderMenu from "../components/menu/SiderMenu";
-
 const minHeight = window.innerHeight - 64 - 24 - 122;
 
 let menuData = [];
@@ -83,9 +82,12 @@ export default {
     }
   },
   beforeCreate() {
-    // 找到路径为"/"的路由下的子路由列表
-    menuData = this.$router.options.routes.find(item => item.path === "/")
-      .children;
+   // 找到路径为"/"的路由下的子路由列表
+    // menuData = this.$router.options.routes.find(item => item.path === "/")
+    //   .children;
+    menuData = this.$store.state.router.routes
+    console.log('menuData',menuData)
+    console.log("store.routes", this.$store.state.router.routes)
   }
 };
 </script>

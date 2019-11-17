@@ -3,3 +3,11 @@
     权限测试, 当前roles: [0, 1, 2]
   </div>
 </template>
+
+<script>
+export default {
+  mounted() {
+    console.log(this.$router);
+  }
+}
+</script>

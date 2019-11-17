@@ -11,7 +11,6 @@ export const constantRouterMap = [
     path: "/login",
     name: "登录页",
     component: Login,
-    invisible: true
   },
   {
     path: "/",
@@ -19,7 +18,6 @@ export const constantRouterMap = [
     component: MenuView,
     redirect: "/userManager",
     icon: "none",
-    invisible: true,
     children: [
       {
         path: "/userManager",
@@ -74,7 +72,7 @@ export const constantRouterMap = [
 export const asyncRouterMap = [
   {
     path: "/permission/test1",
-    name: "路由测试",
+    name: "路由测试4",
     component: () => import("@/views/permissionTest/test1"),
     meta: {
       roles: [0, 1, 2]
@@ -82,21 +80,21 @@ export const asyncRouterMap = [
   },
   {
     path: "/permission/test2",
-    name: "路由测试",
+    name: "路由测试5",
     component: () => import("@/views/permissionTest/test2"),
     meta: {
-      roles: [0, 1]
+      roles: [0]
     }
   },
   {
     path: "/permission/test3",
-    name: "路由测试",
+    name: "路由测试6",
     component: () => import("@/views/permissionTest/test3"),
     meta: {
       roles: [0]
     }
   },
-  { path: "*", redirect: "/exception/403", hidden: true } // 404配置需放到路由配置最后
+  { path: "*", redirect: "/exception/403", hidden: true, invisible: true } // 404配置需放到路由配置最后
 ];
 
 const router = new VueRouter({
