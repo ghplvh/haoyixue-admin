@@ -8,7 +8,7 @@
             v-for="(item, index) in breadcrumb"
           >
             <span v-if="index === 0"
-              ><a href="#/home">{{ item.name }}</a></span
+              ><a href="/">{{ item.name }}</a></span
             >
             <span v-else>{{ item.name }}</span>
           </a-breadcrumb-item>

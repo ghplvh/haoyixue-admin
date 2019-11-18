@@ -14,11 +14,16 @@ const whiteList = [
 
 router.beforeEach((to, from, next) => {
   // const shiroCookie = cookie.get("userInfo");
+  if (store.state.account.userInfo && !store.state.account.userInfo.userId) {
+    store.commit("account/SET_USER");
+  }
   const isLogin = store.state.account.isLogin;
   if (isLogin) {
     if (store.state.router.roles.length === 0) {
       // 登录操作后，以及当刷新页面是store中的数据恢复到初始值，需要重新设置
-      const roles = [1];
+      const role = JSON.parse(sessionStorage.getItem("user")).role;
+      let roles = [];
+      roles.push(role);
       store.commit("router/SET_ROLES", roles);
       store.dispatch("router/GENERATE_ROUTES", { roles }).then(() => {
         // 根据roles权限生成可访问的路由表

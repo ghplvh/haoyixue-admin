@@ -3,12 +3,7 @@
     style="display: inline-block; height: 100%; vertical-align: initial"
   >
     <span style="cursor: pointer">
-      <a-avatar
-        class="avatar"
-        size="small"
-        shape="circle"
-        src="../assets/logo.png"
-      />
+      <a-avatar class="avatar" size="small" shape="circle" icon="user" />
       <span>用户姓名</span>
     </span>
     <a-menu style="width: 150px" slot="overlay">

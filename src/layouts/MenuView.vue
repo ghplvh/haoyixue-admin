@@ -59,7 +59,6 @@ export default {
   created() {
     this.pageList.push(this.$route);
     this.linkList.push(this.$route.fullPath);
-    console.log("linkList", this.linkList);
     this.activePage = this.$route.fullPath;
   },
   watch: {

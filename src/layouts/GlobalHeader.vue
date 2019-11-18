@@ -6,7 +6,7 @@
         to="/"
         :class="['logo', isMobile ? null : 'pc', theme]"
       >
-        <img width="32" src="static/img/vue-antd-logo.png" />
+        <img width="32" src="../assets/logo.png" />
         <h1 v-if="!isMobile">{{ systemName }}</h1>
       </router-link>
       <a-divider v-if="isMobile" type="vertical" />

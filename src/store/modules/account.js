@@ -5,10 +5,10 @@ export default {
     isLogin: false
   },
   mutations: {
-    setUser(state) {
-      let userInfo = JSON.parse(sessionStorage.getItem("user"));
+    SET_USER(state) {
+      const userInfo = JSON.parse(sessionStorage.getItem("user"));
       state.userInfo = userInfo;
-      state.isLogin = !!userInfo.userId;
+      state.isLogin = (userInfo && !!userInfo.userId) || false;
     }
   }
 };

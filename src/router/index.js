@@ -11,6 +11,7 @@ export const constantRouterMap = [
     path: "/login",
     name: "登录页",
     component: Login,
+    invisible: true
   },
   {
     path: "/",
@@ -24,6 +25,11 @@ export const constantRouterMap = [
         name: "用户管理",
         component: () => import("@/views/userManager/userManager"),
         icon: "table"
+      },
+      {
+        path: "/formTest",
+        name: "表单测试",
+        component: () => import("@/views/devTest/formTest")
       },
       {
         path: "/list",
@@ -45,6 +51,7 @@ export const constantRouterMap = [
     path: "/exception",
     name: "异常页",
     icon: "warning",
+    invisible: true,
     component: RouteView,
     children: [
       {
@@ -73,15 +80,15 @@ export const asyncRouterMap = [
   {
     path: "/permission/test1",
     name: "路由测试4",
-    component: () => import("@/views/permissionTest/test1"),
+    component: () => import("@/views/devTest/test1"),
     meta: {
-      roles: [0, 1, 2]
+      roles: [0, 1, 2, 3]
     }
   },
   {
     path: "/permission/test2",
     name: "路由测试5",
-    component: () => import("@/views/permissionTest/test2"),
+    component: () => import("@/views/devTest/test2"),
     meta: {
       roles: [0]
     }
@@ -89,13 +96,19 @@ export const asyncRouterMap = [
   {
     path: "/permission/test3",
     name: "路由测试6",
-    component: () => import("@/views/permissionTest/test3"),
+    component: () => import("@/views/devTest/test3"),
     meta: {
       roles: [0]
     }
   },
   { path: "*", redirect: "/exception/403", hidden: true, invisible: true } // 404配置需放到路由配置最后
 ];
+
+// 解决navigationDuplicated 报错问题
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 
 const router = new VueRouter({
   routes: constantRouterMap

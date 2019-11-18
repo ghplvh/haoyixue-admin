@@ -8,11 +8,7 @@
         </div>
       </div>
       <div class="login">
-        <a-form
-          class="login-form"
-          @submit="onSubmit"
-          :autoFormCreate="form => (this.form = form)"
-        >
+        <a-form class="login-form" @submit="onSubmit" :form="form">
           <a-alert
             type="error"
             :closable="true"
@@ -21,31 +17,44 @@
             showIcon
             style="margin-bottom: 24px;"
           />
-          <a-form-item
-            fieldDecoratorId="account"
-            :fieldDecoratorOptions="{
-              rules: [
+          <a-form-item>
+            <a-input
+              v-decorator="[
+                'account',
                 {
-                  required: true,
-                  message: '请输入账户名',
-                  whitespace: true
+                  rlues: [
+                    {
+                      required: true,
+                      message: '请输入账户名',
+                      whitespace: true
+                    }
+                  ]
                 }
-              ]
-            }"
-          >
-            <a-input size="large" placeholder="请输入账户名称">
+              ]"
+              size="large"
+              placeholder="请输入账户名称"
+            >
               <a-icon slot="prefix" type="user" />
             </a-input>
           </a-form-item>
-          <a-form-item
-            fieldDecoratorId="password"
-            :fieldDecoratorOptions="{
-              rules: [
-                { required: true, message: '请输入密码', whitespace: true }
-              ]
-            }"
-          >
-            <a-input size="large" placeholder="请输入密码" type="password">
+          <a-form-item>
+            <a-input
+              v-decorator="[
+                'password',
+                {
+                  rlues: [
+                    {
+                      required: true,
+                      message: '请输入密码',
+                      whitespace: true
+                    }
+                  ]
+                }
+              ]"
+              size="large"
+              placeholder="请输入密码"
+              type="password"
+            >
               <a-icon slot="prefix" type="lock" />
             </a-input>
           </a-form-item>
@@ -79,7 +88,8 @@ export default {
   data() {
     return {
       logging: false,
-      error: ""
+      error: "",
+      form: this.$form.createForm(this, { name: "login" })
     };
   },
   computed: {
@@ -99,32 +109,32 @@ export default {
   methods: {
     onSubmit(e) {
       e.preventDefault();
-      this.form.validateFields(err => {
-        console.log("this.form", this.form);
+      this.form.validateFields((err, values) => {
         if (!err) {
           this.logging = true;
           this.$api
             .loginV2({
-              account: this.form.getFieldValue("account"),
-              password: this.form.getFieldValue("password")
+              account: values.account,
+              password: values.password
             })
             .then(res => {
               this.logging = false;
               const result = res.data;
-              console.log(result);
               if (res.code >= 0) {
-                // const user = result.user;
-                this.$router.push("/userManager");
-                sessionStorage.setItem("user", JSON.stringify(result));
-                this.$store.commit("account/setUser");
-                this.$message.success(res.message, 3);
-                this.$router.push("/");
+                if (result.role <= 1) {
+                  this.$router.push("/exception/403");
+                } else {
+                  sessionStorage.setItem("user", JSON.stringify(result));
+                  this.$store.commit("account/SET_USER");
+                  this.$message.success("登录成功", 3);
+                  this.$router.push("/");
+                }
               } else {
                 this.error = res.message;
               }
             });
         } else {
-          console.log(err);
+          console.log("loginErr", err);
         }
       });
     }

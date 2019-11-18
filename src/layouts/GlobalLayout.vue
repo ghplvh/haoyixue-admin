@@ -82,12 +82,10 @@ export default {
     }
   },
   beforeCreate() {
-   // 找到路径为"/"的路由下的子路由列表
+    // 找到路径为"/"的路由下的子路由列表
     // menuData = this.$router.options.routes.find(item => item.path === "/")
     //   .children;
-    menuData = this.$store.state.router.routes
-    console.log('menuData',menuData)
-    console.log("store.routes", this.$store.state.router.routes)
+    menuData = this.$store.state.router.routes;
   }
 };
 </script>

@@ -142,7 +142,6 @@ export default {
           loading();
           if (res.code === 1) {
             this.userList = res.data.pageData;
-            console.log("userList", this.userList);
           } else {
             console.log(res.msg);
             this.$message.error(res.msg);
@@ -194,7 +193,6 @@ export default {
         this.schoolCode = res.data[0].schoolCode;
         this.onSelectChange();
       } else {
-        console.log(res.msg);
         this.$message.error(res.msg);
       }
     });
