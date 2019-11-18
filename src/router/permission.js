@@ -1,10 +1,11 @@
+// permission.js用于页面级别的权限管理
 import router from "../router";
 import store from "../store";
 import { hasPermission } from "@/assets/js/common.js";
-// import cookie from "js-cookie";
+// import cookie from "js-cookie";//cookie方案引入如cookie
 
 const whiteList = [
-  // 不需要登录就可以访问的页面
+  // 登录白名单,不需要登录就可以访问的页面
   "/",
   "/login",
   "/exception/404",
@@ -15,12 +16,13 @@ const whiteList = [
 router.beforeEach((to, from, next) => {
   // const shiroCookie = cookie.get("userInfo");
   if (store.state.account.userInfo && !store.state.account.userInfo.userId) {
+    // 刷新页面以后vuex数据丢失, 从seesionStorage获取用户信息
     store.commit("account/SET_USER");
   }
   const isLogin = store.state.account.isLogin;
   if (isLogin) {
+    // 登录操作后，以及当刷新页面是store中的数据恢复到初始值，需要重新设置
     if (store.state.router.roles.length === 0) {
-      // 登录操作后，以及当刷新页面是store中的数据恢复到初始值，需要重新设置
       const role = JSON.parse(sessionStorage.getItem("user")).role;
       let roles = [];
       roles.push(role);

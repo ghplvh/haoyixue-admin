@@ -121,10 +121,13 @@ export default {
               this.logging = false;
               const result = res.data;
               if (res.code >= 0) {
+                // 权限小于1 则直接拒绝访问
                 if (result.role <= 1) {
                   this.$router.push("/exception/403");
                 } else {
+                  // 暂存用户信息到seesionStorage
                   sessionStorage.setItem("user", JSON.stringify(result));
+                  // 存储用户信息到vuex
                   this.$store.commit("account/SET_USER");
                   this.$message.success("登录成功", 3);
                   this.$router.push("/");

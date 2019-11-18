@@ -5,7 +5,7 @@ import PageView from "@/layouts/PageView";
 import MenuView from "@/layouts/MenuView";
 import RouteView from "@/layouts/RouteView";
 Vue.use(VueRouter);
-
+//普通路由, 所有权限都能访问的路由部分
 export const constantRouterMap = [
   {
     path: "/login",
@@ -75,7 +75,7 @@ export const constantRouterMap = [
     ]
   }
 ];
-
+// 异步路由, 需要权限管理的路由
 export const asyncRouterMap = [
   {
     path: "/permission/test1",
@@ -104,7 +104,7 @@ export const asyncRouterMap = [
   { path: "*", redirect: "/exception/403", hidden: true, invisible: true } // 404配置需放到路由配置最后
 ];
 
-// 解决navigationDuplicated 报错问题
+// 解决navigationDuplicated 路由连续点击报错
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);
