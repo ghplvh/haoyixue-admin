@@ -10,6 +10,11 @@ export default {
       const userInfo = JSON.parse(sessionStorage.getItem("user"));
       state.userInfo = userInfo;
       state.isLogin = (userInfo && !!userInfo.userId) || false;
+    },
+    REMOVE_USER(state) {
+      state.userInfo = {};
+      state.isLogin = false;
+      sessionStorage.setItem("user", JSON.stringify({}));
     }
   }
 };

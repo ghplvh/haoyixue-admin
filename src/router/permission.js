@@ -25,7 +25,7 @@ router.beforeEach((to, from, next) => {
     if (store.state.router.roles.length === 0) {
       const role = JSON.parse(sessionStorage.getItem("user")).role;
       let roles = [];
-      roles.push(role);
+      roles = [...roles, role];
       store.commit("router/SET_ROLES", roles);
       store.dispatch("router/GENERATE_ROUTES", { roles }).then(() => {
         // 根据roles权限生成可访问的路由表

@@ -32,6 +32,21 @@ export const constantRouterMap = [
         component: () => import("@/views/devTest/formTest")
       },
       {
+        path: "/form2",
+        name: "表单2",
+        component: () => import("@/views/devTest/form2")
+      },
+      {
+        path: "/table1",
+        name: "表格1",
+        component: () => import("@/views/devTest/table1")
+      },
+      {
+        path: "/table2",
+        name: "表格2",
+        component: () => import("@/views/devTest/table2")
+      },
+      {
         path: "/list",
         name: "列表",
         component: PageView,
@@ -40,7 +55,7 @@ export const constantRouterMap = [
           {
             path: "/list/query",
             name: "查询表格",
-            component: () => import("@/views/list/QueryList"),
+            component: () => import("@/views/devTest/QueryList"),
             icon: "none"
           }
         ]

@@ -16,7 +16,7 @@
         <span>设置</span>
       </a-menu-item>
       <a-menu-divider />
-      <a-menu-item>
+      <a-menu-item @click="onClickOut">
         <router-link to="/login">
           <a-icon type="poweroff" />
           <span>退出登录</span>
@@ -32,6 +32,11 @@ export default {
   computed: {
     currUser() {
       return this.$store.state.account.user;
+    }
+  },
+  methods: {
+    onClickOut() {
+      this.$store.commit("account/REMOVE_USER");
     }
   }
 };

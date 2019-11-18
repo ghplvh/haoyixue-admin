@@ -12,8 +12,9 @@
           <a-alert
             type="error"
             :closable="true"
-            v-show="error"
+            v-if="error"
             :message="error"
+            @close="closeAlert"
             showIcon
             style="margin-bottom: 24px;"
           />
@@ -120,7 +121,7 @@ export default {
             .then(res => {
               this.logging = false;
               const result = res.data;
-              if (res.code >= 0) {
+              if (res.code === 1) {
                 // 权限小于1 则直接拒绝访问
                 if (result.role <= 1) {
                   this.$router.push("/exception/403");
@@ -133,13 +134,16 @@ export default {
                   this.$router.push("/");
                 }
               } else {
-                this.error = res.message;
+                this.error = res.msg;
               }
             });
         } else {
           console.log("loginErr", err);
         }
       });
+    },
+    closeAlert() {
+      this.error = "";
     }
   }
 };
