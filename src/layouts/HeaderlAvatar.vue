@@ -4,10 +4,10 @@
   >
     <span style="cursor: pointer">
       <a-avatar class="avatar" size="small" shape="circle" icon="user" />
-      <span>用户姓名</span>
+      <span>{{ currUser }}</span>
     </span>
     <a-menu style="width: 150px" slot="overlay">
-      <a-menu-item>
+      <!-- <a-menu-item>
         <a-icon type="user" />
         <span>个人中心</span>
       </a-menu-item>
@@ -15,7 +15,7 @@
         <a-icon type="setting" />
         <span>设置</span>
       </a-menu-item>
-      <a-menu-divider />
+      <a-menu-divider /> -->
       <a-menu-item @click="onClickOut">
         <router-link to="/login">
           <a-icon type="poweroff" />
@@ -31,7 +31,7 @@ export default {
   name: "HeaderAvatar",
   computed: {
     currUser() {
-      return this.$store.state.account.user;
+      return this.$store.state.account.userInfo.nickName;
     }
   },
   methods: {

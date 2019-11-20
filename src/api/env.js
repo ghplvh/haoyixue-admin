@@ -13,9 +13,9 @@ let imgBaseUrl = "";
 
 if (process.env.NODE_ENV == "development") {
   imgBaseUrl = "";
-  baseUrl = "https://duchengedu.com/";
+  baseUrl = "https://duchengedu.com/ws-study";
 } else if (process.env.NODE_ENV == "production") {
-  baseUrl = "https://duchengedu.com/";
+  baseUrl = "https://duchengedu.com/ws-study";
 }
 
 export { baseUrl, routerMode, imgBaseUrl };

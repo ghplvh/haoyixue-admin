@@ -163,7 +163,7 @@ export default {
     padding: 32px 0;
     flex: 1;
     @media (min-width: 768px) {
-      padding: 112px 0 24px;
+      padding: 224px 0 24px;
     }
     .top {
       text-align: center;

@@ -13,8 +13,8 @@
                   <a-col :md="8" :sm="24">
                     <a-form-item
                       label="学校:"
-                      :labelCol="{ span: 5 }"
-                      :wrapperCol="{ span: 18, offset: 1 }"
+                      :labelCol="{ span: 3 }"
+                      :wrapperCol="{ span: 12, offset: 1 }"
                     >
                       <a-select
                         @change="onSelectChange"
@@ -22,8 +22,8 @@
                         v-model="schoolCode"
                       >
                         <a-select-option
-                          v-for="(item, index) in schoolList"
-                          :key="index"
+                          v-for="item in schoolList"
+                          :key="item.schoolCode"
                           :value="item.schoolCode"
                         >
                           {{ item.schoolName }}
@@ -34,8 +34,8 @@
                   <a-col :md="8" :sm="24">
                     <a-form-item
                       label="角色:"
-                      :labelCol="{ span: 5 }"
-                      :wrapperCol="{ span: 18, offset: 1 }"
+                      :labelCol="{ span: 3 }"
+                      :wrapperCol="{ span: 12, offset: 1 }"
                     >
                       <a-select v-model="role" @change="onSelectChange">
                         <a-select-option :value="1">家长</a-select-option>

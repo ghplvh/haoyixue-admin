@@ -17,9 +17,15 @@ export const constantRouterMap = [
     path: "/",
     name: "首页",
     component: MenuView,
-    redirect: "/userManager",
+    redirect: "/home",
     icon: "none",
     children: [
+      {
+        path: "/home",
+        name: "首页",
+        component: () => import("@/views/home/home.vue"),
+        icon: "table"
+      },
       {
         path: "/userManager",
         name: "用户管理",
@@ -29,22 +35,26 @@ export const constantRouterMap = [
       {
         path: "/formTest",
         name: "表单测试",
-        component: () => import("@/views/devTest/formTest")
+        component: () => import("@/views/devTest/formTest"),
+        icon: "table"
       },
       {
         path: "/form2",
         name: "表单2",
-        component: () => import("@/views/devTest/form2")
+        component: () => import("@/views/devTest/form2"),
+        icon: "table"
       },
       {
         path: "/table1",
         name: "表格1",
-        component: () => import("@/views/devTest/table1")
+        component: () => import("@/views/devTest/table1"),
+        icon: "table"
       },
       {
-        path: "/table2",
-        name: "表格2",
-        component: () => import("@/views/devTest/table2")
+        path: "/test1",
+        name: "test1",
+        component: () => import("@/views/devTest/test1"),
+        icon: "table"
       },
       {
         path: "/list",

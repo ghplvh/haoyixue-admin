@@ -10,6 +10,7 @@
   "dependencies": {
     "ant-design-vue": "^1.4.4",
     "core-js": "^3.3.2",
+    "js-cookie": "^2.2.1",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "vue": "^2.6.10",

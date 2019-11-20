@@ -86,6 +86,13 @@ export default {
     // menuData = this.$router.options.routes.find(item => item.path === "/")
     //   .children;
     menuData = this.$store.state.router.routes;
+    let list;
+    menuData.forEach(item => {
+      if (item.path === "/") {
+        list = item;
+      }
+    });
+    menuData = list.children;
   }
 };
 </script>

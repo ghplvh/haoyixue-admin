@@ -26,13 +26,13 @@
         />
       </div>
       <div :class="['global-header-right', theme]">
-        <header-search class="header-item" />
+        <!-- <header-search class="header-item" />
         <a-tooltip class="header-item" title="帮助文档" placement="bottom">
           <a>
             <a-icon type="question-circle-o" />
           </a>
         </a-tooltip>
-        <header-notice class="header-item" />
+        <header-notice class="header-item" /> -->
         <header-avatar class="header-item" />
       </div>
     </div>
@@ -40,14 +40,14 @@
 </template>
 
 <script>
-import HeaderSearch from "./HeaderSearch";
-import HeaderNotice from "./HeaderNotice";
+// import HeaderSearch from "./HeaderSearch";
+// import HeaderNotice from "./HeaderNotice";
 import HeaderAvatar from "./HeaderlAvatar";
 import IMenu from "../components/menu/menu";
 
 export default {
   name: "GlobalHeader",
-  components: { IMenu, HeaderAvatar, HeaderNotice, HeaderSearch },
+  components: { IMenu, HeaderAvatar },
   props: ["collapsed", "menuData"],
   computed: {
     isMobile() {
