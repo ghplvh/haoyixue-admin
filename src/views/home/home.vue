@@ -26,7 +26,6 @@
                     ]"
                     placeholder="请选择学校"
                     showArrow
-                    @change="onSchoolChange"
                   >
                     <a-select-option
                       v-for="(item, index) in schoolList"
@@ -38,12 +37,17 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-              <a-col :span="8">
+              <a-col :span="13">
                 <a-form-item :wrapper-col="{ span: 12, offset: 2 }">
                   <a-button type="primary" html-type="submit">
                     查询
                   </a-button>
                 </a-form-item>
+              </a-col>
+              <a-col :span="3">
+                <a-button type="primary">
+                  新增收费项目
+                </a-button>
               </a-col>
             </a-row>
           </a-form>
@@ -92,6 +96,7 @@ export default {
       form: this.$form.createForm(this, {
         name: "form"
       }),
+      billList: [],
       schoolList: [], //学校列表
       schoolCode: "" // 学校code
     };
@@ -105,11 +110,12 @@ export default {
         this.data = newData;
       }
     },
-    onSchoolChange() {},
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((error, values) => {
         console.log("Received values of form: ", values);
+        this.schoolCode = values.school;
+        this.getBillConfig();
       });
     },
     edit(key) {
@@ -140,6 +146,24 @@ export default {
         delete target.editable;
         this.data = newData;
       }
+    },
+    getBillConfig() {
+      const loading = this.$message.loading("正在载入", 0);
+      this.$api
+        .getBillConfigBy({
+          orgNo: this.schoolCode,
+          status: 0
+        })
+        .then(res => {
+          loading();
+          this.$message.success("加载完成", 1.2);
+          if (res.code === 1) {
+            this.billList = res.data;
+          } else {
+            this.billList = [];
+            this.$message.error(res.msg);
+          }
+        });
     }
   },
   mounted() {
@@ -147,7 +171,10 @@ export default {
       if (res.code === 1) {
         this.schoolList = res.data;
         this.schoolCode = res.data[0].schoolCode;
+        this.getBillConfig();
       } else {
+        this.schoolList = [];
+        this.schoolCode = "";
         this.$message.error(res.msg);
       }
     });

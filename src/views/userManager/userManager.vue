@@ -92,20 +92,30 @@ import PageLayout from "@/layouts/PageLayout";
 const columns = [
   {
     title: "ID",
-    dataIndex: "userId",
+    dataIndex: "id",
     width: "25%",
-    scopedSlots: { customRender: "userId" }
+    scopedSlots: { customRender: "id" }
   },
   {
-    title: "账户",
-    dataIndex: "account",
+    title: "学校编码",
+    dataIndex: "orgNo",
     width: "15%",
-    scopedSlots: { customRender: "account" }
+    scopedSlots: { customRender: "orgNo" }
   },
   {
-    title: "操作",
-    dataIndex: "operation",
-    scopedSlots: { customRender: "operation" }
+    title: "项目名称",
+    dataIndex: "billName",
+    scopedSlots: { customRender: "billName" }
+  },
+  {
+    title: "项目描述",
+    dataIndex: "description",
+    scopedSlots: { customRender: "description" }
+  },
+  {
+    title: "状态",
+    dataIndex: "status",
+    scopedSlots: { customRender: "status" }
   }
 ];
 
@@ -130,7 +140,7 @@ export default {
       this.getUsers();
     },
     getUsers() {
-      const loading = this.$message.loading("正在载入", 0);
+      const loading = this.$message.loading("正在加载", 0);
       this.$api
         .getUsers({
           pagesize: 10,
