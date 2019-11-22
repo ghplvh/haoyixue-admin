@@ -1,5 +1,5 @@
 <template>
-  <a-layout>
+  <a-layout :style="`height:${innerHeight}`">
     <drawer v-if="isMobile" :openDrawer="collapsed" @change="onDrawerChange">
       <sider-menu
         :theme="theme"
@@ -40,7 +40,7 @@ import GlobalFooter from "./GlobalFooter";
 import Drawer from "../components/tool/Drawer";
 import SiderMenu from "../components/menu/SiderMenu";
 const minHeight = window.innerHeight - 64 - 24 - 122;
-
+const innerHeight = window.innerHeight;
 let menuData = [];
 
 export default {
@@ -50,7 +50,8 @@ export default {
     return {
       minHeight: minHeight + "px",
       collapsed: false,
-      menuData: menuData
+      menuData: menuData,
+      innerHeight: innerHeight + "px"
     };
   },
   computed: {

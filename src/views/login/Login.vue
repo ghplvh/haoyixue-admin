@@ -130,7 +130,6 @@ export default {
                   sessionStorage.setItem("user", JSON.stringify(result));
                   // 存储用户信息到vuex
                   this.$store.commit("account/SET_USER");
-                  this.$message.success("登录成功", 3);
                   this.$router.push("/");
                 }
               } else {

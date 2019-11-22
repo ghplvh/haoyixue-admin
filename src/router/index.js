@@ -57,6 +57,12 @@ export const constantRouterMap = [
         icon: "table"
       },
       {
+        path: "/test2",
+        name: "test2",
+        component: () => import("@/views/devTest/test2"),
+        icon: "table"
+      },
+      {
         path: "/list",
         name: "列表",
         component: PageView,

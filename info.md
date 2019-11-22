@@ -15,3 +15,17 @@
     @/store/modules/router.js
     @/router/index  > meta: {roles: [0,1,2,3]}
  
+# commit -m
+  2019-11-22 08:53:37
+  
+  2019-11-21 09:05:34 
+  1. 修复globalLayout的高度没有撑满问题
+  2. /home完成form, table, change, add
+  3. /home所有请求按钮制作loading
+
+# 上线
+  - [delete]src/api/api2 
+  - [delete]src/views/home/home表格....
+  - [delete]src/views/devTest
+  - [delete]src/views/userManager
+

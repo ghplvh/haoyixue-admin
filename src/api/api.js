@@ -20,12 +20,7 @@ export const api = {
       "POST"
     ),
   // 6. 创建缴费"活动" /home
-  createBillConfig: ({ id, billName, status, description }) =>
-    fetch(
-      "/app/bill/createBillConfig",
-      { id, billName, status, description },
-      "POST"
-    ),
+  createBillConfig: data => fetch("/app/bill/createBillConfig", data, "POST"),
   // 7. 创建缴费项目(商品) /billProduct
   createBillProduct: ({
     senderId,
