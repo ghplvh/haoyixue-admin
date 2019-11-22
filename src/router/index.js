@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "@/views/login/Login";
-import PageView from "@/layouts/PageView";
+// import PageView from "@/layouts/PageView";
 import MenuView from "@/layouts/MenuView";
 import RouteView from "@/layouts/RouteView";
 Vue.use(VueRouter);
@@ -24,58 +24,59 @@ export const constantRouterMap = [
         path: "/home",
         name: "首页",
         component: () => import("@/views/home/home.vue"),
-        icon: "table"
+        icon: "home"
       },
       {
         path: "/userManager",
         name: "用户管理",
-        component: () => import("@/views/userManager/userManager"),
-        icon: "table"
-      },
-      {
-        path: "/formTest",
-        name: "表单测试",
-        component: () => import("@/views/devTest/formTest"),
-        icon: "table"
-      },
-      {
-        path: "/form2",
-        name: "表单2",
-        component: () => import("@/views/devTest/form2"),
-        icon: "table"
-      },
-      {
-        path: "/table1",
-        name: "表格1",
-        component: () => import("@/views/devTest/table1"),
-        icon: "table"
-      },
-      {
-        path: "/test1",
-        name: "test1",
-        component: () => import("@/views/devTest/test1"),
-        icon: "table"
-      },
-      {
-        path: "/test2",
-        name: "test2",
-        component: () => import("@/views/devTest/test2"),
-        icon: "table"
-      },
-      {
-        path: "/list",
-        name: "列表",
-        component: PageView,
-        icon: "table",
-        children: [
-          {
-            path: "/list/query",
-            name: "查询表格",
-            component: () => import("@/views/devTest/QueryList"),
-            icon: "none"
-          }
-        ]
+        component: () => import("@/views/userManager/userManager.vue"),
+        icon: "user"
       }
+
+      // {
+      //   path: "/formTest",
+      //   name: "表单测试",
+      //   component: () => import("@/views/devTest/formTest"),
+      //   icon: "table"
+      // },
+      // {
+      //   path: "/form2",
+      //   name: "表单2",
+      //   component: () => import("@/views/devTest/form2"),
+      //   icon: "table"
+      // },
+      // {
+      //   path: "/table1",
+      //   name: "表格1",
+      //   component: () => import("@/views/devTest/table1"),
+      //   icon: "table"
+      // },
+      // {
+      //   path: "/test1",
+      //   name: "test1",
+      //   component: () => import("@/views/devTest/test1"),
+      //   icon: "table"
+      // },
+      // {
+      //   path: "/test2",
+      //   name: "test2",
+      //   component: () => import("@/views/devTest/test2"),
+      //   icon: "table"
+      // },
+      // {
+      //   path: "/list",
+      //   name: "列表",
+      //   component: PageView,
+      //   icon: "table",
+      //   children: [
+      //     {
+      //       path: "/list/query",
+      //       name: "查询表格",
+      //       component: () => import("@/views/devTest/QueryList"),
+      //       icon: "none"
+      //     }
+      //   ]
+      // }
     ]
   },
   {

@@ -17,7 +17,9 @@
  
 # commit -m
   2019-11-22 08:53:37
-  
+  1. /home分页请求
+  2. /userManger init
+  3. 
   2019-11-21 09:05:34 
   1. 修复globalLayout的高度没有撑满问题
   2. /home完成form, table, change, add
@@ -28,4 +30,4 @@
   - [delete]src/views/home/home表格....
   - [delete]src/views/devTest
   - [delete]src/views/userManager
-
+  - [delete]删除dev 相关route

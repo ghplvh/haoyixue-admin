@@ -1,5 +1,5 @@
 <template>
-  <page-layout :desc="desc" :title="title" :linkList="linkList">
+  <page-layout :desc="desc" :title="title" :linkList="linkList" id="home">
     <div slot="extra" class="extraImg">
       <img :src="extraImage" />
     </div>
@@ -56,6 +56,7 @@
             class="table"
             :columns="columns"
             :dataSource="billList"
+            rowKey="id"
             bordered
             :loading="isTableLoading"
           >
@@ -165,7 +166,7 @@
     <a-modal
       class="add-modal"
       :visible="isAddVisible"
-      title="更新缴费项目"
+      title="新增缴费项目"
       okText="确定"
       cancelText="取消"
       @cancel="cancelAdd"
@@ -351,6 +352,7 @@ export default {
       this.isBtnLoading = false;
     },
     editChange(id) {
+      // console.log("id", id);
       const newData = [...this.billList];
       const target = newData.filter(item => id === item.id)[0];
       if (target) {
@@ -480,11 +482,17 @@ export default {
 </script>
 <style lang="scss">
 @import "../../assets/style/mixin.scss";
-.content {
-  min-width: $minWidth;
-}
-.table {
-  margin-top: 2vh;
+#home {
+  .ant-form-item-label label {
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .content {
+    min-width: $minWidth;
+  }
+  .table {
+    margin-top: 2vh;
+  }
 }
 </style>
 
