@@ -46,6 +46,9 @@ let menuData = [];
 export default {
   name: "GlobalLayout",
   components: { SiderMenu, Drawer, GlobalFooter, GlobalHeader },
+  mounted() {
+    console.log("innerHeight", window.innerHeight), console.log(window);
+  },
   data() {
     return {
       minHeight: minHeight + "px",
