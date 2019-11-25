@@ -1,4 +1,6 @@
-import { baseUrl } from "./env";
+import {
+  baseUrl
+} from "./env";
 
 export default async (url = "", data = {}, type = "GET", method = "fetch") => {
   type = type.toUpperCase();
@@ -39,9 +41,16 @@ export default async (url = "", data = {}, type = "GET", method = "fetch") => {
 
     try {
       const response = await fetch(url, requestConfig);
-      const responseJson = await response.json();
-      return responseJson;
+      console.log("response", response)
+      if (response.ok) {
+        const responseJson = await response.json();
+        return responseJson;
+      } else {
+        console.log('接口请求失败', response.statusText)
+        return false
+      }
     } catch (error) {
+      console.log("error", error)
       throw new Error(error);
     }
   } else {

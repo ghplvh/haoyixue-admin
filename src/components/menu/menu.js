@@ -114,20 +114,28 @@ export default {
           key: menu.path ? menu.path : "item_" + pIndex + "_" + index
         },
         [
-          h("a", { attrs: { href: "#" + menu.path } }, [
-            this.renderIcon(h, menu.icon),
-            h("span", [menu.name])
-          ])
+          h(
+            "a",
+            {
+              attrs: {
+                href: "#" + menu.path
+              }
+            },
+            [this.renderIcon(h, menu.icon), h("span", [menu.name])]
+          )
         ]
       );
     },
     renderSubMenu: function(h, menu, pIndex, index) {
       var this2_ = this;
       var subItem = [
-        h("span", { slot: "title" }, [
-          this.renderIcon(h, menu.icon),
-          h("span", [menu.name])
-        ])
+        h(
+          "span",
+          {
+            slot: "title"
+          },
+          [this.renderIcon(h, menu.icon), h("span", [menu.name])]
+        )
       ];
       var itemArr = [];
       var pIndex_ = pIndex + "_" + index;
@@ -136,7 +144,9 @@ export default {
       });
       return h(
         SubMenu,
-        { key: menu.path ? menu.path : "submenu_" + pIndex + "_" + index },
+        {
+          key: menu.path ? menu.path : "submenu_" + pIndex + "_" + index
+        },
         subItem.concat(itemArr)
       );
     },

@@ -1,38 +1,37 @@
 <template>
-  <page-layout
-    :desc="setting.desc"
-    :title="setting.title"
-    :linkList="setting.linkList"
-    id="user-manager"
-  >
-    <div slot="extra" class="extraImg">
+  <page-layout :desc="setting.desc"
+               :title="setting.title"
+               :linkList="setting.linkList"
+               id="user-manager">
+    <div slot="extra"
+         class="extraImg">
       <img :src="setting.extraImage" />
     </div>
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
-          <a-form :form="searchForm.form" layout="inline" @submit="onSearch">
-            <a-row type="flex" align="middle">
+          <a-form :form="searchForm.form"
+                  layout="inline"
+                  @submit="onSearch">
+            <a-row type="flex"
+                   align="middle">
               <a-col>
-                <a-form-item style="width:100%" label="学校">
-                  <a-select
-                    v-if="searchForm.schoolList.length > 0"
-                    v-decorator="[
+                <a-form-item style="width:100%"
+                             label="学校">
+                  <a-select v-if="searchForm.schoolList.length > 0"
+                            v-decorator="[
                       'schoolCode',
                       {
                         initialValue: searchForm.schoolCode,
                         rules: [{ required: true }]
                       }
                     ]"
-                    placeholder="请选择学校"
-                    showArrow
-                  >
-                    <a-select-option
-                      v-for="(item, index) in searchForm.schoolList"
-                      :key="index"
-                      :title="item.schoolName"
-                      :value="item.schoolCode"
-                    >
+                            placeholder="请选择学校"
+                            showArrow>
+                    <a-select-option v-for="(item, index) in searchForm.schoolList"
+                                     :key="index"
+                                     :title="item.schoolName"
+                                     :value="item.schoolCode">
                       {{ item.schoolName }}
                     </a-select-option>
                   </a-select>
@@ -40,9 +39,8 @@
               </a-col>
               <a-col>
                 <a-form-item label="项目状态">
-                  <a-radio-group
-                    name="role"
-                    v-decorator="[
+                  <a-radio-group name="role"
+                                 v-decorator="[
                       'role',
                       {
                         rules: [
@@ -52,8 +50,7 @@
                         ],
                         initialValue: 1
                       }
-                    ]"
-                  >
+                    ]">
                     <a-radio :value="1">家长</a-radio>
                     <a-radio :value="2">老师</a-radio>
                     <a-radio :value="3">管理员</a-radio>
@@ -67,28 +64,25 @@
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
-                  <a-button
-                    type="primary"
-                    html-type="submit"
-                    :loading="searchForm.isLoading"
-                    :disabled="searchForm.isLoading"
-                  >
+                  <a-button type="primary"
+                            html-type="submit"
+                            :loading="searchForm.isLoading"
+                            :disabled="searchForm.isLoading">
                     查询
                   </a-button>
                 </a-form-item>
               </a-col>
             </a-row>
           </a-form>
-          <a-table
-            class="table"
-            :columns="table.columns"
-            :dataSource="table.userList"
-            rowKey="userId"
-            bordered
-            :loading="table.isLoading"
-          >
-            <template
-              v-for="col in [
+          <a-table class="table"
+                   :pagination="table.pagination"
+                   :columns="table.columns"
+                   :dataSource="table.userList"
+                   rowKey="userId"
+                   @change="pageChange"
+                   bordered
+                   :loading="table.isLoading">
+            <template v-for="col in [
                 'id',
                 'schoolCode',
                 'billName',
@@ -97,9 +91,8 @@
                 'createTime',
                 'updateTime'
               ]"
-              :slot="col"
-              slot-scope="text, record"
-            >
+                      :slot="col"
+                      slot-scope="text, record">
               <div :key="col">
                 <template v-if="col === 'role'">
                   <template v-if="record.role === 1">
@@ -115,7 +108,8 @@
                 <template v-else>{{ text }}</template>
               </div>
             </template>
-            <template slot="operation" slot-scope="text, record">
+            <template slot="operation"
+                      slot-scope="text, record">
               <div class="editable-row-operations">
                 <span>
                   <a @click="() => onEdit(record.id)">修改</a>
@@ -126,21 +120,19 @@
         </a-card>
       </keep-alive>
     </transition>
-    <a-modal
-      class="change-modal"
-      :visible="editForm.isVisible"
-      title="更新缴费项目"
-      okText="确定"
-      cancelText="取消"
-      @cancel="cancelEdit"
-      @ok="saveEdit"
-      :okButtonProps="{ props: { loading: editForm.isLoading } }"
-    >
-      <a-form layout="vertical" :form="editForm.form">
+    <a-modal class="change-modal"
+             :visible="editForm.isVisible"
+             title="更新缴费项目"
+             okText="确定"
+             cancelText="取消"
+             @cancel="cancelEdit"
+             @ok="saveEdit"
+             :okButtonProps="{ props: { loading: editForm.isLoading } }">
+      <a-form layout="vertical"
+              :form="editForm.form">
         <a-form-item label="缴费项目名称">
-          <a-input
-            autoFocus
-            v-decorator="[
+          <a-input autoFocus
+                   v-decorator="[
               'billName',
               {
                 rules: [
@@ -151,15 +143,13 @@
                 ],
                 initialValue: editForm.data.billName
               }
-            ]"
-          />
+            ]" />
         </a-form-item>
         <a-form-item label="内容描述">
-          <a-input
-            type="textarea"
-            rows="5"
-            style="resize:none;"
-            v-decorator="[
+          <a-input type="textarea"
+                   rows="5"
+                   style="resize:none;"
+                   v-decorator="[
               'description',
               {
                 rules: [
@@ -170,12 +160,10 @@
                 ],
                 initialValue: editForm.data.description
               }
-            ]"
-          />
+            ]" />
         </a-form-item>
         <a-form-item label="项目状态">
-          <a-radio-group
-            v-decorator="[
+          <a-radio-group v-decorator="[
               'status',
               {
                 rules: [
@@ -185,8 +173,7 @@
                 ],
                 initialValue: editForm.data.status
               }
-            ]"
-          >
+            ]">
             <a-radio :value="0">正常</a-radio>
             <a-radio :value="1">下线</a-radio>
           </a-radio-group>
@@ -294,7 +281,10 @@ export default {
         // 表格loading
         isLoading: false,
         // 用户列表
-        userList: []
+        userList: [],
+        pagination: {
+          total: 0
+        }
       }
     };
   },
@@ -360,8 +350,12 @@ export default {
       this.editForm.data = {};
       this.editForm.isVisible = false;
     },
+    pageChange(pagination) {
+      console.log("pagination", pagination)
+      this.getUsers(pagination.current)
+    },
     // api
-    async getUsers({ pageNum = 1 }) {
+    async getUsers(pageNum) {
       this.table.isLoading = true;
       // 加载前清空相关数据
       this.table.userList = [];
@@ -382,6 +376,7 @@ export default {
             }
           });
           this.table.userList = list;
+          this.table.pagination.total = res.data.dataTotal
         } else {
           this.$error({ title: "错误", content: res.msg });
         }
@@ -395,7 +390,6 @@ export default {
       this.table.userList = [];
       let data = { account };
       await this.$api.findUser(data).then(res => {
-        console.log("findUser", res);
         if (res.code === 1) {
           this.table.userList.push(res.data);
         } else {

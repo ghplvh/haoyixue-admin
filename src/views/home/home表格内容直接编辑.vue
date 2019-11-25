@@ -1,32 +1,35 @@
 <template>
-  <page-layout :desc="desc" :title="title" :linkList="linkList">
-    <div slot="extra" class="extraImg">
+  <page-layout :desc="desc"
+               :title="title"
+               :linkList="linkList">
+    <div slot="extra"
+         class="extraImg">
       <img :src="extraImage" />
     </div>
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
-          <a-form :form="form" layout="inline" @submit="onSubmit">
-            <a-row type="flex" align="middle">
+          <a-form :form="form"
+                  layout="inline"
+                  @submit="onSubmit">
+            <a-row type="flex"
+                   align="middle">
               <a-col>
-                <a-form-item style="width:100%" label="学校">
-                  <a-select
-                    v-if="schoolList.length > 0"
-                    v-decorator="[
+                <a-form-item style="width:100%"
+                             label="学校">
+                  <a-select v-if="schoolList.length > 0"
+                            v-decorator="[
                       'school',
                       {
                         initialValue: schoolCode,
                         rules: [{ required: true, message: '请选择学校' }]
                       }
                     ]"
-                    placeholder="请选择学校"
-                    showArrow
-                  >
-                    <a-select-option
-                      v-for="(item, index) in schoolList"
-                      :key="index"
-                      :value="item.schoolCode"
-                    >
+                            placeholder="请选择学校"
+                            showArrow>
+                    <a-select-option v-for="(item, index) in schoolList"
+                                     :key="index"
+                                     :value="item.schoolCode">
                       {{ item.schoolName }}
                     </a-select-option>
                   </a-select>
@@ -34,7 +37,8 @@
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
-                  <a-button type="primary" html-type="submit">
+                  <a-button type="primary"
+                            html-type="submit">
                     查询
                   </a-button>
                 </a-form-item>
@@ -46,14 +50,11 @@
               </a-col>
             </a-row>
           </a-form>
-          <a-table
-            class="table"
-            :columns="columns"
-            :dataSource="billList"
-            bordered
-          >
-            <template
-              v-for="col in [
+          <a-table class="table"
+                   :columns="columns"
+                   :dataSource="billList"
+                   bordered>
+            <template v-for="col in [
                 'id',
                 'orgNo',
                 'billName',
@@ -62,36 +63,30 @@
                 'createTime',
                 'updateTime'
               ]"
-              :slot="col"
-              slot-scope="text, record"
-            >
+                      :slot="col"
+                      slot-scope="text, record">
               <div :key="col">
-                <a-input
-                  v-if="record.editable"
-                  style="margin: -5px 0"
-                  :value="text"
-                  @change="e => onTableChange(e.target.value, record.key, col)"
-                />
+                <a-input v-if="record.editable"
+                         style="margin: -5px 0"
+                         :value="text"
+                         @change="e => onTableChange(e.target.value, record.key, col)" />
                 <template v-else>{{ text }}</template>
               </div>
             </template>
-            <template slot="operation" slot-scope="text, record">
+            <template slot="operation"
+                      slot-scope="text, record">
               <div class="editable-row-operations">
                 <span v-if="record.editable">
-                  <a-popconfirm
-                    @confirm="() => save(record.id)"
-                    title="确定保存吗?"
-                    okText="是"
-                    cancelText="否"
-                  >
+                  <a-popconfirm @confirm="() => save(record.id)"
+                                title="确定保存吗?"
+                                okText="是"
+                                cancelText="否">
                     <a style="display:inline-block">保存</a>
                   </a-popconfirm>
-                  <a-popconfirm
-                    title="确定取消吗?"
-                    okText="是"
-                    cancelText="否"
-                    @confirm="() => cancel(record.id)"
-                  >
+                  <a-popconfirm title="确定取消吗?"
+                                okText="是"
+                                cancelText="否"
+                                @confirm="() => cancel(record.id)">
                     <a style="display:inline-block">取消</a>
                   </a-popconfirm>
                 </span>
@@ -156,7 +151,7 @@ const columns = [
 export default {
   name: "QueryList",
   components: { PageLayout },
-  data() {
+  data () {
     return {
       columns, // 列
       // 全局配置
@@ -175,7 +170,7 @@ export default {
     };
   },
   methods: {
-    onTableChange(value, key, column) {
+    onTableChange (value, key, column) {
       const newData = [...this.billList];
       const target = newData.filter(item => key === item.key)[0];
       if (target) {
@@ -183,7 +178,7 @@ export default {
         this.billList = newData;
       }
     },
-    onSubmit(e) {
+    onSubmit (e) {
       e.preventDefault();
       this.form.validateFields((error, values) => {
         console.log("Received values of form: ", values);
@@ -191,7 +186,7 @@ export default {
         this.getBillConfig();
       });
     },
-    edit(id) {
+    edit (id) {
       const newData = [...this.billList];
       // console.log("newData", newData);
       const target = newData.filter(item => id === item.id)[0];
@@ -201,7 +196,7 @@ export default {
         this.billList = newData;
       }
     },
-    save(id) {
+    save (id) {
       const newData = [...this.billList];
       const target = newData.filter(item => id === item.id)[0];
       if (target) {
@@ -211,7 +206,7 @@ export default {
         // 下面调用修改接口
       }
     },
-    cancel(id) {
+    cancel (id) {
       const newData = [...this.billList];
       console.log("newData", newData);
       const target = newData.filter(item => id === item.id)[0];
@@ -225,7 +220,7 @@ export default {
         this.billList = newData;
       }
     },
-    getBillConfig() {
+    getBillConfig () {
       const loading = this.$message.loading("正在加载", 0);
       this.$api
         .getBillConfigBy({
@@ -246,7 +241,7 @@ export default {
         });
     }
   },
-  mounted() {
+  mounted () {
     this.$api.findSchoolList().then(res => {
       if (res.code === 1) {
         this.schoolList = res.data;

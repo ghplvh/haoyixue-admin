@@ -1,7 +1,9 @@
 // permission.js用于页面级别的权限管理
 import router from "../router";
 import store from "../store";
-import { hasPermission } from "@/assets/js/common.js";
+import {
+  hasPermission
+} from "@/assets/js/common.js";
 // import cookie from "js-cookie";//cookie方案引入如cookie
 
 const whiteList = [
@@ -27,10 +29,15 @@ router.beforeEach((to, from, next) => {
       let roles = [];
       roles = [...roles, role];
       store.commit("router/SET_ROLES", roles);
-      store.dispatch("router/GENERATE_ROUTES", { roles }).then(() => {
+      store.dispatch("router/GENERATE_ROUTES", {
+        roles
+      }).then(() => {
         // 根据roles权限生成可访问的路由表
         router.addRoutes(store.state.router.addRoutes); // 动态添加可访问路由表
-        next({ ...to, replace: true }); // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+        next({
+          to,
+          replace: true
+        }); // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
       });
     } else {
       // 没有刷新页面对路由权限验证

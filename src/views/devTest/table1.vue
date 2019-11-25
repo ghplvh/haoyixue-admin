@@ -1,6 +1,9 @@
 <template>
-  <a-table :columns="columns" :dataSource="data" bordered>
-    <template slot="name" slot-scope="text">
+  <a-table :columns="columns"
+           :dataSource="data"
+           bordered>
+    <template slot="name"
+              slot-scope="text">
       <a href="javascript:;">{{ text }}</a>
     </template>
     <template slot="title">
@@ -51,7 +54,7 @@ const data = [
 ];
 
 export default {
-  data() {
+  data () {
     return {
       data,
       columns

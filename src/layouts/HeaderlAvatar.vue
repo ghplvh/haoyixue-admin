@@ -1,12 +1,14 @@
 <template>
-  <a-dropdown
-    style="display: inline-block; height: 100%; vertical-align: initial"
-  >
+  <a-dropdown style="display: inline-block; height: 100%; vertical-align: initial">
     <span style="cursor: pointer">
-      <a-avatar class="avatar" size="small" shape="circle" icon="user" />
+      <a-avatar class="avatar"
+                size="small"
+                shape="circle"
+                icon="user" />
       <span>{{ currUser }}</span>
     </span>
-    <a-menu style="width: 150px" slot="overlay">
+    <a-menu style="width: 150px"
+            slot="overlay">
       <!-- <a-menu-item>
         <a-icon type="user" />
         <span>个人中心</span>
@@ -30,12 +32,12 @@
 export default {
   name: "HeaderAvatar",
   computed: {
-    currUser() {
+    currUser () {
       return this.$store.state.account.userInfo.nickName;
     }
   },
   methods: {
-    onClickOut() {
+    onClickOut () {
       this.$store.commit("account/REMOVE_USER");
     }
   }

@@ -1,18 +1,20 @@
 <template>
   <div>
-    <div :class="['mask', openDrawer ? 'open' : 'close']" @click="close"></div>
+    <div :class="['mask', openDrawer ? 'open' : 'close']"
+         @click="close"></div>
     <div :class="['drawer', placement, openDrawer ? 'open' : 'close']">
-      <div ref="drawer" style="position: relative; height: 100%;">
+      <div ref="drawer"
+           style="position: relative; height: 100%;">
         <slot></slot>
       </div>
-      <div
-        v-if="showHandler"
-        :class="['handler-container', placement]"
-        ref="handler"
-        @click="handle"
-      >
-        <slot v-if="$slots.handler" name="handler"></slot>
-        <div v-else class="handler">
+      <div v-if="showHandler"
+           :class="['handler-container', placement]"
+           ref="handler"
+           @click="handle">
+        <slot v-if="$slots.handler"
+              name="handler"></slot>
+        <div v-else
+             class="handler">
           <a-icon :type="openDrawer ? 'close' : 'bars'" />
         </div>
       </div>
@@ -23,7 +25,7 @@
 <script>
 export default {
   name: "Drawer",
-  data() {
+  data () {
     return {
       drawerWidth: 0
     };
@@ -45,11 +47,11 @@ export default {
       default: true
     }
   },
-  mounted() {
+  mounted () {
     this.drawerWidth = this.getDrawerWidth();
   },
   watch: {
-    drawerWidth: function(val) {
+    drawerWidth: function (val) {
       if (this.placement === "left") {
         this.$refs.handler.style.left = val + "px";
       } else {
@@ -58,16 +60,16 @@ export default {
     }
   },
   methods: {
-    open() {
+    open () {
       this.$emit("change", true);
     },
-    close() {
+    close () {
       this.$emit("change", false);
     },
-    handle() {
+    handle () {
       this.$emit("change", !this.openDrawer);
     },
-    getDrawerWidth() {
+    getDrawerWidth () {
       return this.$refs.drawer.clientWidth;
     }
   }

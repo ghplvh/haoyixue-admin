@@ -1,28 +1,25 @@
 <template>
-  <a-table :columns="columns" :dataSource="data" bordered>
-    <template
-      v-for="col in ['name', 'age', 'address']"
-      :slot="col"
-      slot-scope="text, record"
-    >
+  <a-table :columns="columns"
+           :dataSource="data"
+           bordered>
+    <template v-for="col in ['name', 'age', 'address']"
+              :slot="col"
+              slot-scope="text, record">
       <div :key="col">
-        <a-input
-          v-if="record.editable"
-          style="margin: -5px 0"
-          :value="text"
-          @change="e => handleChange(e.target.value, record.key, col)"
-        />
+        <a-input v-if="record.editable"
+                 style="margin: -5px 0"
+                 :value="text"
+                 @change="e => handleChange(e.target.value, record.key, col)" />
         <template v-else>{{ text }}</template>
       </div>
     </template>
-    <template slot="operation" slot-scope="text, record">
+    <template slot="operation"
+              slot-scope="text, record">
       <div class="editable-row-operations">
         <span v-if="record.editable">
           <a @click="() => save(record.key)">Save</a>
-          <a-popconfirm
-            title="Sure to cancel?"
-            @confirm="() => cancel(record.key)"
-          >
+          <a-popconfirm title="Sure to cancel?"
+                        @confirm="() => cancel(record.key)">
             <a>Cancel</a>
           </a-popconfirm>
         </span>
@@ -70,7 +67,7 @@ for (let i = 0; i < 100; i++) {
   });
 }
 export default {
-  data() {
+  data () {
     this.cacheData = data.map(item => ({ ...item }));
     return {
       data,
@@ -78,7 +75,7 @@ export default {
     };
   },
   methods: {
-    handleChange(value, key, column) {
+    handleChange (value, key, column) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[0];
       if (target) {
@@ -86,7 +83,7 @@ export default {
         this.data = newData;
       }
     },
-    edit(key) {
+    edit (key) {
       console.log("data", this.data);
       console.log("cacheData", this.cacheData);
       const newData = [...this.data];
@@ -96,7 +93,7 @@ export default {
         this.data = newData;
       }
     },
-    save(key) {
+    save (key) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[0];
       if (target) {
@@ -105,7 +102,7 @@ export default {
         this.cacheData = newData.map(item => ({ ...item }));
       }
     },
-    cancel(key) {
+    cancel (key) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[0];
       if (target) {

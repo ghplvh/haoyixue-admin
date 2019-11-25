@@ -1,13 +1,13 @@
 <template>
   <span class="header-search">
-    <a-icon type="search" class="search-icon" @click="enterSearchMode" />
-    <a-auto-complete
-      ref="input"
-      :dataSource="dataSource"
-      :class="['search-input', searchMode ? 'enter' : 'leave']"
-      placeholder="站内搜索"
-      @blur="leaveSearchMode"
-    >
+    <a-icon type="search"
+            class="search-icon"
+            @click="enterSearchMode" />
+    <a-auto-complete ref="input"
+                     :dataSource="dataSource"
+                     :class="['search-input', searchMode ? 'enter' : 'leave']"
+                     placeholder="站内搜索"
+                     @blur="leaveSearchMode">
     </a-auto-complete>
   </span>
 </template>
@@ -15,18 +15,18 @@
 <script>
 export default {
   name: "HeaderSearch",
-  data() {
+  data () {
     return {
       dataSource: ["选项一", "选项二"],
       searchMode: false
     };
   },
   methods: {
-    enterSearchMode() {
+    enterSearchMode () {
       this.searchMode = true;
       setTimeout(() => this.$refs.input.focus(), 300);
     },
-    leaveSearchMode() {
+    leaveSearchMode () {
       this.searchMode = false;
     }
   }

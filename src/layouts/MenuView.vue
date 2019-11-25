@@ -1,26 +1,21 @@
 <template>
   <global-layout>
-    <contextmenu
-      :itemList="menuItemList"
-      :visible.sync="menuVisible"
-      @select="onMenuSelect"
-    />
-    <a-tabs
-      @contextmenu.native="e => onContextmenu(e)"
-      v-if="multipage"
-      :active-key="activePage"
-      style="margin-top: -8px; margin-bottom: 8px"
-      :hide-add="true"
-      type="editable-card"
-      @change="changePage"
-      @edit="editPage"
-    >
-      <a-tab-pane
-        :id="page.fullPath"
-        :key="page.fullPath"
-        v-for="page in pageList"
-      >
-        <span slot="tab" :pagekey="page.fullPath">{{ page.name }}</span>
+    <contextmenu :itemList="menuItemList"
+                 :visible.sync="menuVisible"
+                 @select="onMenuSelect" />
+    <a-tabs @contextmenu.native="e => onContextmenu(e)"
+            v-if="multipage"
+            :active-key="activePage"
+            style="margin-top: -8px; margin-bottom: 8px"
+            :hide-add="true"
+            type="editable-card"
+            @change="changePage"
+            @edit="editPage">
+      <a-tab-pane :id="page.fullPath"
+                  :key="page.fullPath"
+                  v-for="page in pageList">
+        <span slot="tab"
+              :pagekey="page.fullPath">{{ page.name }}</span>
       </a-tab-pane>
     </a-tabs>
     <transition name="page-toggle">
@@ -62,7 +57,7 @@ export default {
     this.activePage = this.$route.fullPath;
   },
   watch: {
-    $route: function(newRoute) {
+    $route: function (newRoute) {
       this.activePage = newRoute.fullPath;
       if (!this.multipage) {
         this.linkList = [newRoute.fullPath];
@@ -72,10 +67,10 @@ export default {
         this.pageList.push(newRoute);
       }
     },
-    activePage: function(key) {
+    activePage: function (key) {
       this.$router.push(key);
     },
-    multipage: function(newVal) {
+    multipage: function (newVal) {
       if (!newVal) {
         this.linkList = [this.$route.fullPath];
         this.pageList = [this.$route];
@@ -107,14 +102,7 @@ export default {
         this.menuVisible = true;
       }
     },
-    /**
-     * 由于ant-design-vue组件库的TabPane组件暂不支持自定义监听器，无法直接获取到右键target所在标签页的 pagekey 。故增加此方法用于
-     * 查询右键target所在标签页的标识 pagekey ，以用于自定义右键菜单的事件处理。
-     * 注：TabPane组件支持自定义监听器后可去除该方法并重构 ‘自定义右键菜单的事件处理’
-     * @param target 查询开始目标
-     * @param count 查询层级深度 （查找层级最多不超过3层，超过3层深度直接返回 null）
-     * @returns {String}
-     */
+
     getPageKey(target, depth) {
       depth = depth || 0;
       if (depth > 2) {

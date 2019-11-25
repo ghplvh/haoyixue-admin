@@ -11,7 +11,7 @@
 export default {
   name: "RouteView",
   computed: {
-    multipage() {
+    multipage () {
       return this.$store.state.setting.multipage;
     }
   }

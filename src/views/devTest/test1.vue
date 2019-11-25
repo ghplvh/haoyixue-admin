@@ -6,12 +6,12 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       list: []
     };
   },
-  mounted() {
+  mounted () {
     this.fetch(
       "http://120.24.181.77:8888/base/user/getSiteList",
       {
@@ -26,7 +26,7 @@ export default {
     });
   },
   methods: {
-    getRList(list) {
+    getRList (list) {
       let oList = [];
       list.forEach(item1 => {
         let pList = [];
@@ -38,7 +38,7 @@ export default {
       });
       return oList;
     },
-    getPlist(list) {
+    getPlist (list) {
       let count = 0;
       let gList = [];
       let kList = [];
@@ -57,7 +57,7 @@ export default {
       kList = [];
       return gList;
     },
-    fuckFive(g) {
+    fuckFive (g) {
       let list = g.concat();
       let name = "";
       let count = 1;
@@ -79,7 +79,7 @@ export default {
       list[index].rowSpan = count;
       return list;
     },
-    totalFuck(list) {
+    totalFuck (list) {
       let rList = this.getRList(list);
       let pList = this.getPlist(rList);
       let resList = [];
@@ -89,7 +89,7 @@ export default {
       });
       return resList;
     },
-    async fetch(url = "", data = {}, type = "GET", method = "fetch") {
+    async fetch (url = "", data = {}, type = "GET", method = "fetch") {
       type = type.toUpperCase();
 
       // 此处规定get请求的参数使用时放在data中，如同post请求

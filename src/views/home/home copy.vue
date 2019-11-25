@@ -1,33 +1,37 @@
 <template>
-  <page-layout :desc="desc" :title="title" :linkList="linkList" id="home">
-    <div slot="extra" class="extraImg">
+  <page-layout :desc="desc"
+               :title="title"
+               :linkList="linkList"
+               id="home">
+    <div slot="extra"
+         class="extraImg">
       <img :src="extraImage" />
     </div>
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
-          <a-form :form="form" layout="inline" @submit="onSubmit">
-            <a-row type="flex" align="middle">
+          <a-form :form="form"
+                  layout="inline"
+                  @submit="onSubmit">
+            <a-row type="flex"
+                   align="middle">
               <a-col>
-                <a-form-item style="width:100%" label="学校">
-                  <a-select
-                    v-if="schoolList.length > 0"
-                    v-decorator="[
+                <a-form-item style="width:100%"
+                             label="学校">
+                  <a-select v-if="schoolList.length > 0"
+                            v-decorator="[
                       'school',
                       {
                         initialValue: schoolCode,
                         rules: [{ required: true, message: '请选择学校' }]
                       }
                     ]"
-                    placeholder="请选择学校"
-                    showArrow
-                  >
-                    <a-select-option
-                      v-for="(item, index) in schoolList"
-                      :key="index"
-                      :title="item.schoolName"
-                      :value="item.schoolCode"
-                    >
+                            placeholder="请选择学校"
+                            showArrow>
+                    <a-select-option v-for="(item, index) in schoolList"
+                                     :key="index"
+                                     :title="item.schoolName"
+                                     :value="item.schoolCode">
                       {{ item.schoolName }}
                     </a-select-option>
                   </a-select>
@@ -35,33 +39,29 @@
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
-                  <a-button
-                    type="primary"
-                    html-type="submit"
-                    :loading="isBtnLoading"
-                    :disabled="isBtnLoading"
-                  >
+                  <a-button type="primary"
+                            html-type="submit"
+                            :loading="isBtnLoading"
+                            :disabled="isBtnLoading">
                     查询
                   </a-button>
                 </a-form-item>
               </a-col>
               <a-col>
-                <a-button type="primary" @click="editAdd">
+                <a-button type="primary"
+                          @click="editAdd">
                   新增收费项目
                 </a-button>
               </a-col>
             </a-row>
           </a-form>
-          <a-table
-            class="table"
-            :columns="columns"
-            :dataSource="billList"
-            rowKey="id"
-            bordered
-            :loading="isTableLoading"
-          >
-            <template
-              v-for="col in [
+          <a-table class="table"
+                   :columns="columns"
+                   :dataSource="billList"
+                   rowKey="id"
+                   bordered
+                   :loading="isTableLoading">
+            <template v-for="col in [
                 'id',
                 'orgNo',
                 'billName',
@@ -70,9 +70,8 @@
                 'createTime',
                 'updateTime'
               ]"
-              :slot="col"
-              slot-scope="text, record"
-            >
+                      :slot="col"
+                      slot-scope="text, record">
               <div :key="col">
                 <template v-if="col === 'status'">
                   <template v-if="record.status === 0">
@@ -85,7 +84,8 @@
                 <template v-else>{{ text }}</template>
               </div>
             </template>
-            <template slot="operation" slot-scope="text, record">
+            <template slot="operation"
+                      slot-scope="text, record">
               <div class="editable-row-operations">
                 <span>
                   <a @click="() => editChange(record.id)">修改</a>
@@ -96,21 +96,19 @@
         </a-card>
       </keep-alive>
     </transition>
-    <a-modal
-      class="change-modal"
-      :visible="isChangeVisible"
-      title="更新缴费项目"
-      okText="确定"
-      cancelText="取消"
-      @cancel="cancelChange"
-      @ok="saveChange"
-      :okButtonProps="{ props: { loading: isChangeConfirmLoading } }"
-    >
-      <a-form layout="vertical" :form="changeForm">
+    <a-modal class="change-modal"
+             :visible="isChangeVisible"
+             title="更新缴费项目"
+             okText="确定"
+             cancelText="取消"
+             @cancel="cancelChange"
+             @ok="saveChange"
+             :okButtonProps="{ props: { loading: isChangeConfirmLoading } }">
+      <a-form layout="vertical"
+              :form="changeForm">
         <a-form-item label="缴费项目名称">
-          <a-input
-            autoFocus
-            v-decorator="[
+          <a-input autoFocus
+                   v-decorator="[
               'billName',
               {
                 rules: [
@@ -121,15 +119,13 @@
                 ],
                 initialValue: changeData.billName
               }
-            ]"
-          />
+            ]" />
         </a-form-item>
         <a-form-item label="内容描述">
-          <a-input
-            type="textarea"
-            rows="5"
-            style="resize:none;"
-            v-decorator="[
+          <a-input type="textarea"
+                   rows="5"
+                   style="resize:none;"
+                   v-decorator="[
               'description',
               {
                 rules: [
@@ -140,12 +136,10 @@
                 ],
                 initialValue: changeData.description
               }
-            ]"
-          />
+            ]" />
         </a-form-item>
         <a-form-item label="项目状态">
-          <a-radio-group
-            v-decorator="[
+          <a-radio-group v-decorator="[
               'status',
               {
                 rules: [
@@ -155,29 +149,26 @@
                 ],
                 initialValue: changeData.status
               }
-            ]"
-          >
+            ]">
             <a-radio :value="0">正常</a-radio>
             <a-radio :value="1">下线</a-radio>
           </a-radio-group>
         </a-form-item>
       </a-form>
     </a-modal>
-    <a-modal
-      class="add-modal"
-      :visible="isAddVisible"
-      title="新增缴费项目"
-      okText="确定"
-      cancelText="取消"
-      @cancel="cancelAdd"
-      @ok="saveAdd"
-      :okButtonProps="{ props: { loading: isAddConfirmLoading } }"
-    >
-      <a-form layout="vertical" :form="addForm">
+    <a-modal class="add-modal"
+             :visible="isAddVisible"
+             title="新增缴费项目"
+             okText="确定"
+             cancelText="取消"
+             @cancel="cancelAdd"
+             @ok="saveAdd"
+             :okButtonProps="{ props: { loading: isAddConfirmLoading } }">
+      <a-form layout="vertical"
+              :form="addForm">
         <a-form-item label="缴费项目名称">
-          <a-input
-            autoFocus
-            v-decorator="[
+          <a-input autoFocus
+                   v-decorator="[
               'billName',
               {
                 rules: [
@@ -187,15 +178,13 @@
                   }
                 ]
               }
-            ]"
-          />
+            ]" />
         </a-form-item>
         <a-form-item label="内容描述">
-          <a-input
-            type="textarea"
-            rows="5"
-            style="resize:none;"
-            v-decorator="[
+          <a-input type="textarea"
+                   rows="5"
+                   style="resize:none;"
+                   v-decorator="[
               'description',
               {
                 rules: [
@@ -205,13 +194,11 @@
                   }
                 ]
               }
-            ]"
-          />
+            ]" />
         </a-form-item>
         <a-form-item label="缴费条目">
-          <a-checkbox-group
-            style="display:flex;flex-wrap:wrap;"
-            v-decorator="[
+          <a-checkbox-group style="display:flex;flex-wrap:wrap;"
+                            v-decorator="[
               'productIds',
               {
                 rules: [
@@ -221,14 +208,11 @@
                   }
                 ]
               }
-            ]"
-          >
-            <a-checkbox
-              v-for="item in billProductsList"
-              :value="item.id"
-              :key="item.id"
-              style="flex-grow:1;margin-left:0;"
-            >
+            ]">
+            <a-checkbox v-for="item in billProductsList"
+                        :value="item.id"
+                        :key="item.id"
+                        style="flex-grow:1;margin-left:0;">
               {{ item.productName }}
             </a-checkbox>
           </a-checkbox-group>
@@ -293,7 +277,7 @@ const columns = [
 export default {
   name: "QueryList",
   components: { PageLayout },
-  data() {
+  data () {
     return {
       // table标题列表
       columns,
@@ -339,7 +323,7 @@ export default {
     };
   },
   methods: {
-    async onSubmit(e) {
+    async onSubmit (e) {
       e.preventDefault();
       this.isBtnLoading = true;
       this.billList = [];
@@ -351,7 +335,7 @@ export default {
       this.getBillProductsByOrg();
       this.isBtnLoading = false;
     },
-    editChange(id) {
+    editChange (id) {
       // console.log("id", id);
       const newData = [...this.billList];
       const target = newData.filter(item => id === item.id)[0];
@@ -360,7 +344,7 @@ export default {
       }
       this.isChangeVisible = true;
     },
-    async saveChange() {
+    async saveChange () {
       this.isChangeConfirmLoading = true;
       let data;
       let err;
@@ -389,14 +373,14 @@ export default {
       this.isChangeConfirmLoading = false;
       this.isChangeVisible = false;
     },
-    cancelChange() {
+    cancelChange () {
       this.changeData = {};
       this.isChangeVisible = false;
     },
-    editAdd() {
+    editAdd () {
       this.isAddVisible = true;
     },
-    async saveAdd() {
+    async saveAdd () {
       this.isAddConfirmLoading = true;
       let data;
       let err;
@@ -425,11 +409,11 @@ export default {
       this.isAddConfirmLoading = false;
       this.isAddVisible = false;
     },
-    cancelAdd() {
+    cancelAdd () {
       this.isAddVisible = false;
     },
     // api
-    async getBillConfig() {
+    async getBillConfig () {
       this.isTableLoading = true;
       // 加载前清空相关数据
       this.billList = [];
@@ -450,7 +434,7 @@ export default {
       this.isTableLoading = false;
     },
     // api 
-    async getBillProductsByOrg() {
+    async getBillProductsByOrg () {
       // 加载前清空相关数据
       this.billProductsList = [];
       await this.$api
@@ -466,7 +450,7 @@ export default {
         });
     }
   },
-  mounted() {
+  mounted () {
     this.$api.findSchoolList().then(res => {
       if (res.code === 1) {
         this.schoolList = res.data;

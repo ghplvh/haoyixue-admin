@@ -3,24 +3,25 @@
     <div class="content">
       <div class="top">
         <div class="header">
-          <img alt="logo" class="logo" src="../../assets/logo.png" />
+          <img alt="logo"
+               class="logo"
+               src="../../assets/logo.png" />
           <span class="title">{{ systemName }}</span>
         </div>
       </div>
       <div class="login">
-        <a-form class="login-form" @submit="onSubmit" :form="form">
-          <a-alert
-            type="error"
-            :closable="true"
-            v-if="error"
-            :message="error"
-            @close="closeAlert"
-            showIcon
-            style="margin-bottom: 24px;"
-          />
+        <a-form class="login-form"
+                @submit="onSubmit"
+                :form="form">
+          <a-alert type="error"
+                   :closable="true"
+                   v-if="error"
+                   :message="error"
+                   @close="closeAlert"
+                   showIcon
+                   style="margin-bottom: 24px;" />
           <a-form-item>
-            <a-input
-              v-decorator="[
+            <a-input v-decorator="[
                 'account',
                 {
                   rlues: [
@@ -32,15 +33,14 @@
                   ]
                 }
               ]"
-              size="large"
-              placeholder="请输入账户名称"
-            >
-              <a-icon slot="prefix" type="user" />
+                     size="large"
+                     placeholder="请输入账户名称">
+              <a-icon slot="prefix"
+                      type="user" />
             </a-input>
           </a-form-item>
           <a-form-item>
-            <a-input
-              v-decorator="[
+            <a-input v-decorator="[
                 'password',
                 {
                   rlues: [
@@ -52,11 +52,11 @@
                   ]
                 }
               ]"
-              size="large"
-              placeholder="请输入密码"
-              type="password"
-            >
-              <a-icon slot="prefix" type="lock" />
+                     size="large"
+                     placeholder="请输入密码"
+                     type="password">
+              <a-icon slot="prefix"
+                      type="lock" />
             </a-input>
           </a-form-item>
           <div>
@@ -64,19 +64,17 @@
             <a style="float: right">忘记密码</a>
           </div>
           <a-form-item>
-            <a-button
-              :loading="logging"
-              style="width: 100%;margin-top: 24px"
-              size="large"
-              htmlType="submit"
-              type="primary"
-              >登录</a-button
-            >
+            <a-button :loading="logging"
+                      style="width: 100%;margin-top: 24px"
+                      size="large"
+                      htmlType="submit"
+                      type="primary">登录</a-button>
           </a-form-item>
         </a-form>
       </div>
     </div>
-    <global-footer :link-list="linkList" :copyright="copyright" />
+    <global-footer :link-list="linkList"
+                   :copyright="copyright" />
   </div>
 </template>
 
@@ -86,7 +84,7 @@ import GlobalFooter from "../../layouts/GlobalFooter";
 export default {
   name: "Login",
   components: { GlobalFooter },
-  data() {
+  data () {
     return {
       logging: false,
       error: "",
@@ -95,20 +93,20 @@ export default {
   },
   computed: {
     //系统名称(左上角)
-    systemName() {
+    systemName () {
       return this.$store.state.setting.systemName;
     },
     // foot栏信息
-    linkList() {
+    linkList () {
       return this.$store.state.setting.footerLinks;
     },
     // copyright
-    copyright() {
+    copyright () {
       return this.$store.state.setting.copyright;
     }
   },
   methods: {
-    onSubmit(e) {
+    onSubmit (e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -141,7 +139,7 @@ export default {
         }
       });
     },
-    closeAlert() {
+    closeAlert () {
       this.error = "";
     }
   }

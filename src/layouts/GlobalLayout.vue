@@ -1,34 +1,29 @@
 <template>
   <a-layout :style="`height:${innerHeight}`">
-    <drawer v-if="isMobile" :openDrawer="collapsed" @change="onDrawerChange">
-      <sider-menu
-        :theme="theme"
-        :menuData="menuData"
-        :collapsed="false"
-        :collapsible="false"
-        @menuSelect="onMenuSelect"
-      />
+    <drawer v-if="isMobile"
+            :openDrawer="collapsed"
+            @change="onDrawerChange">
+      <sider-menu :theme="theme"
+                  :menuData="menuData"
+                  :collapsed="false"
+                  :collapsible="false"
+                  @menuSelect="onMenuSelect" />
     </drawer>
-    <sider-menu
-      :theme="theme"
-      v-else-if="layout === 'side'"
-      :menuData="menuData"
-      :collapsed="collapsed"
-      :collapsible="true"
-    />
+    <sider-menu :theme="theme"
+                v-else-if="layout === 'side'"
+                :menuData="menuData"
+                :collapsed="collapsed"
+                :collapsible="true" />
     <a-layout>
-      <global-header
-        :menuData="menuData"
-        :collapsed="collapsed"
-        @toggleCollapse="toggleCollapse"
-      />
-      <a-layout-content
-        :style="{ minHeight: minHeight, margin: '24px 24px 0' }"
-      >
+      <global-header :menuData="menuData"
+                     :collapsed="collapsed"
+                     @toggleCollapse="toggleCollapse" />
+      <a-layout-content :style="{ minHeight: minHeight, margin: '24px 24px 0' }">
         <slot></slot>
       </a-layout-content>
       <a-layout-footer style="padding: 0px">
-        <global-footer :link-list="linkList" :copyright="copyright" />
+        <global-footer :link-list="linkList"
+                       :copyright="copyright" />
       </a-layout-footer>
     </a-layout>
   </a-layout>
@@ -47,7 +42,6 @@ export default {
   name: "GlobalLayout",
   components: { SiderMenu, Drawer, GlobalFooter, GlobalHeader },
   mounted() {
-    console.log("innerHeight", window.innerHeight), console.log(window);
   },
   data() {
     return {
