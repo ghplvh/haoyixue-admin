@@ -251,10 +251,12 @@ export default {
       this.searchForm.isLoading = false;
     },
     // 学校改变 
-    onSchoolChange(value, option) {
+    async onSchoolChange(value, option) {
       this.searchForm.schoolCode = value
-      this.getBillConfigBy()
-      this.getSchoolDeparts()
+      await this.getBillConfigBy()
+      this.searchForm.form.setFieldsValue({ billId: "全部" })
+      await this.getSchoolDeparts()
+      this.searchForm.form.setFieldsValue({ depart_name: "全部" })
     },
     // 页号改变
     async onPageChange(pagination) {
@@ -264,12 +266,6 @@ export default {
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
-        // 成功访问, 处理数据
         if (res.code === 1) {
           this.searchForm.schoolCode = res.data[0].schoolCode;
           this.searchForm.schoolList = res.data;
@@ -288,12 +284,6 @@ export default {
           status: null
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
-          // 成功访问, 处理数据
           if (res.code === 1) {
             let list = [{ billName: "全部", id: "全部" }]
             list = [...list, ...res.data]
@@ -302,7 +292,6 @@ export default {
             this.$error({ title: "错误", content: res.msg });
           }
         });
-      this.searchForm.form.setFieldsValue({ billId: "全部" })
     },
     // api
     async getSchoolDeparts() {
@@ -311,12 +300,6 @@ export default {
           schoolCode: this.searchForm.schoolCode
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
-          // 成功访问, 处理数据
           if (res.code === 1) {
             let list = [{ depart_name: "全部" }]
             list = [...list, ...res.data]
@@ -325,7 +308,6 @@ export default {
             this.$error({ title: "错误", content: res.msg });
           }
         });
-      this.searchForm.form.setFieldsValue({ depart_name: "全部" })
     },
     // api
     async getBillsBy() {
@@ -338,36 +320,28 @@ export default {
         pageNum: this.table.pagination.current,
         orgNo: this.searchForm.schoolCode
       }
-      let err
       // 表单数据
       this.searchForm.form.validateFields((error, values) => {
-        err = error
+        this.searchForm.schoolCode = values.schoolCode;
         data.billId = values.billId === "全部" ? null : values.billId
         data.depart = values.depart_name === "全部" ? null : values.depart_name
       });
-      // 表单校验
-      if (err) {
-        this.table.isLoading = false;
-      } else {
-        // 请求接口
-        await this.$api
-          .getBillsBy(data)
-          .then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
-            // 成功访问, 处理数据
-            if (res.code === 1) {
-              this.table.billList = res.data.pageData
-              this.table.pagination.total = res.data.dataTotal
-            } else {
-              this.$error({ title: "错误", content: res.msg });
-            }
-          });
-        this.table.isLoading = false;
-      }
+      // 请求接口
+      await this.$api
+        .getBillsBy(data)
+        .then(res => {
+          if (!res) {
+            console.log("接口出错")
+            return
+          }
+          if (res.code === 1) {
+            this.table.billList = res.data.pageData
+            this.table.pagination.total = res.data.dataTotal
+          } else {
+            this.$error({ title: "错误", content: res.msg });
+          }
+        });
+      this.table.isLoading = false;
     },
     // 初始化数据
     async initData() {

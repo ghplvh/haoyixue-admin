@@ -41,7 +41,6 @@ export default async (url = "", data = {}, type = "GET", method = "fetch") => {
 
     try {
       const response = await fetch(url, requestConfig);
-      console.log("response", response)
       if (response.ok) {
         const responseJson = await response.json();
         return responseJson;

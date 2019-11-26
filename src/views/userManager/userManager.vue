@@ -20,13 +20,14 @@
                              label="学校">
                   <a-select v-if="searchForm.schoolList.length > 0"
                             v-decorator="[
-                      'schoolCode',
-                      {
-                        initialValue: searchForm.schoolCode,
-                        rules: [{ required: true }]
-                      }
-                    ]"
+                              'schoolCode',
+                              {
+                                initialValue: searchForm.schoolCode,
+                                rules: [{ required: true }]
+                              }
+                            ]"
                             placeholder="请选择学校"
+                            @change='onSchoolChange'
                             showArrow>
                     <a-select-option v-for="(item, index) in searchForm.schoolList"
                                      :key="index"
@@ -59,7 +60,8 @@
               </a-col>
               <a-col>
                 <a-form-item label="账户">
-                  <a-input v-decorator="['account', { initialValue: '' }]" />
+                  <a-input @change="onAccountChange"
+                           v-decorator="['account', { initialValue: '' }]" />
                 </a-form-item>
               </a-col>
               <a-col style="flex-grow:1">
@@ -79,7 +81,7 @@
                    :columns="table.columns"
                    :dataSource="table.userList"
                    rowKey="userId"
-                   @change="pageChange"
+                   @change="onPageChange"
                    bordered
                    :loading="table.isLoading">
             <template v-for="col in [
@@ -130,54 +132,62 @@
              :okButtonProps="{ props: { loading: editForm.isLoading } }">
       <a-form layout="vertical"
               :form="editForm.form">
-        <a-form-item label="缴费项目名称">
-          <a-input autoFocus
-                   v-decorator="[
-              'billName',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: '请填写缴费项目名称'
-                  }
-                ],
-                initialValue: editForm.data.billName
-              }
-            ]" />
-        </a-form-item>
-        <a-form-item label="内容描述">
-          <a-input type="textarea"
-                   rows="5"
-                   style="resize:none;"
-                   v-decorator="[
-              'description',
-              {
-                rules: [
-                  {
-                    required: true,
-                    message: '请填写内容描述'
-                  }
-                ],
-                initialValue: editForm.data.description
-              }
-            ]" />
-        </a-form-item>
-        <a-form-item label="项目状态">
-          <a-radio-group v-decorator="[
-              'status',
-              {
-                rules: [
-                  {
-                    required: true
-                  }
-                ],
-                initialValue: editForm.data.status
-              }
-            ]">
-            <a-radio :value="0">正常</a-radio>
-            <a-radio :value="1">下线</a-radio>
-          </a-radio-group>
-        </a-form-item>
+
+        <a-col>
+          <a-form-item :wrapperCol="{span:12}"
+                       label="学校">
+            <a-select v-if="searchForm.schoolList.length > 0"
+                      v-decorator="[
+                        'orgNo',
+                        {
+                          initialValue: searchForm.schoolCode,
+                          rules: [{ required: true }]
+                        }
+                      ]"
+                      placeholder="请选择学校"
+                      showArrow>
+              <a-select-option v-for="(item, index) in searchForm.schoolList"
+                               :key="index"
+                               :title="item.schoolName"
+                               :value="item.schoolCode">
+                {{ item.schoolName }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col>
+          <a-form-item label="项目状态">
+            <a-radio-group name="role"
+                           v-decorator="[
+                      'role',
+                      {
+                        rules: [
+                          {
+                            required: true
+                          }
+                        ],
+                        initialValue: editForm.data.role
+                      }
+                    ]">
+              <a-radio :value="1">家长</a-radio>
+              <a-radio :value="2">老师</a-radio>
+              <a-radio :value="3">管理员</a-radio>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col>
+          <a-form-item label="账户"
+                       :wrapperCol="{span:12}">
+            <a-input type="username"
+                     v-decorator="['phone', {
+                        rules: [
+                          {
+                            required: true,
+                            message: '请输入账户名'
+                          },
+                        ], initialValue: editForm.data.account }]" />
+          </a-form-item>
+        </a-col>
       </a-form>
     </a-modal>
   </page-layout>
@@ -208,7 +218,9 @@ export default {
         //学校列表
         schoolList: [],
         // 学校code
-        schoolCode: ""
+        schoolCode: "",
+        // 查询账户
+        account: ""
       },
       editForm: {
         // 修改form依赖
@@ -240,12 +252,14 @@ export default {
           {
             title: "学校编码",
             dataIndex: "orgNo",
-            scopedSlots: { customRender: "orgNo" }
+            scopedSlots: { customRender: "orgNo" },
+            align: "center"
           },
           {
             title: "手机号码",
             dataIndex: "account",
-            scopedSlots: { customRender: "account" }
+            scopedSlots: { customRender: "account" },
+            align: "center"
           },
           {
             title: "角色",
@@ -283,7 +297,8 @@ export default {
         // 用户列表
         userList: [],
         pagination: {
-          total: 0
+          total: 0,
+          current: 1
         }
       }
     };
@@ -293,18 +308,22 @@ export default {
     async onSearch(e) {
       e.preventDefault();
       this.searchForm.isLoading = true;
-      this.table.userList = [];
-      let account;
-      this.searchForm.form.validateFields((error, values) => {
-        this.searchForm.schoolCode = values.schoolCode;
-        account = values.account;
-      });
-      if (account.length > 0) {
-        await this.findUser(account);
+      this.table.pagination.current = 1
+      if (this.searchForm.account.length > 0) {
+        await this.findUser();
       } else {
-        await this.getUsers(1);
+        await this.getUsers();
       }
       this.searchForm.isLoading = false;
+    },
+    // 学校改变 
+    onSchoolChange(value) {
+      this.searchForm.schoolCode = value
+    },
+    // 查询账户改变
+    onAccountChange(e) {
+      const value = e.target.value
+      this.searchForm.account = value
     },
     // 修改
     onEdit(id) {
@@ -313,70 +332,129 @@ export default {
       if (target) {
         this.editForm.data = target;
       }
+      console.log('target', target)
+      this.editForm.form.resetFields()
       this.editForm.isVisible = true;
     },
     // 修改.保存
     async saveEdit() {
-      this.editForm.isLoading = true;
-      let data;
-      let err;
-      this.editForm.form.validateFields((error, values) => {
-        err = error;
-        data = {
-          id: this.editForm.data.id,
-          billName: values.billName,
-          status: values.status,
-          description: values.description
-        };
-      });
-      if (err) {
-        return;
-      }
-      await this.$api.updateBillConfig(data).then(res => {
-        this.editForm.data = {};
-        if (res.code === 1) {
-          this.$message.success("修改成功");
-        } else {
-          this.$message.fail(res.msg);
-        }
-        this.getBillConfig();
-        this.getBillProductsByOrg();
-      });
-      this.editForm.isLoading = false;
-      this.editForm.isVisible = false;
+      await this.updateUserInfo()
+      this.getUsers();
     },
     // 修改.取消
     cancelEdit() {
       this.editForm.data = {};
       this.editForm.isVisible = false;
     },
-    pageChange(pagination) {
-      console.log("pagination", pagination)
-      this.getUsers(pagination.current)
+    onPageChange(pagination) {
+      this.table.pagination.current = pagination.current
+      this.getUsers()
     },
     // api
-    async getUsers(pageNum) {
+    async updateUserInfo() {
+      this.editForm.isLoading = true;
+      // 接口参数
+      let data;
+      let err;
+      // 表单数据添加到参数中
+      this.editForm.form.validateFields((error, values) => {
+        err = error;
+        data = {
+          userId: this.editForm.data.userId,
+          phone: values.phone,
+          role: values.role,
+          orgNo: values.orgNo
+        };
+      });
+      // 表单校验
+      if (err) {
+        this.editForm.isLoading = false;
+      } else {
+        // 请求接口
+        await this.$api.updateUserInfo(data).then(res => {
+          // 接口出错 返回res为false
+          if (!res) {
+            console.log("接口出错")
+            return
+          }
+          // 成功访问, 处理数据
+          if (res.code === 1) {
+            this.$message.success("修改成功");
+          } else {
+            this.$message.fail(res.msg);
+          }
+        });
+        // 成功访问, 处理数据
+        this.editForm.data = {};
+        this.editForm.isLoading = false;
+        this.editForm.isVisible = false;
+      }
+
+    },
+    // api
+    async getUsers() {
       this.table.isLoading = true;
       // 加载前清空相关数据
       this.table.userList = [];
+      // 接口参数
       let data = {
         pageSize: 10,
-        pageNum
-      };
+        pageNum: this.table.pagination.current
+      }
+      let err
       this.searchForm.form.validateFields((error, values) => {
-        data.orgNo = this.searchForm.schoolCode;
+        err = error
+        data.orgNo = values.schoolCode;
         data.role = values.role;
       });
-      await this.$api.getUsers(data).then(res => {
+      // 表单校验
+      if (err) {
+        this.table.isLoading = false;
+      } else {
+        await this.$api.getUsers(data).then(res => {
+          // 接口出错 返回res为false
+          if (!res) {
+            console.log("接口出错")
+            return
+          }
+          // 成功访问, 处理数据
+          if (res.code === 1) {
+            let list = res.data.pageData;
+            // 去除chirldren(会渲染出多层表格), 添加key( 解决table组件渲染无key报错)
+            list.forEach((item, index) => {
+              if (!item.children.length > 0) {
+                delete item.children;
+                item.key = index
+              }
+            });
+            this.table.userList = list;
+            this.table.pagination.total = res.data.dataTotal
+          } else {
+            this.$error({ title: "错误", content: res.msg });
+          }
+        });
+        this.table.isLoading = false;
+      }
+    },
+    // api
+    async findUser() {
+      this.table.isLoading = true;
+      // 加载前清空相关数据
+      this.table.userList = [];
+      let data = { account: this.searchForm.account };
+      await this.$api.findUser(data).then(res => {
+        // 接口出错 返回res为false
+        if (!res) {
+          console.log("接口出错")
+          return
+        }
+        // 成功访问, 处理数据
         if (res.code === 1) {
-          let list = res.data.pageData;
-          list.forEach(item => {
-            if (!item.children.length > 0) {
-              delete item.children;
-            }
-          });
-          this.table.userList = list;
-          this.table.pagination.total = res.data.dataTotal
+          let result = res.data
+          if (!result.children.length > 0) {
+            delete result.children;
+          }
+          this.table.userList.push(result);
         } else {
           this.$error({ title: "错误", content: res.msg });
         }
@@ -384,33 +462,32 @@ export default {
       this.table.isLoading = false;
     },
     // api
-    async findUser(account) {
-      this.table.isLoading = true;
-      // 加载前清空相关数据
-      this.table.userList = [];
-      let data = { account };
-      await this.$api.findUser(data).then(res => {
+    async findSchoolList() {
+      await this.$api.findSchoolList().then(res => {
+        // 接口出错 返回res为false
+        if (!res) {
+          console.log("接口出错")
+          return
+        }
+        // 成功访问, 处理数据
         if (res.code === 1) {
-          this.table.userList.push(res.data);
+          this.searchForm.schoolList = res.data;
+          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.getUsers();
         } else {
-          this.$error({ title: "错误", content: res.msg });
+          this.searchForm.schoolList = [];
+          this.searchForm.schoolCode = "";
+          this.$message.error(res.msg);
         }
       });
-      this.table.isLoading = false;
+    },
+    async initData() {
+      await this.findSchoolList()
+      this.getUsers()
     }
   },
   mounted() {
-    this.$api.findSchoolList().then(res => {
-      if (res.code === 1) {
-        this.searchForm.schoolList = res.data;
-        this.searchForm.schoolCode = res.data[0].schoolCode;
-        this.getUsers(1);
-      } else {
-        this.searchForm.schoolList = [];
-        this.searchForm.schoolCode = "";
-        this.$message.error(res.msg);
-      }
-    });
+    this.initData()
   }
 };
 </script>

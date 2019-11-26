@@ -47,6 +47,24 @@ export const constantRouterMap = [{
           icon: "none",
           component: () => import("@/views/bill/billRecord.vue")
         }]
+      },
+      {
+        path: "/orderHome",
+        name: "订单",
+        redirect: "/order",
+        icon: "audit",
+        component: RouteView,
+        children: [{
+          path: "/order",
+          name: "订单管理",
+          icon: "none",
+          component: () => import("@/views/order/order.vue")
+        }, {
+          path: "/orderSelect",
+          name: "订单查询",
+          icon: "none",
+          component: () => import("@/views/order/orderSelect.vue")
+        }]
       }
     ]
   },

@@ -40,23 +40,23 @@
                 </a-form-item>
               </a-col>
               <a-col>
-                <a-form-item label="项目"
-                             v-if="searchForm.billList.length > 0">
+                <a-form-item label="商品"
+                             v-if="searchForm.productList.length > 0">
                   <a-select v-decorator="[
-                              'billId',
+                              'productId',
                               {
                                 initialValue: '全部',
-                                rules: [{ required: true, message: '请选择项目' }]
+                                rules: [{ required: true, message: '请选择商品' }]
                               }
                             ]"
                             placeholder="请选择项目"
                             showArrow>
                     <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.billList"
+                                     v-for="(item, index) in searchForm.productList"
                                      :key="index"
-                                     :title="item.billName"
+                                     :title="item.productName"
                                      :value="item.id">
-                      {{ item.billName }}
+                      {{ item.productName }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -98,8 +98,8 @@
           <a-table class="table"
                    id="table"
                    :columns="table.columns"
-                   :dataSource="table.billList"
-                   rowKey="id"
+                   :dataSource="table.productList"
+                   rowKey="key"
                    bordered
                    :pagination="table.pagination"
                    @change="onPageChange"
@@ -162,79 +162,75 @@ export default {
         // 学校code
         schoolCode: "",
         // 项目列表
-        billList: [],
+        productList: [],
         // 部门列表
         departmentList: [],
         // 查询按钮loading
         isLoading: false
       },
+      // 表格依赖
       table: {
-        // 项目列表
-        billList: [],
+        // 产品列表
+        productList: [],
         // 表格loading
         isLoading: false,
+        // 换页依赖
         pagination: {
           total: 0,
           current: 1
         },
-        // table标题列表
+        // table表头
         columns: [
           {
-            title: "ID",
-            dataIndex: "id",
-            scopedSlots: { customRender: "id" },
-            align: "center"
-          },
-          {
-            title: "项目ID",
-            dataIndex: "billId",
-            scopedSlots: { customRender: "billId" },
+            title: "商品名称",
+            dataIndex: "productName",
+            scopedSlots: { customRender: "productName" },
             align: "center"
           },
           {
             title: "学校编号",
             dataIndex: "orgNo",
-            scopedSlots: { customRender: "orgNo" }
-          },
-          {
-            title: "学校名称",
-            dataIndex: "orgName",
-            scopedSlots: { customRender: "orgName" }
-          },
-          {
-            title: "部门",
-            dataIndex: "depart",
-            scopedSlots: { customRender: "depart" },
+            scopedSlots: { customRender: "orgNo" },
             align: "center"
           },
           {
-            title: "被缴费人",
-            dataIndex: "studentName",
-            scopedSlots: { customRender: "studentName" },
+            title: "学生姓名",
+            dataIndex: "student_name",
+            scopedSlots: { customRender: "student_name" }
+          },
+          {
+            title: "学号",
+            dataIndex: "work_no",
+            scopedSlots: { customRender: "work_no" }
+          },
+          {
+            title: "部门名称",
+            dataIndex: "depart_name",
+            scopedSlots: { customRender: "depart_name" },
             align: "center"
           },
           {
-            title: "联系电话",
-            dataIndex: "contact",
-            scopedSlots: { customRender: "contact" },
+            title: "家长联系方式",
+            dataIndex: "account",
+            scopedSlots: { customRender: "account" },
             align: "center"
           },
           {
-            title: "订单号",
-            dataIndex: "orderNo",
-            scopedSlots: { customRender: "orderNo" },
-            align: "center"
-          },
-          {
-            title: "付款状态",
-            dataIndex: "payment",
-            scopedSlots: { customRender: "payment" },
+            title: "订单金额",
+            dataIndex: "orderPrice",
+            scopedSlots: { customRender: "orderPrice" },
             align: "center"
           },
           {
             title: "缴费时间",
             dataIndex: "createTime",
             scopedSlots: { customRender: "createTime" },
+            align: "center"
+          },
+          {
+            title: "订单状态",
+            dataIndex: "",
+            scopedSlots: { customRender: "" },
             align: "center"
           }
         ]
@@ -244,22 +240,22 @@ export default {
   methods: {
     // 查询
     async onSearch(e) {
-      e && e.preventDefault()
+      e.preventDefault()
       this.searchForm.isLoading = true;
       this.table.pagination.current = 1
-      await this.getBillsBy()
+      await this.getOrders()
       this.searchForm.isLoading = false;
     },
     // 学校改变 
     onSchoolChange(value, option) {
       this.searchForm.schoolCode = value
-      this.getBillConfigBy()
+      this.getBillProductsByOrg()
       this.getSchoolDeparts()
     },
     // 页号改变
-    async onPageChange(pagination) {
+    onPageChange(pagination) {
       this.table.pagination.current = pagination.current
-      this.getBillsBy()
+      this.getOrders()
     },
     // api
     async findSchoolList() {
@@ -281,11 +277,10 @@ export default {
       });
     },
     // api
-    async getBillConfigBy() {
+    async getBillProductsByOrg() {
       await this.$api
-        .getBillConfigBy({
+        .getBillProductsByOrg({
           orgNo: this.searchForm.schoolCode,
-          status: null
         })
         .then(res => {
           // 接口出错 返回res为false
@@ -295,14 +290,14 @@ export default {
           }
           // 成功访问, 处理数据
           if (res.code === 1) {
-            let list = [{ billName: "全部", id: "全部" }]
+            let list = [{ productName: "全部", id: "全部" }]
             list = [...list, ...res.data]
-            this.searchForm.billList = list;
+            this.searchForm.productList = list;
           } else {
             this.$error({ title: "错误", content: res.msg });
           }
         });
-      this.searchForm.form.setFieldsValue({ billId: "全部" })
+      this.searchForm.form.setFieldsValue({ productId: "全部" })
     },
     // api
     async getSchoolDeparts() {
@@ -328,21 +323,22 @@ export default {
       this.searchForm.form.setFieldsValue({ depart_name: "全部" })
     },
     // api
-    async getBillsBy() {
+    async getOrders() {
       this.table.isLoading = true;
       // 加载前清空相关数据
-      this.table.billList = [];
+      this.table.productList = [];
       // 接口参数
       let data = {
         pageSize: 10,
         pageNum: this.table.pagination.current,
-        orgNo: this.searchForm.schoolCode
+        orgNo: this.searchForm.schoolCode,
+        status: 2
       }
       let err
-      // 表单数据
+      // 表单数据添加到参数中
       this.searchForm.form.validateFields((error, values) => {
         err = error
-        data.billId = values.billId === "全部" ? null : values.billId
+        data.productId = values.productId === "全部" ? null : values.productId
         data.depart = values.depart_name === "全部" ? null : values.depart_name
       });
       // 表单校验
@@ -351,7 +347,7 @@ export default {
       } else {
         // 请求接口
         await this.$api
-          .getBillsBy(data)
+          .getOrders(data)
           .then(res => {
             // 接口出错 返回res为false
             if (!res) {
@@ -360,7 +356,12 @@ export default {
             }
             // 成功访问, 处理数据
             if (res.code === 1) {
-              this.table.billList = res.data.pageData
+              // 加上key, 解决table组件渲染无key报错
+              let list = [...res.data.pageData]
+              list.forEach((item, index) => {
+                item.key = index
+              })
+              this.table.productList = list
               this.table.pagination.total = res.data.dataTotal
             } else {
               this.$error({ title: "错误", content: res.msg });
@@ -372,9 +373,9 @@ export default {
     // 初始化数据
     async initData() {
       await this.findSchoolList()
-      await this.getBillConfigBy()
+      await this.getBillProductsByOrg()
       await this.getSchoolDeparts()
-      this.getBillsBy()
+      this.getOrders()
     },
   },
   mounted() {

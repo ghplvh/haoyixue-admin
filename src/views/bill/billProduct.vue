@@ -3,7 +3,6 @@
                :title="setting.title"
                :linkList="setting.linkList"
                id="bill-product">
-
     <div slot="extra"
          class="extraImg">
       <img :src="setting.extraImage" />
@@ -26,6 +25,7 @@
                                 rules: [{ required: true, message: '请选择学校' }]
                               }
                             ]"
+                            @change="onSchoolChange"
                             placeholder="请选择学校"
                             showArrow>
                     <a-select-option style="width:100px;"
@@ -107,6 +107,26 @@
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
       <a-form layout="vertical"
               :form="addForm.form">
+        <a-form-item label="学校"
+                     v-if="searchForm.schoolList.length > 0">
+          <a-select v-decorator="[
+                      'schoolCode',
+                      {
+                        initialValue: searchForm.schoolCode,
+                        rules: [{ required: true, message: '请选择学校' }]
+                      }
+                    ]"
+                    placeholder="请选择学校"
+                    showArrow>
+            <a-select-option style="width:100px;"
+                             v-for="(item, index) in searchForm.schoolList"
+                             :key="index"
+                             :title="item.schoolName"
+                             :value="item.schoolCode">
+              {{ item.schoolName }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item label="项目名称">
           <a-input autoFocus
                    v-decorator="[
@@ -267,12 +287,12 @@ export default {
     async onSearch(e) {
       e.preventDefault();
       this.searchForm.isLoading = true;
-      this.table.billList = [];
-      this.searchForm.form.validateFields((error, values) => {
-        this.searchForm.schoolCode = values.school;
-      });
       await this.getBillProductsByOrg();
       this.searchForm.isLoading = false;
+    },
+    // 学校改变 
+    async onSchoolChange(value) {
+      this.searchForm.schoolCode = value
     },
     // 删除
     onDelete(id) {
@@ -287,50 +307,71 @@ export default {
     },
     // 添加.保存
     async saveAdd() {
-      this.addForm.isLoading = true;
-      let data;
-      let err;
-      this.addForm.form.validateFields((error, values) => {
-        err = error;
-        data = {
-          sendId: 1,
-          type: 98,
-          price: values.price,
-          orgNo: this.searchForm.schoolCode,
-          productName: values.productName,
-          desc: values.desc,
-          discountPrice: values.discountPrice
-        };
-      });
-      if (err) {
-        this.addForm.isLoading = false;
-      } else {
-        await this.$api.createBillProduct(data).then(res => {
-          if (res.code === 1) {
-            this.$message.success("添加成功");
-          } else {
-            this.$error({ title: "错误", content: "添加失败" });
-          }
-          this.getBillProductsByOrg();
-        });
-        this.addForm.isLoading = false;
-        this.addForm.isVisible = false;
-      }
+      await this.createBillProduct();
+      this.getBillProductsByOrg();
     },
     // 添加.取消
     cancelAdd() {
       this.addForm.isVisible = false;
     },
     // api
+    async createBillProduct() {
+      this.addForm.isLoading = true;
+      // 接口参数
+      let data;
+      let err;
+      // 表单数据添加到参数中
+      this.addForm.form.validateFields((error, values) => {
+        err = error;
+        data = {
+          sendId: 1,
+          type: 98,
+          price: values.price,
+          orgNo: values.schoolCode,
+          productName: values.productName,
+          desc: values.desc,
+          discountPrice: values.discountPrice
+        };
+      });
+      // 表单校验
+      if (err) {
+        this.addForm.isLoading = false;
+      } else {
+        // 请求接口
+        await this.$api.createBillProduct(data).then(res => {
+          // 接口出错 返回res为false
+          if (!res) {
+            console.log("接口出错")
+            return
+          }
+          // 成功访问, 处理数据
+          if (res.code === 1) {
+            this.$message.success("添加成功");
+          } else {
+            this.$error({ title: "错误", content: "添加失败" });
+          }
+        });
+        this.addForm.isLoading = false;
+        this.addForm.isVisible = false;
+      }
+    },
+    // api
     async getBillProductsByOrg() {
       this.table.isLoading = true;
       // 加载前清空相关数据
       this.table.billProductsList = [];
+      // 请求接口
       await this.$api
         .getBillProductsByOrg({
           orgNo: this.searchForm.schoolCode
         })
         .then(res => {
+          // 接口出错 返回res为false
+          if (!res) {
+            console.log("接口出错")
+            return
+          }
+          // 成功访问, 处理数据
           if (res.code === 1) {
             this.table.billProductsList = res.data;
           } else {
@@ -338,20 +379,34 @@ export default {
           }
         });
       this.table.isLoading = false;
+    },
+    // api
+    async findSchoolList() {
+      await this.$api.findSchoolList().then(res => {
+        // 接口出错 返回res为false
+        if (!res) {
+          console.log("接口出错")
+          return
+        }
+        // 成功访问, 处理数据
+        if (res.code === 1) {
+          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.searchForm.schoolList = res.data;
+        } else {
+          this.searchForm.schoolList = [];
+          this.searchForm.schoolCode = "";
+          this.$message.error(res.msg);
+        }
+      });
+    },
+    // 初始化数据
+    async initData() {
+      await this.findSchoolList()
+      this.getBillProductsByOrg()
     }
   },
-  created() {
-    this.$api.findSchoolList().then(res => {
-      if (res.code === 1) {
-        this.searchForm.schoolCode = res.data[0].schoolCode;
-        this.searchForm.schoolList = res.data;
-        this.getBillProductsByOrg();
-      } else {
-        this.searchForm.schoolList = [];
-        this.searchForm.schoolCode = "";
-        this.$message.error(res.msg);
-      }
-    });
+  mounted() {
+    this.initData()
   }
 };
 </script>
