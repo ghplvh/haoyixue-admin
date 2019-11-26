@@ -8,21 +8,26 @@
   [http://192.168.0.176:9666/swagger-ui.html#/subject-info-high-controller/getSubjectInfoHighUsingGET]
 - 侧边导航菜单修改:
   src\layouts\GlobalLayout.vue > beforeCreate > menuData
-
+# 进程
+  ...
+  - [bug]fetch 服务器返回400, 无法被.json()解析, 此时报错;修复成返回false, 调用接口时判断, 如果false, 则取消后续操作
+  - [view] /billRecord 
 # commit -m
 
-- 2019-11-24 14:32:24
+- 2019-11-26 
+  1. /billRecord 初步完成
+  
+- 2019-11-24 
 
-  1. /userMnager 表格分页
+  1. /userMnager 表格分页 
   2. /billProduct init
   3. /billRecord init
 
-- 2019-11-22 08:53:37
-
+- 2019-11-22 
   1. /userManger init
   2. 重构代码布局, 数据分类维护
 
-- 2019-11-21 09:05:34
+- 2019-11-21 
 
   1. 修复 globalLayout 的高度没有撑满问题
   2. /home 完成 form, table, change, add

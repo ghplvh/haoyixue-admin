@@ -45,7 +45,7 @@
                   <a-select v-decorator="[
                               'billId',
                               {
-                                initialValue: searchForm.billId,
+                                initialValue: '全部',
                                 rules: [{ required: true, message: '请选择项目' }]
                               }
                             ]"
@@ -67,7 +67,7 @@
                   <a-select v-decorator="[
                               'depart_name',
                               {
-                                initialValue: searchForm.depart_name,
+                                initialValue: '全部',
                                 rules: [{ required: true, message: '请选择部门' }]
                               }
                             ]"
@@ -96,28 +96,34 @@
             </a-row>
           </a-form>
           <a-table class="table"
+                   id="table"
                    :columns="table.columns"
                    :dataSource="table.billList"
                    rowKey="id"
                    bordered
+                   :pagination="table.pagination"
+                   @change="onPageChange"
                    :loading="table.isLoading">
             <template v-for="col in [
                       'id',
+                      'billId',
                       'orgNo',
-                      'billName',
-                      'description',
-                      'status',
-                      'createTime',
-                      'updateTime']"
+                      'orgName',
+                      'depart',
+                      'studentName',
+                      'contact',
+                      'orderNo',
+                      'payment',
+                      'createTime']"
                       :slot="col"
                       slot-scope="text, record">
               <div :key="col">
-                <template v-if="col === 'status'">
-                  <template v-if="record.status === 0">
-                    正常
+                <template v-if="col === 'payment'">
+                  <template v-if="record.payment === 1">
+                    已付款
                   </template>
                   <template v-else>
-                    下线
+                    未付款
                   </template>
                 </template>
                 <template v-else>{{ text }}</template>
@@ -157,12 +163,8 @@ export default {
         schoolCode: "",
         // 项目列表
         billList: [],
-        // 项目id
-        billId: "",
         // 部门列表
         departmentList: [],
-        // 部门id
-        departName: "",
         // 查询按钮loading
         isLoading: false
       },
@@ -172,7 +174,8 @@ export default {
         // 表格loading
         isLoading: false,
         pagination: {
-          total: 0
+          total: 0,
+          current: 1
         },
         // table标题列表
         columns: [
@@ -183,43 +186,55 @@ export default {
             align: "center"
           },
           {
-            title: "学校编码",
+            title: "项目ID",
+            dataIndex: "billId",
+            scopedSlots: { customRender: "billId" },
+            align: "center"
+          },
+          {
+            title: "学校编号",
             dataIndex: "orgNo",
-            scopedSlots: { customRender: "orgNo" },
+            scopedSlots: { customRender: "orgNo" }
+          },
+          {
+            title: "学校名称",
+            dataIndex: "orgName",
+            scopedSlots: { customRender: "orgName" }
+          },
+          {
+            title: "部门",
+            dataIndex: "depart",
+            scopedSlots: { customRender: "depart" },
             align: "center"
           },
           {
-            title: "项目名称",
-            dataIndex: "billName",
-            scopedSlots: { customRender: "billName" }
-          },
-          {
-            title: "项目描述",
-            dataIndex: "description",
-            scopedSlots: { customRender: "description" }
-          },
-          {
-            title: "状态",
-            dataIndex: "status",
-            scopedSlots: { customRender: "status" },
+            title: "被缴费人",
+            dataIndex: "studentName",
+            scopedSlots: { customRender: "studentName" },
             align: "center"
           },
           {
-            title: "创建时间",
+            title: "联系电话",
+            dataIndex: "contact",
+            scopedSlots: { customRender: "contact" },
+            align: "center"
+          },
+          {
+            title: "订单号",
+            dataIndex: "orderNo",
+            scopedSlots: { customRender: "orderNo" },
+            align: "center"
+          },
+          {
+            title: "付款状态",
+            dataIndex: "payment",
+            scopedSlots: { customRender: "payment" },
+            align: "center"
+          },
+          {
+            title: "缴费时间",
             dataIndex: "createTime",
             scopedSlots: { customRender: "createTime" },
-            align: "center"
-          },
-          {
-            title: "更新时间",
-            dataIndex: "updateTime",
-            scopedSlots: { customRender: "updateTime" },
-            align: "center"
-          },
-          {
-            title: "操作",
-            dataIndex: "operation",
-            scopedSlots: { customRender: "operation" },
             align: "center"
           }
         ]
@@ -229,23 +244,27 @@ export default {
   methods: {
     // 查询
     async onSearch(e) {
-      e.preventDefault();
+      console.log("e", e)
+      e && e.preventDefault()
       this.searchForm.isLoading = true;
-      this.table.billList = [];
-      let data = {
-        pageSize: 10,
-        pageNum: 1,
-        orgNo: this.searchForm.schoolCode
-      }
-      this.searchForm.form.validateFields((error, values) => {
-        this.searchForm.schoolCode = values.schoolCode;
-        data.billId = values.billId
-        data.depart = values.depart_name
-      });
-      await this.getBillsBy(data)
+      this.table.pagination.current = 1
+      await this.getBillsBy()
       this.searchForm.isLoading = false;
     },
-    //
+    // 学校改变 
+    async onSchoolChange(value, option) {
+      this.searchForm.schoolCode = value
+      await this.getBillConfigBy()
+      this.searchForm.form.setFieldsValue({ billId: "全部" })
+      await this.getSchoolDeparts()
+      this.searchForm.form.setFieldsValue({ depart_name: "全部" })
+    },
+    // 页号改变
+    async onPageChange(pagination) {
+      console.log("pagination", pagination)
+      this.table.pagination.current = pagination.current
+      this.getBillsBy()
+    },
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
@@ -268,8 +287,9 @@ export default {
         })
         .then(res => {
           if (res.code === 1) {
-            this.searchForm.billList = res.data;
-            this.searchForm.billId = res.data[0].id
+            let list = [{ billName: "全部", id: "全部" }]
+            list = [...list, ...res.data]
+            this.searchForm.billList = list;
           } else {
             this.$error({ title: "错误", content: res.msg });
           }
@@ -283,18 +303,29 @@ export default {
         })
         .then(res => {
           if (res.code === 1) {
-            this.searchForm.departmentList = res.data;
-            this.searchForm.depart_name = res.data[0].depart_name
+            let list = [{ depart_name: "全部" }]
+            list = [...list, ...res.data]
+            this.searchForm.departmentList = list;
           } else {
             this.$error({ title: "错误", content: res.msg });
           }
         });
     },
     // api
-    async getBillsBy(data) {
+    async getBillsBy() {
       this.table.isLoading = true;
       // 加载前清空相关数据
       this.table.billList = [];
+      let data = {
+        pageSize: 10,
+        pageNum: this.table.pagination.current,
+        orgNo: this.searchForm.schoolCode
+      }
+      this.searchForm.form.validateFields((error, values) => {
+        this.searchForm.schoolCode = values.schoolCode;
+        data.billId = values.billId === "全部" ? null : values.billId
+        data.depart = values.depart_name === "全部" ? null : values.depart_name
+      });
       await this.$api
         .getBillsBy(data)
         .then(res => {
@@ -316,6 +347,7 @@ export default {
       await this.findSchoolList()
       await this.getBillConfigBy()
       await this.getSchoolDeparts()
+      this.getBillsBy()
     },
   },
   mounted() {
