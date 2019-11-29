@@ -380,7 +380,7 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             this.table.billProductsList = res.data;
           } else {
             let error = res.msg || res.message || "无反馈信息"
@@ -405,7 +405,7 @@ export default {
           return
         }
         // 成功访问, 处理数据
-        if (res.code === 1) {
+        if (res.code === 1 && res.data) {
           this.searchForm.schoolCode = res.data[0].schoolCode;
           this.searchForm.schoolList = res.data;
         } else {

@@ -238,15 +238,12 @@ export default {
         if (res.code === 1 && res.data) {
           this.table.userId = res.data.userId
           // 加上key, 解决table组件渲染无key报错
-          console.log("res", res)
           let list = [...res.data.usrChildren]
           let rList = []
-          console.log('list', list)
           list.forEach((item, index) => {
             item.key = index
           })
           this.table.userList = list
-          console.log('userList', this.table.userList)
         } else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
@@ -291,9 +288,8 @@ export default {
               return
             }
             // 成功访问, 处理数据
-            if (res.code === 1) {
+            if (res.code === 1 && res.data) {
               // 加上key, 解决table组件渲染无key报错
-              console.log('order--res', res)
               let list = [...res.data.pageData]
               let rList = []
               list.forEach((item, index) => {

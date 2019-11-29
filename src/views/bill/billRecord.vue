@@ -171,6 +171,7 @@ export default {
       table: {
         // 项目列表
         billList: [],
+        cacheList: [],
         // 表格loading
         isLoading: false,
         pagination: {
@@ -270,7 +271,7 @@ export default {
           return
         }
         // 成功访问, 处理数据
-        if (res.code === 1) {
+        if (res.code === 1 && res.data) {
           this.searchForm.schoolCode = res.data[0].schoolCode;
           this.searchForm.schoolList = res.data;
         } else {
@@ -302,7 +303,7 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             let list = [{ billName: "全部", id: "全部" }]
             list = [...list, ...res.data]
             this.searchForm.billList = list;
@@ -333,7 +334,7 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             let list = [{ depart_name: "全部" }]
             list = [...list, ...res.data]
             this.searchForm.departmentList = list;
@@ -370,36 +371,59 @@ export default {
         data.depart = values.depart_name === "全部" ? null : values.depart_name
       });
       // 表单校验
-      if (err) {
-        this.table.isLoading = false;
-      } else {
-        // 请求接口
-        await this.$api
-          .getBillsBy(data)
-          .then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
-            // 成功访问, 处理数据
-            if (res.code === 1) {
-              this.table.billList = res.data.pageData
-              this.table.pagination.total = res.data.dataTotal
-            } else {
-              let error = res.msg || res.message || "无反馈信息"
-              this.$error({
-                title: "错误",
-                content:
-                  (<div>
-                    <p>获取缴费列表失败</p>
-                    <p>错误提示: {error}</p>
-                  </div>)
-              })
-            }
-          });
-        this.table.isLoading = false;
+      if (!err) {
+        // 检索缓存, 如果存在目标页面数据, 则不调用api,而使用缓存数据
+        const cacheFilters = this.table.cacheList.filter(item => {
+          return item.pageNum === data.pageNum
+            && item.orgNo === data.orgNo
+            && item.billId === data.billId
+            && item.depart === data.depart
+        })
+
+        if (cacheFilters.length > 0) {
+          this.table.billList = cacheFilters[0].list
+          this.table.pagination.total = cacheFilters[0].total
+        } else {
+          // 用于缓存已载入数据
+          let cache = {
+            pageNum: data.pageNum,
+            orgNo: data.orgNo,
+            billId: data.billId,
+            depart: data.depart
+          }
+          // 请求接口
+          await this.$api
+            .getBillsBy(data)
+            .then(res => {
+              // 接口出错 返回res为false
+              if (!res) {
+                console.log("接口出错")
+                return
+              }
+              // 成功访问, 处理数据
+              if (res.code === 1 && res.data) {
+                this.table.billList = res.data.pageData
+                this.table.pagination.total = res.data.dataTotal
+                // 已载入数据进行缓存
+                cache.list = res.data.pageData
+                cache.total = res.data.dataTotal
+                this.table.cacheList.push(cache)
+                console.log("cacheList", this.table.cacheList)
+              } else {
+                let error = res.msg || res.message || "无反馈信息"
+                this.$error({
+                  title: "错误",
+                  content:
+                    (<div>
+                      <p>获取缴费列表失败</p>
+                      <p>错误提示: {error}</p>
+                    </div>)
+                })
+              }
+            });
+        }
       }
+      this.table.isLoading = false;
     },
     // 初始化数据
     async initData() {

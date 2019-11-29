@@ -172,6 +172,8 @@ export default {
       table: {
         // 产品列表
         productList: [],
+        // 缓存列表
+        cacheList: [],
         // 表格loading
         isLoading: false,
         // 换页依赖
@@ -266,7 +268,7 @@ export default {
           return
         }
         // 成功访问, 处理数据
-        if (res.code === 1) {
+        if (res.code === 1 && res.data) {
           this.searchForm.schoolCode = res.data[0].schoolCode;
           this.searchForm.schoolList = res.data;
         } else {
@@ -297,12 +299,12 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             let list = [{ productName: "全部", id: "全部" }]
             list = [...list, ...res.data]
             this.searchForm.productList = list;
           } else {
-            let error = res.msg || res.message || "无反馈信息" 
+            let error = res.msg || res.message || "无反馈信息"
             this.$error({
               title: "错误",
               content:
@@ -328,12 +330,12 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             let list = [{ depart_name: "全部" }]
             list = [...list, ...res.data]
             this.searchForm.departmentList = list;
           } else {
-            let error = res.msg || res.message || "无反馈信息" 
+            let error = res.msg || res.message || "无反馈信息"
             this.$error({
               title: "错误",
               content:
@@ -366,41 +368,64 @@ export default {
         data.depart = values.depart_name === "全部" ? null : values.depart_name
       });
       // 表单校验
-      if (err) {
-        this.table.isLoading = false;
-      } else {
-        // 请求接口
-        await this.$api
-          .getOrders(data)
-          .then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
-            // 成功访问, 处理数据
-            if (res.code === 1) {
-              // 加上key, 解决table组件渲染无key报错
-              let list = [...res.data.pageData]
-              list.forEach((item, index) => {
-                item.key = index
-              })
-              this.table.productList = list
-              this.table.pagination.total = res.data.dataTotal
-            } else {
-            let error = res.msg || res.message || "无反馈信息" 
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>获取订单列表失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
-            }
-          });
-        this.table.isLoading = false;
+      if (!err) {
+        // 检索缓存, 如果存在目标页面数据, 则不调用api,而使用缓存数据
+        const cacheFilters = this.table.cacheList.filter(item => {
+          return item.pageNum === data.pageNum
+            && item.orgNo === data.orgNo
+            && item.productId === data.productId
+            && item.depart === data.depart
+        })
+
+        if (cacheFilters.length > 0) {
+          this.table.productList = cacheFilters[0].list
+          this.table.pagination.total = cacheFilters[0].total
+        } else {
+          // 用于缓存已载入数据
+          let cache = {
+            pageNum: data.pageNum,
+            orgNo: data.orgNo,
+            productId: data.productId,
+            depart: data.depart
+          }
+          // 请求接口
+          await this.$api
+            .getOrders(data)
+            .then(res => {
+              // 接口出错 返回res为false
+              if (!res) {
+                console.log("接口出错")
+                return
+              }
+              // 成功访问, 处理数据
+              if (res.code === 1 && res.data) {
+                // 加上key, 解决table组件渲染无key报错
+                let list = [...res.data.pageData]
+                list.forEach((item, index) => {
+                  item.key = index
+                })
+                this.table.productList = list
+                this.table.pagination.total = res.data.dataTotal
+                // 已载入数据进行缓存
+                cache.list = list
+                cache.total = res.data.dataTotal
+                this.table.cacheList.push(cache)
+                console.log("cacheList", this.table.cacheList)
+              } else {
+                let error = res.msg || res.message || "无反馈信息"
+                this.$error({
+                  title: "错误",
+                  content:
+                    (<div>
+                      <p>获取订单列表失败</p>
+                      <p>错误提示: {error}</p>
+                    </div>)
+                })
+              }
+            });
+        }
       }
+      this.table.isLoading = false;
     },
     // 初始化数据
     async initData() {

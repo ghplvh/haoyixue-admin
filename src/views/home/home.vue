@@ -365,9 +365,6 @@ export default {
     async onSchoolChange(value) {
       this.searchForm.schoolCode = value
       await this.getBillProductsByOrg()
-      this.searchForm.form.setFieldsValue({ productId: "全部" })
-      await this.getSchoolDeparts()
-      this.searchForm.form.setFieldsValue({ depart_name: "全部" })
     },
     // 修改
     onEdit(id) {
@@ -519,7 +516,7 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             this.table.billList = res.data;
           } else {
             let error = res.msg || res.message || "无反馈信息"
@@ -550,7 +547,7 @@ export default {
             return
           }
           // 成功访问, 处理数据
-          if (res.code === 1) {
+          if (res.code === 1 && res.data) {
             this.addForm.billProductsList = res.data;
           } else {
             let error = res.msg || res.message || "无反馈信息"
@@ -574,7 +571,7 @@ export default {
           return
         }
         // 成功访问, 处理数据
-        if (res.code === 1) {
+        if (res.code === 1 && res.data) {
           this.searchForm.schoolCode = res.data[0].schoolCode;
           this.searchForm.schoolList = res.data;
         } else {
