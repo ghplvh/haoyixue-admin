@@ -439,7 +439,15 @@ export default {
           if (res.code === 1) {
             this.$message.success("修改成功");
           } else {
-            this.$error({ title: "错误", content: "添加失败" });
+            let error = res.msg || res.message || "无反馈信息"
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>更新缴费信息失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
         this.editForm.data = {};
@@ -478,7 +486,15 @@ export default {
           if (res.code === 1) {
             this.$message.success("添加成功");
           } else {
-            this.$error({ title: "错误", content: "添加失败" });
+            let error = res.msg || res.message || "无反馈信息"
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>创建缴费信息失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
         this.addForm.isLoading = false;
@@ -506,7 +522,15 @@ export default {
           if (res.code === 1) {
             this.table.billList = res.data;
           } else {
-            this.$error({ title: "错误", content: res.msg });
+            let error = res.msg || res.message || "无反馈信息"
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>获取缴费失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
       this.table.isLoading = false;
@@ -529,7 +553,15 @@ export default {
           if (res.code === 1) {
             this.addForm.billProductsList = res.data;
           } else {
-            this.$error({ title: "错误", content: res.msg });
+            let error = res.msg || res.message || "无反馈信息"
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>获取缴费产品列表失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
     },
@@ -548,7 +580,15 @@ export default {
         } else {
           this.searchForm.schoolList = [];
           this.searchForm.schoolCode = "";
-          this.$message.error(res.msg);
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取学校列表失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
         }
       });
     },

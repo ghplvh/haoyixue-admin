@@ -272,7 +272,15 @@ export default {
         } else {
           this.searchForm.schoolList = [];
           this.searchForm.schoolCode = "";
-          this.$message.error(res.msg);
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取学校列表失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
         }
       });
     },
@@ -294,7 +302,15 @@ export default {
             list = [...list, ...res.data]
             this.searchForm.productList = list;
           } else {
-            this.$error({ title: "错误", content: res.msg });
+            let error = res.msg || res.message || "无反馈信息" 
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>获取缴费产品列表失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
       this.searchForm.form.setFieldsValue({ productId: "全部" })
@@ -317,7 +333,15 @@ export default {
             list = [...list, ...res.data]
             this.searchForm.departmentList = list;
           } else {
-            this.$error({ title: "错误", content: res.msg });
+            let error = res.msg || res.message || "无反馈信息" 
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>获取学校部门失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
       this.searchForm.form.setFieldsValue({ depart_name: "全部" })
@@ -364,7 +388,15 @@ export default {
               this.table.productList = list
               this.table.pagination.total = res.data.dataTotal
             } else {
-              this.$error({ title: "错误", content: res.msg });
+            let error = res.msg || res.message || "无反馈信息" 
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>获取订单列表失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
             }
           });
         this.table.isLoading = false;

@@ -84,7 +84,7 @@ import GlobalFooter from "../../layouts/GlobalFooter";
 export default {
   name: "Login",
   components: { GlobalFooter },
-  data () {
+  data() {
     return {
       logging: false,
       error: "",
@@ -93,20 +93,20 @@ export default {
   },
   computed: {
     //系统名称(左上角)
-    systemName () {
+    systemName() {
       return this.$store.state.setting.systemName;
     },
     // foot栏信息
-    linkList () {
+    linkList() {
       return this.$store.state.setting.footerLinks;
     },
     // copyright
-    copyright () {
+    copyright() {
       return this.$store.state.setting.copyright;
     }
   },
   methods: {
-    onSubmit (e) {
+    onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -132,6 +132,15 @@ export default {
                 }
               } else {
                 this.error = res.msg;
+                let error = res.msg || res.message || "无反馈信息"
+                this.$error({
+                  title: "错误",
+                  content:
+                    (<div>
+                      <p>登录失败</p>
+                      <p>错误提示: {error}</p>
+                    </div>)
+                })
               }
             });
         } else {
@@ -139,7 +148,7 @@ export default {
         }
       });
     },
-    closeAlert () {
+    closeAlert() {
       this.error = "";
     }
   }

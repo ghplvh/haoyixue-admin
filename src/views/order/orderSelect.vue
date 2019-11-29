@@ -2,7 +2,7 @@
   <page-layout :desc="setting.desc"
                :title="setting.title"
                :linkList="setting.linkList"
-               id="bill-record">
+               id="user-manager">
     <div slot="extra"
          class="extraImg">
       <img :src="setting.extraImage" />
@@ -11,76 +11,20 @@
       <keep-alive>
         <a-card class="content">
           <a-form :form="searchForm.form"
-                  id="search-form"
                   layout="inline"
                   @submit="onSearch">
             <a-row type="flex"
                    align="middle">
               <a-col>
-                <a-form-item label="学校"
-                             v-if="searchForm.schoolList.length > 0">
-                  <a-select v-decorator="[
-                              'schoolCode',
-                              {
-                                initialValue: searchForm.schoolCode,
-                                rules: [{ required: true, message: '请选择学校' }]
-                              }
-                            ]"
-                            @change="onSchoolChange"
-                            placeholder="请选择学校"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.schoolList"
-                                     :key="index"
-                                     :title="item.schoolName"
-                                     :value="item.schoolCode">
-                      {{ item.schoolName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col>
-                <a-form-item label="项目"
-                             v-if="searchForm.billList.length > 0">
-                  <a-select v-decorator="[
-                              'billId',
-                              {
-                                initialValue: '全部',
-                                rules: [{ required: true, message: '请选择项目' }]
-                              }
-                            ]"
-                            placeholder="请选择项目"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.billList"
-                                     :key="index"
-                                     :title="item.billName"
-                                     :value="item.id">
-                      {{ item.billName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col>
-                <a-form-item label="部门"
-                             v-if="searchForm.departmentList.length > 0">
-                  <a-select v-decorator="[
-                              'depart_name',
-                              {
-                                initialValue: '全部',
-                                rules: [{ required: true, message: '请选择部门' }]
-                              }
-                            ]"
-                            placeholder="请选择部门"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.departmentList"
-                                     :key="index"
-                                     :title="item.depart_name"
-                                     :value="item.depart_name">
-                      {{ item.depart_name }}
-                    </a-select-option>
-                  </a-select>
+                <a-form-item label="账户">
+                  <a-input @change="onAccountChange"
+                           v-decorator="['account',
+                            { initialValue: '',
+                            rules:[{
+                              required:true,
+                              message: '请输入账户'
+                            }] 
+                           }]" />
                 </a-form-item>
               </a-col>
               <a-col style="flex-grow:1">
@@ -96,39 +40,26 @@
             </a-row>
           </a-form>
           <a-table class="table"
-                   id="table"
-                   :columns="table.columns"
-                   :dataSource="table.billList"
-                   rowKey="id"
+                   id="user-table"
+                   :pagination="table.userPagination"
+                   :columns="table.userColumns"
+                   :dataSource="table.userList"
+                   rowKey="key"
                    bordered
-                   :pagination="table.pagination"
-                   @change="onPageChange"
-                   :loading="table.isLoading">
-            <template v-for="col in [
-                      'id',
-                      'billId',
-                      'orgNo',
-                      'orgName',
-                      'depart',
-                      'studentName',
-                      'contact',
-                      'orderNo',
-                      'payment',
-                      'createTime']"
-                      :slot="col"
-                      slot-scope="text, record">
-              <div :key="col">
-                <template v-if="col === 'payment'">
-                  <template v-if="record.payment === 1">
-                    已付款
-                  </template>
-                  <template v-else>
-                    未付款
-                  </template>
-                </template>
-                <template v-else>{{ text }}</template>
-              </div>
+                   :loading="table.isUserLoading">
+            <template v-for="col in table.userColList"
+                      :slot="col">
             </template>
+          </a-table>
+          <a-table class="table"
+                   id="order-table"
+                   :pagination="table.orderPagination"
+                   :columns="table.orderColumns"
+                   :dataSource="table.orderList"
+                   rowKey="key"
+                   @change="onPageChange"
+                   bordered
+                   :loading="table.isOrderLoading">
           </a-table>
         </a-card>
       </keep-alive>
@@ -151,84 +82,82 @@ export default {
         linkList: [],
         extraImage: ""
       },
-      // 查询form
       searchForm: {
-        // form创建依赖
+        // 查询form依赖
         form: this.$form.createForm(this, {
           name: "form"
         }),
-        //学校列表
-        schoolList: [],
-        // 学校code
-        schoolCode: "",
-        // 项目列表
-        billList: [],
-        // 部门列表
-        departmentList: [],
         // 查询按钮loading
-        isLoading: false
+        isLoading: false,
+        // 查询账户
+        account: ""
       },
       table: {
-        // 项目列表
-        billList: [],
-        // 表格loading
-        isLoading: false,
-        pagination: {
-          total: 0,
-          current: 1
-        },
-        // table标题列表
-        columns: [
+        userId: "",
+        // 用户表头
+        userColumns: [
           {
-            title: "ID",
-            dataIndex: "id",
-            scopedSlots: { customRender: "id" },
+            title: "学校编号",
+            dataIndex: "org_no",
+            scopedSlots: { customRender: "org_no" },
             align: "center"
           },
           {
-            title: "项目ID",
-            dataIndex: "billId",
-            scopedSlots: { customRender: "billId" },
+            title: "班级编号",
+            dataIndex: "depart_name",
+            scopedSlots: { customRender: "depart_name" },
+            align: "center"
+          },
+          {
+            title: "身份",
+            dataIndex: "identity",
+            scopedSlots: { customRender: "identity" },
+            align: "center"
+          },
+          {
+            title: "学生姓名",
+            dataIndex: "student_name",
+            scopedSlots: { customRender: "student_name" },
+            align: "center"
+          },
+          {
+            title: "学号",
+            dataIndex: "work_no",
+            scopedSlots: { customRender: "work_no" },
+            align: "center"
+          }
+        ],
+        userColList: [
+          "org_no",
+          "depart_name",
+          "identity",
+          "student_name",
+          "work_no"
+        ],
+        //订单表头
+        orderColumns: [
+          {
+            title: "商品名称",
+            dataIndex: "productName",
+            scopedSlots: { customRender: "productName" },
             align: "center"
           },
           {
             title: "学校编号",
             dataIndex: "orgNo",
-            scopedSlots: { customRender: "orgNo" }
-          },
-          {
-            title: "学校名称",
-            dataIndex: "orgName",
-            scopedSlots: { customRender: "orgName" }
-          },
-          {
-            title: "部门",
-            dataIndex: "depart",
-            scopedSlots: { customRender: "depart" },
+            scopedSlots: { customRender: "orgNo" },
             align: "center"
           },
           {
-            title: "被缴费人",
-            dataIndex: "studentName",
-            scopedSlots: { customRender: "studentName" },
-            align: "center"
-          },
-          {
-            title: "联系电话",
-            dataIndex: "contact",
-            scopedSlots: { customRender: "contact" },
-            align: "center"
-          },
-          {
-            title: "订单号",
+            title: "订单编号",
             dataIndex: "orderNo",
             scopedSlots: { customRender: "orderNo" },
             align: "center"
           },
           {
-            title: "付款状态",
-            dataIndex: "payment",
-            scopedSlots: { customRender: "payment" },
+            title: "订单金额（元）",
+            dataIndex: "price",
+            scopedSlots: { customRender: "price" },
             align: "center"
           },
           {
@@ -236,129 +165,173 @@ export default {
             dataIndex: "createTime",
             scopedSlots: { customRender: "createTime" },
             align: "center"
+          },
+          {
+            title: "订单状态",
+            dataIndex: "status",
+            scopedSlots: { customRender: "status" },
+            align: "center"
           }
-        ]
+        ],
+        // 表格loading
+        isUserLoading: false,
+        // 表格loading
+        isOrderLoading: false,
+        // 用户列表
+        userList: [],
+        // 订单列表
+        orderList: [],
+        userPagination: {
+          total: 0,
+          current: 1,
+          hideOnSinglePage: true
+        },
+        orderPagination: {
+          total: 0,
+          current: 1,
+          hideOnSinglePage: true
+        },
       }
     };
   },
   methods: {
-    // 查询
+    // 搜索
     async onSearch(e) {
-      e && e.preventDefault()
+      e.preventDefault();
       this.searchForm.isLoading = true;
-      this.table.pagination.current = 1
-      await this.getBillsBy()
+      let err
+      this.searchForm.form.validateFields(error => {
+        err = error
+      })
+      if (err) {
+        this.searchForm.isLoading = false;
+        return
+      }
+      this.table.orderPagination.current = 1
+      await this.findUser()
+      await this.getUserOrders()
       this.searchForm.isLoading = false;
     },
-    // 学校改变 
-    async onSchoolChange(value, option) {
-      this.searchForm.schoolCode = value
-      await this.getBillConfigBy()
-      this.searchForm.form.setFieldsValue({ billId: "全部" })
-      await this.getSchoolDeparts()
-      this.searchForm.form.setFieldsValue({ depart_name: "全部" })
+    // 查询账户改变
+    onAccountChange(e) {
+      const value = e.target.value
+      this.searchForm.account = value
     },
-    // 页号改变
-    async onPageChange(pagination) {
-      this.table.pagination.current = pagination.current
-      this.getBillsBy()
+    onPageChange(pagination) {
+      this.table.orderPagination.current = pagination.current
+      this.getUserOrders()
     },
     // api
-    async findSchoolList() {
-      await this.$api.findSchoolList().then(res => {
-        if (res.code === 1) {
-          this.searchForm.schoolCode = res.data[0].schoolCode;
-          this.searchForm.schoolList = res.data;
+    async findUser() {
+      this.table.isUserLoading = true;
+      // 加载前清空相关数据
+      this.table.userList = [];
+      this.table.userId = "";
+      let data = { account: this.searchForm.account };
+      await this.$api.findUser(data).then(res => {
+        // 接口出错 返回res为false
+        if (!res) {
+          console.log("接口出错")
+          return
+        }
+        // 成功访问, 处理数据
+        if (res.code === 1 && res.data) {
+          this.table.userId = res.data.userId
+          // 加上key, 解决table组件渲染无key报错
+          console.log("res", res)
+          let list = [...res.data.usrChildren]
+          let rList = []
+          console.log('list', list)
+          list.forEach((item, index) => {
+            item.key = index
+          })
+          this.table.userList = list
+          console.log('userList', this.table.userList)
         } else {
-          this.searchForm.schoolList = [];
-          this.searchForm.schoolCode = "";
-          this.$message.error(res.msg);
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取用户失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
         }
       });
+      this.table.isUserLoading = false;
     },
-    // api
-    async getBillConfigBy() {
-      await this.$api
-        .getBillConfigBy({
-          orgNo: this.searchForm.schoolCode,
-          status: null
-        })
-        .then(res => {
-          if (res.code === 1) {
-            let list = [{ billName: "全部", id: "全部" }]
-            list = [...list, ...res.data]
-            this.searchForm.billList = list;
-          } else {
-            this.$error({ title: "错误", content: res.msg });
-          }
-        });
-    },
-    // api
-    async getSchoolDeparts() {
-      await this.$api
-        .getSchoolDeparts({
-          schoolCode: this.searchForm.schoolCode
-        })
-        .then(res => {
-          if (res.code === 1) {
-            let list = [{ depart_name: "全部" }]
-            list = [...list, ...res.data]
-            this.searchForm.departmentList = list;
-          } else {
-            this.$error({ title: "错误", content: res.msg });
-          }
-        });
-    },
-    // api
-    async getBillsBy() {
-      this.table.isLoading = true;
+    // api 
+    async getUserOrders() {
+      this.table.isOrderLoading = true;
       // 加载前清空相关数据
-      this.table.billList = [];
+      this.table.orderList = [];
       // 接口参数
       let data = {
         pageSize: 10,
-        pageNum: this.table.pagination.current,
-        orgNo: this.searchForm.schoolCode
+        pageNum: this.table.orderPagination.current,
+        buyerId: this.table.userId
       }
-      // 表单数据
+      let err
+      // 表单数据添加到参数中
       this.searchForm.form.validateFields((error, values) => {
-        this.searchForm.schoolCode = values.schoolCode;
-        data.billId = values.billId === "全部" ? null : values.billId
-        data.depart = values.depart_name === "全部" ? null : values.depart_name
+        err = error
       });
-      // 请求接口
-      await this.$api
-        .getBillsBy(data)
-        .then(res => {
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
-          if (res.code === 1) {
-            this.table.billList = res.data.pageData
-            this.table.pagination.total = res.data.dataTotal
-          } else {
-            this.$error({ title: "错误", content: res.msg });
-          }
-        });
-      this.table.isLoading = false;
-    },
-    // 初始化数据
-    async initData() {
-      await this.findSchoolList()
-      await this.getBillConfigBy()
-      await this.getSchoolDeparts()
-      this.getBillsBy()
-    },
+      // 表单校验
+      if (err) {
+        this.table.isOrderLoading = false;
+      } else {
+        // 请求接口
+        await this.$api
+          .getUserOrders(data)
+          .then(res => {
+            // 接口出错 返回res为false
+            if (!res) {
+              console.log("接口出错")
+              return
+            }
+            // 成功访问, 处理数据
+            if (res.code === 1) {
+              // 加上key, 解决table组件渲染无key报错
+              console.log('order--res', res)
+              let list = [...res.data.pageData]
+              let rList = []
+              list.forEach((item, index) => {
+                let obj =
+                {
+                  productName: item.product.productName,
+                  orgNo: item.product.orgNo,
+                  orderNo: item.orderNo,
+                  price: item.product.price / 100,
+                  createTime: item.createTime,
+                  status: item.status,
+                  key: index
+                }
+                rList = [...rList, obj]
+              })
+              this.table.orderList = rList
+              this.table.orderPagination.total = res.data.dataTotal
+            } else {
+              let error = res.msg || res.message || "无反馈信息"
+              this.$error({
+                title: "错误",
+                content:
+                  (<div>
+                    <p>获取用户订单列表失败</p>
+                    <p>错误提示: {error}</p>
+                  </div>)
+              })
+            }
+          });
+        this.table.isOrderLoading = false;
+      }
+    }
   },
-  mounted() {
-    this.initData()
-  }
 };
 </script>
 <style lang="scss">
 @import "../../assets/style/mixin.scss";
-#bill-record {
+#user-manager {
   .ant-form-item-label label {
     font-weight: 800;
     font-size: 14px;

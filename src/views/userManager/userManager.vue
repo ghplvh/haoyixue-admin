@@ -381,7 +381,15 @@ export default {
           if (res.code === 1) {
             this.$message.success("修改成功");
           } else {
-            this.$message.fail(res.msg);
+            let error = res.msg || res.message || "无反馈信息"
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>修改用户信息失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
         // 成功访问, 处理数据
@@ -430,7 +438,15 @@ export default {
             this.table.userList = list;
             this.table.pagination.total = res.data.dataTotal
           } else {
-            this.$error({ title: "错误", content: res.msg });
+            let error = res.msg || res.message || "无反馈信息"
+            this.$error({
+              title: "错误",
+              content:
+                (<div>
+                  <p>获取用户列表失败</p>
+                  <p>错误提示: {error}</p>
+                </div>)
+            })
           }
         });
         this.table.isLoading = false;
@@ -456,7 +472,15 @@ export default {
           }
           this.table.userList.push(result);
         } else {
-          this.$error({ title: "错误", content: res.msg });
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>查询用户失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
         }
       });
       this.table.isLoading = false;
@@ -477,7 +501,15 @@ export default {
         } else {
           this.searchForm.schoolList = [];
           this.searchForm.schoolCode = "";
-          this.$message.error(res.msg);
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取学校列表列表失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
         }
       });
     },
