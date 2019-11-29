@@ -65,7 +65,13 @@ export const constantRouterMap = [{
           icon: "none",
           component: () => import("@/views/order/orderSelect.vue")
         }]
-      }
+      },
+      {
+        path: "/mall",
+        name: "首页",
+        component: () => import("@/views/mall/mall.vue"),
+        icon: "shop"
+      },
     ]
   },
   {

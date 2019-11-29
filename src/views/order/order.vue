@@ -410,7 +410,6 @@ export default {
                 cache.list = list
                 cache.total = res.data.dataTotal
                 this.table.cacheList.push(cache)
-                console.log("cacheList", this.table.cacheList)
               } else {
                 let error = res.msg || res.message || "无反馈信息"
                 this.$error({

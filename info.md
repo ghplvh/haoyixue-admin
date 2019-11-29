@@ -23,6 +23,7 @@
   - [bug][done] /home form中, 应该用resetInitValue, 否则会有情况引发报错, cant set before render
   - [bug][done] /userManager 修改按钮修改的账户, 后台修改的是phone
   - [requirement][done] /userManager /billRecord /order分页加载的内容已加载部分进行缓存
+  
 # commit -m
 
 - 2019-11-29 
