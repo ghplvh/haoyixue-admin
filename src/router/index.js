@@ -67,10 +67,46 @@ export const constantRouterMap = [{
         }]
       },
       {
+        path: "/inform",
+        name: "通知",
+        component: () => import("@/views/inform/inform.vue"),
+        icon: "notification"
+      },
+      {
+        path: "/homework",
+        name: "作业",
+        component: () => import("@/views/homework/homework.vue"),
+        icon: "read"
+      },
+      {
         path: "/mall",
-        name: "首页",
+        name: "商城",
         component: () => import("@/views/mall/mall.vue"),
         icon: "shop"
+      },
+      {
+        path: "/news",
+        name: "新闻",
+        component: () => import("@/views/news/news.vue"),
+        icon: "message"
+      },
+      {
+        path: "/banner",
+        name: "Banner",
+        component: () => import("@/views/banner/banner.vue"),
+        icon: "profile"
+      },
+      {
+        path: "/attendance",
+        name: "考勤",
+        component: () => import("@/views/attendance/attendance.vue"),
+        icon: "hourglass"
+      },
+      {
+        path: "/user",
+        name: "个人中心",
+        component: () => import("@/views/user/user.vue"),
+        icon: "user"
       },
     ]
   },

@@ -2,7 +2,7 @@
   <page-layout :desc="setting.desc"
                :title="setting.title"
                :linkList="setting.linkList"
-               id="mall">
+               id="news">
     <div slot="extra"
          class="extraImg">
       <img :src="setting.extraImage" />
@@ -16,10 +16,8 @@
           </a-button>
           <a-table class="table"
                    :columns="table.columns"
-                   :dataSource="table.billList"
-                   rowKey="key"
-                   :pagination="table.pagination"
-                   @change="onPageChange"
+                   :dataSource="table.bannerList"
+                   rowKey="id"
                    bordered
                    :loading="table.isLoading">
             <template slot="operation"
@@ -31,21 +29,11 @@
                 </span>
               </div>
             </template>
-            <template slot="desc"
-                      slot-scope="text">
-              <a-tooltip placement="bottomRight"
-                         :title="text"
-                         :autoAdjustOverflow="true">
-                <p class="desc">
-                  {{text.replace(/\\n/g,'')}}
-                </p>
-              </a-tooltip>
-            </template>
-            <template slot="pics"
+            <template slot="pic_url"
                       slot-scope="text, record">
-              <img :src="record.pics"
+              <img :src="record.pic_url.split(';')[0]"
                    class="table-pics"
-                   @click="onTablePreview(record.pics)"
+                   @click="onTablePreview(record.pic_url)"
                    alt="商品图片">
             </template>
           </a-table>
@@ -54,7 +42,7 @@
     </transition>
     <a-modal class="add-modal"
              :visible="addForm.isVisible"
-             title="新增缴费项目"
+             title="新增新闻"
              okText="确定"
              cancelText="取消"
              @cancel="cancelAdd"
@@ -62,37 +50,35 @@
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
       <a-form layout="vertical"
               :form="addForm.form">
-        <a-form-item label="商品名称">
+        <a-form-item label="跳转链接">
           <a-input autoFocus
                    v-decorator="[
-                    'productName',
+                    'jump_url',
                     {
                       rules: [
                         {
                           required: true,
-                          message: '请填写商品名称'
+                          message: '请填写跳转链接'
                         }
                       ]
                     }
                   ]" />
         </a-form-item>
-        <a-form-item label="商品价格"
-                     :wrapperCol="{span:12}">
+        <a-form-item label="跳转动作">
           <a-input autoFocus
-                   type="number"
                    v-decorator="[
-                    'price',
+                    'jump_action',
                     {
                       rules: [
                         {
                           required: true,
-                          message: '请填写商品价格'
+                          message: '请填写跳转动作'
                         }
                       ]
                     }
                   ]" />
         </a-form-item>
-        <a-form-item label="商品图片">
+        <a-form-item label="新闻图片">
           <div>
             <a-upload :action="addForm.action"
                       listType="picture-card"
@@ -107,22 +93,6 @@
               </div>
             </a-upload>
           </div>
-        </a-form-item>
-        <a-form-item label="商品描述">
-          <a-input type="textarea"
-                   rows="5"
-                   style="resize:none;"
-                   v-decorator="[
-                    'desc',
-                    {
-                      rules: [
-                        {
-                          required: true,
-                          message: '请填写商品描述'
-                        }
-                      ]
-                    }
-                  ]" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -189,81 +159,47 @@ export default {
       },
       table: {
         // 项目列表
-        billList: [],
-        // 缓存
-        cacheList: [],
+        bannerList: [],
         // 表格loading
         isLoading: false,
         // 预览的图片
         previewImage: [],
         // 图片预览
         isPreviewVisible: false,
-        // 分页依赖
-        pagination: {
-          current: 1,
-          total: 1
-        },
         // table标题列表
         columns: [
           {
             title: "ID",
             dataIndex: "id",
-            width: 80,
             scopedSlots: { customRender: "id" },
             align: "center"
           },
           {
-            title: "商品名字",
-            dataIndex: "productName",
-            width: 120,
-            scopedSlots: { customRender: "productName" },
+            title: "跳转链接",
+            dataIndex: "jump_url",
+            scopedSlots: { customRender: "jump_url" },
           },
           {
-            title: "商品描述",
-            dataIndex: "desc",
-            width: 400,
-            scopedSlots: { customRender: "desc" }
+            title: "跳转动作",
+            dataIndex: "jump_action",
+            scopedSlots: { customRender: "jump_action" }
           },
           {
-            title: "商品价格",
+            title: "banner图片",
             align: "center",
-            width: 100,
-            dataIndex: "price",
-            scopedSlots: { customRender: "price" }
+            dataIndex: "pic_url",
+            scopedSlots: { customRender: "pic_url" }
           },
           {
-            title: "折扣价",
-            width: 80,
-            dataIndex: "discountPrice",
-            scopedSlots: { customRender: "discountPrice" },
-            align: "center"
-          },
-          {
-            title: "商品图片",
-            dataIndex: "pics",
-            scopedSlots: { customRender: "pics" },
-            width: 100,
-            align: "center"
-          },
-          {
-            title: "销售数量",
-            width: 100,
-            dataIndex: "saleSum",
-            scopedSlots: { customRender: "saleSum" },
-            align: "center"
-          },
-          {
-            title: "创建时间",
-            dataIndex: "createTime",
-            scopedSlots: { customRender: "createTime" },
-            width: 200,
+            title: "TYPE",
+            dataIndex: "type",
+            scopedSlots: { customRender: "type" },
             align: "center"
           },
           {
             title: "操作",
             dataIndex: "operation",
             scopedSlots: { customRender: "operation" },
-            width: 80,
             align: "center"
           }
         ]
@@ -283,12 +219,11 @@ export default {
       this.addForm.isVisible = true;
     },
     // 添加.保存
-    async saveAdd() {
-      await this.createProduct()
-      // 清理缓存
-      this.addForm.fileList = []
-      this.table.cacheList = []
-      this.getUserProducts()
+    saveAdd() {
+      this.$info({
+        title: '此功能还未启用',
+        onOk() { }
+      });
     },
     // 添加.取消
     cancelAdd() {
@@ -298,6 +233,7 @@ export default {
     onUpload(file) {
       this.imgUpload(file)
     },
+    // 移除图片
     onFileRemove(file) {
       let list = this.addForm.fileList.filter(item => {
         return item.uid !== file.uid
@@ -318,15 +254,11 @@ export default {
     onPreviewCancel() {
       this.addForm.isPreviewVisible = false;
     },
+    // 图片预览
     onTablePreview(pics) {
-      let url = pics.split(',')
+      let url = pics.split(';')
       this.table.previewImage = url
       this.table.isPreviewVisible = true
-    },
-    // 改变页面
-    onPageChange(pagination) {
-      this.table.pagination.current = pagination.current
-      this.getUserProducts()
     },
     //api
     async imgUpload(file) {
@@ -364,30 +296,14 @@ export default {
       })
     },
     // api
-    async getUserProducts() {
+    async getHomeBanner() {
       this.table.isLoading = true;
       // 加载前清空相关数据
-      this.table.billList = [];
-      // 接口参数
-      let data = {
-        pageSize: 10,
-        pageNum: this.table.pagination.current
-      }
-      // 表单校验成功则继续
-      // 检索缓存, 如果存在目标页面数据, 则不调用api,而使用缓存数据
-      const cacheFilters = this.table.cacheList.filter(item => {
-        return item.pageNum === data.pageNum
-      })
-      if (cacheFilters.length > 0) {
-        this.table.billList = cacheFilters[0].list
-        this.table.pagination.total = cacheFilters[0].total
-      } else {
-        // 用于缓存已载入数据
-        let cache = {
-          pageNum: data.pageNum
-        }
-        // fetch api
-        await this.$api.getUserProducts(data).then(res => {
+      this.table.bannerList = [];
+      // 请求接口
+      await this.$api
+        .getHomeBanner({})
+        .then(res => {
           // 接口出错 返回res为false
           if (!res) {
             console.log("接口出错")
@@ -395,103 +311,35 @@ export default {
           }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
-            let list = res.data.pageData;
-            // 添加key( 解决table组件渲染无key报错)
-            list.forEach((item, index) => {
-              item.key = index
-            });
-            this.table.billList = list;
-            this.table.pagination.total = res.data.dataTotal
-            // 已载入数据进行缓存
-            cache.list = list
-            cache.total = res.data.dataTotal
-            this.table.cacheList.push(cache)
+            this.table.bannerList = res.data;
           } else {
             let error = res.msg || res.message || "无反馈信息"
             this.$error({
               title: "错误",
               content:
                 (<div>
-                  <p>获取用户列表失败</p>
+                  <p>获取缴费产品列表出错</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })
           }
         });
-      }
       this.table.isLoading = false;
-    },
-    // api
-    async createProduct() {
-      this.addForm.isLoading = true;
-      // 接口参数
-      let data
-      let err;
-      // 表单数据添加到参数中
-      this.addForm.form.validateFields((error, values) => {
-        err = error;
-        data = {
-          senderId: 1,
-          type: 0,
-          discountPrice: 0,
-          productName: values.productName,
-          pics: this.pics,
-          price: values.price,
-          desc: values.desc
-        };
-      });
-      // 表单校验
-      if (!err) {
-        // 请求接口
-        await this.$api.createProduct(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
-          // 成功访问, 处理数据
-          if (res.code === 1) {
-            this.$message.success("提交成功");
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>修改用户信息失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
-          }
-        });
-        // 成功访问, 处理数据
-        this.addForm.data = {};
-        this.addForm.isVisible = false;
-      }
-      this.addForm.isLoading = false;
     },
     // 初始数据
     async initData() {
       this.getUploadToken()
-      this.getUserProducts()
+      this.getHomeBanner()
     }
   },
   mounted() {
     this.initData()
-  },
-  computed: {
-    pics() {
-      let list = this.addForm.fileList.map(item => {
-        return item.url
-      })
-      return list.join(',')
-    }
   }
 };
 </script>
 <style lang="scss">
 @import "../../assets/style/mixin.scss";
-#mall {
+#news {
   .ant-form-item-label label {
     font-weight: 800;
     font-size: 14px;

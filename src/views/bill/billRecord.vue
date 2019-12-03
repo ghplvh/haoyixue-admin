@@ -184,59 +184,69 @@ export default {
             title: "ID",
             dataIndex: "id",
             scopedSlots: { customRender: "id" },
-            align: "center"
+            align: "center",
+            width: 80
           },
           {
             title: "项目ID",
             dataIndex: "billId",
             scopedSlots: { customRender: "billId" },
-            align: "center"
+            align: "center",
+            width: 80
           },
           {
             title: "学校编号",
             dataIndex: "orgNo",
-            scopedSlots: { customRender: "orgNo" }
+            scopedSlots: { customRender: "orgNo" },
+            width: 100
           },
           {
             title: "学校名称",
             dataIndex: "orgName",
-            scopedSlots: { customRender: "orgName" }
+            scopedSlots: { customRender: "orgName" },
+            width: 100
           },
           {
             title: "部门",
             dataIndex: "depart",
             scopedSlots: { customRender: "depart" },
-            align: "center"
+            align: "center",
+            width: 80
           },
           {
             title: "被缴费人",
             dataIndex: "studentName",
             scopedSlots: { customRender: "studentName" },
-            align: "center"
+            align: "center",
+            width: 100
           },
           {
             title: "联系电话",
             dataIndex: "contact",
             scopedSlots: { customRender: "contact" },
-            align: "center"
+            align: "center",
+            width: 100
           },
           {
             title: "订单号",
             dataIndex: "orderNo",
             scopedSlots: { customRender: "orderNo" },
-            align: "center"
+            align: "center",
+            width: 80
           },
           {
             title: "付款状态",
             dataIndex: "payment",
             scopedSlots: { customRender: "payment" },
-            align: "center"
+            align: "center",
+            width: 100
           },
           {
             title: "缴费时间",
             dataIndex: "createTime",
             scopedSlots: { customRender: "createTime" },
-            align: "center"
+            align: "center",
+            width: 100
           }
         ]
       }

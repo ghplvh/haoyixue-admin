@@ -2,10 +2,22 @@ import {
   baseUrl
 } from "./env";
 
-export default async (url = "", data = {}, type = "GET", method = "fetch") => {
+export default async ({
+  url = "",
+  data = {},
+  type = "GET",
+  method = "fetch",
+  redirectUrl = "",
+  // contentType = "application/json",
+  processData = true,
+  formData = null
+}) => {
   type = type.toUpperCase();
-  url = baseUrl + url;
-
+  if (redirectUrl.length > 0) {
+    url = redirectUrl + url
+  } else {
+    url = baseUrl + url;
+  }
   // 此处规定get请求的参数使用时放在data中，如同post请求
   if (type == "GET") {
     let dataStr = "";
@@ -27,16 +39,22 @@ export default async (url = "", data = {}, type = "GET", method = "fetch") => {
       method: type,
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
       },
-      mode: "cors", // 以CORS的形式跨域
-      cache: "force-cache"
+      processData,
+      mode: "cors", // 以CORS的形式跨域 
+      cache: "force-cache",
     };
 
     if (type == "POST") {
-      Object.defineProperty(requestConfig, "body", {
-        value: JSON.stringify(data)
-      });
+      // 此处存在一个bug, 如果用formData进行表单上传, 设置contentType会上传失败,去掉content-type字段即可
+      if (formData) {
+        requestConfig.body = formData
+      } else {
+        requestConfig.headers["Content-Type"] = "application/json"
+        Object.defineProperty(requestConfig, "body", {
+          value: JSON.stringify(data)
+        });
+      }
     }
 
     try {
@@ -45,7 +63,6 @@ export default async (url = "", data = {}, type = "GET", method = "fetch") => {
         const responseJson = await response.json();
         return responseJson;
       } else {
-        console.log('接口请求失败', response.statusText)
         return false
       }
     } catch (error) {

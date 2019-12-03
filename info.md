@@ -23,8 +23,24 @@
   - [bug][done] /home form中, 应该用resetInitValue, 否则会有情况引发报错, cant set before render
   - [bug][done] /userManager 修改按钮修改的账户, 后台修改的是phone
   - [requirement][done] /userManager /billRecord /order分页加载的内容已加载部分进行缓存
-  
+  - [bug] 小窗口打开, 然后全屏时, 会出现窗口未自动适应问题
+  - [bug][done] /mall 如果用fetch进行formData的表单上传, 设置contentType会上传失败,去掉content-type字段即可
+  - [view] /mall [api][✔][dom][✔][script][✔]
+  - [view] /news [api][✔][dom][✔][script][✔]
+  - [view] /banner [api][✔][dom][✔][script][✔]
+  - [view] /inform [api][✔][dom][✔][script][✔]
 # commit -m
+
+- 2019-12-03
+
+  - [view] /mall [api][✔][dom][✔][script][✔]
+  - [view] /news [api][✔][dom][✔][script][✔]
+  - [view] /banner [api][✔][dom][✔][script][✔]
+  - [view] /inform [api][✔][dom][✔][script][✔]
+
+- 2019-12-02 
+
+  - [bug][done] /mall 如果用fetch进行formData的表单上传, 设置contentType会上传失败,去掉content-type字段即可
 
 - 2019-11-29 
 
@@ -32,7 +48,8 @@
   - [bug][done] /userManager 修复修改按钮没有对应到数据(id改成userId)
   - [requirement][done] api中需要用到res.data的地方, 都先判断有无data
   - [requirement][done] /userManager /billRecord /order分页加载的内容已加载部分进行缓存
-  
+  - [view] /mall init
+
 - 2019-11-27
 
   1. /orderSelect init
@@ -70,6 +87,8 @@
 - [notify]/order getOrders.data.status 写死为2 (业务不明)
 - [notify]/home getBillConfig.data.status 写死为0 (业务不明)
 - [notify]/billProduct createBillProduct.data.sendId,type 写死(业务不明)
+- [notify]/mall createProduct senderId type discountPrice写死(业务不明)
+- [notify]/inform  api.getClassByUserId{type}写死(业务不明)
 - [notify]/order 订单状态未定义, 义务需求不清晰
 - [notify]所有页面setting全局设置都还未载入(footlinks等)
 - [requirement]所有页面form表单校验完善
@@ -79,4 +98,6 @@
 - [requirement] form表单校验规则新增
 - [api] /orderSelect findUser接口,查询到内容为空时, 返回参数没有data, 且msg为success
 - [api] /orderSelect getUserOrders接口,不传入id也会返回值
-- [notify]api失败回调应写明哪个部分出错(参考:/billRecord api.getSchoolDepart)
+- [notify] api失败回调应写明哪个部分出错(参考:/billRecord api.getSchoolDepart)
+- [notify] 做了分页缓存的页面, 如果带有修改或者上传数据功能, 应该在上传或者修改数据之后, 对缓存进行清空
+- [notify] 检查所有分页依赖的cache的数据

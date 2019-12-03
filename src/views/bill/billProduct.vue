@@ -63,26 +63,15 @@
                    rowKey="id"
                    bordered
                    :loading="table.isLoading">
-            <template v-for="col in [
-                        'orgNo',
-                        'productName',
-                        'desc',
-                        'price',
-                        'discountPrice',
-                        'updateTime'
-                      ]"
-                      :slot="col"
+            <template slot="desc"
                       slot-scope="text">
-              <p :title="text"
-                 class="desc"
-                 v-if="col==='desc'"
-                 :value="text"
-                 :key="col">
-                {{text}}
-              </p>
-              <template v-else>
-                {{text}}
-              </template>
+              <a-tooltip placement="bottomRight"
+                         :title="text"
+                         :autoAdjustOverflow="true">
+                <p class="desc">
+                  {{text.replace(/\\n/g,'')}}
+                </p>
+              </a-tooltip>
             </template>
             <template slot="operation"
                       slot-scope="text, record">
@@ -252,7 +241,7 @@ export default {
             title: "项目描述",
             dataIndex: "desc",
             scopedSlots: { customRender: "desc" },
-            width: "40%"
+            width: 400
           },
           {
             title: "价格",
@@ -453,8 +442,6 @@ export default {
   #table {
     .desc {
       @include ellipsis(3);
-      resize: none;
-      border: none;
     }
   }
 }
