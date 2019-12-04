@@ -316,35 +316,17 @@ export const api = {
     type: "POST"
   }),
   // 24. 发作业  /homework
-  createHomework: ({
-      senderId,
-      category,
-      content,
-      pics,
-      clazz
-    }) =>
+  createHomework: data =>
     fetch({
       url: "/app/homework/create",
-      data: {
-        senderId,
-        category,
-        content,
-        pics,
-        clazz
-      },
+      data,
       type: "POST"
     }),
   // 25. 获取作业  /homework
-  getUserHomeworks: ({
-      pageSize,
-      pageNum
-    }) =>
+  getUserHomeworks: data =>
     fetch({
       url: "/app/homework/getUserHomeworks",
-      data: {
-        pageSize,
-        pageNum
-      },
+      data: data,
       type: "POST"
     }),
   // 26. 获取新闻  /news

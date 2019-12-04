@@ -139,14 +139,6 @@ export const constantRouterMap = [{
 ];
 // 异步路由, 需要权限管理的路由
 export const asyncRouterMap = [{
-    path: "/permission/test1",
-    name: "路由测试4",
-    component: () => import("@/views/devTest/test1"),
-    meta: {
-      roles: [0, 1, 2, 3]
-    }
-  },
-  {
     path: "*",
     redirect: "/exception/403",
     hidden: true,

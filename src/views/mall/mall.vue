@@ -12,8 +12,9 @@
         <a-card class="content">
           <a-button type="primary"
                     @click="onAdd">
-            新增收费项目
+            新增商品
           </a-button>
+          <!-- #table -->
           <a-table class="table"
                    :columns="table.columns"
                    :dataSource="table.billList"
@@ -54,7 +55,7 @@
     </transition>
     <a-modal class="add-modal"
              :visible="addForm.isVisible"
-             title="新增缴费项目"
+             title="新增商品"
              okText="确定"
              cancelText="取消"
              @cancel="cancelAdd"

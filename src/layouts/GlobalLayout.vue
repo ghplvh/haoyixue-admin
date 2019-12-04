@@ -1,5 +1,5 @@
 <template>
-  <a-layout :style="`height:${innerHeight}`">
+  <a-layout class="global-layout">
     <drawer v-if="isMobile"
             :openDrawer="collapsed"
             @change="onDrawerChange">
@@ -94,5 +94,8 @@ export default {
   }
 };
 </script>
-
-<style lang="less" scoped></style>
+<style lang="scss" scoped>
+.global-layout {
+  min-height: 100vh;
+}
+</style>

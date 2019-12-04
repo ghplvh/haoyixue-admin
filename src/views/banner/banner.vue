@@ -12,7 +12,7 @@
         <a-card class="content">
           <a-button type="primary"
                     @click="onAdd">
-            新增收费项目
+            新增Banner
           </a-button>
           <a-table class="table"
                    :columns="table.columns"
@@ -42,7 +42,7 @@
     </transition>
     <a-modal class="add-modal"
              :visible="addForm.isVisible"
-             title="新增新闻"
+             title="新增Banner"
              okText="确定"
              cancelText="取消"
              @cancel="cancelAdd"
@@ -78,7 +78,7 @@
                     }
                   ]" />
         </a-form-item>
-        <a-form-item label="新闻图片">
+        <a-form-item label="Banner图片">
           <div>
             <a-upload :action="addForm.action"
                       listType="picture-card"

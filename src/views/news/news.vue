@@ -12,7 +12,7 @@
         <a-card class="content">
           <a-button type="primary"
                     @click="onAdd">
-            新增收费项目
+            新增新闻
           </a-button>
           <a-table class="table"
                    :columns="table.columns"

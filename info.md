@@ -16,20 +16,22 @@
 
 # 进程
   ...
-  - [bug][done] fetch 服务器返回400, 无法被.json()解析, 此时报错;修复成返回false, 调用接口时判断, 如果false, 则取消后续操作
-  - [dev][done] 页面代码逻辑修整(执行位置等...)
-  - [bug][done] /userManager 点击修改按钮后, form有缓存, 应该修改成对应的value
-  - [bug][done] api中需要用到res.data的地方, 都先判断有无data
-  - [bug][done] /home form中, 应该用resetInitValue, 否则会有情况引发报错, cant set before render
-  - [bug][done] /userManager 修改按钮修改的账户, 后台修改的是phone
-  - [requirement][done] /userManager /billRecord /order分页加载的内容已加载部分进行缓存
-  - [bug] 小窗口打开, 然后全屏时, 会出现窗口未自动适应问题
-  - [bug][done] /mall 如果用fetch进行formData的表单上传, 设置contentType会上传失败,去掉content-type字段即可
-  - [view] /mall [api][✔][dom][✔][script][✔]
+  - [view] /login [api][✔][dom][✔][script][✔]
+  - [view] /home [api][✔][dom][✔][script][✔]
+  - [view] /order/order [api][✔][dom][✔][script][✔]
+  - [view] /order/orderSelect [api][✔][dom][✔][script][✔]
+  - [view] /userManager [api][✔][dom][✔][script][✔]
+  - [view] /bill/billProduct [api][✔][dom][✔][script][✔]
+  - [view] /bill/billRecord [api][✔][dom][✔][script][✔]
   - [view] /news [api][✔][dom][✔][script][✔]
   - [view] /banner [api][✔][dom][✔][script][✔]
   - [view] /inform [api][✔][dom][✔][script][✔]
+  - [view] /homework [api][✔][dom][✔][script][✔] 
 # commit -m
+- 2019-12-04 
+
+ - [bug] @\layout\GlobalLayout.vue  添加css minheight = 100vh - ** px 自适应高度
+ - [view] /homework [api][✔][dom][✔][script][✔] 
 
 - 2019-12-03
 
@@ -81,14 +83,14 @@
 
 # 上线
 
-- [delete]src/api/api2
-- [delete]src/views/devTest
-- [delete]删除 dev 相关 route
+- [delete][✔]src/views/devTest
+- [delete][✔]删除 dev 相关 route
 - [notify]/order getOrders.data.status 写死为2 (业务不明)
 - [notify]/home getBillConfig.data.status 写死为0 (业务不明)
 - [notify]/billProduct createBillProduct.data.sendId,type 写死(业务不明)
 - [notify]/mall createProduct senderId type discountPrice写死(业务不明)
 - [notify]/inform  api.getClassByUserId{type}写死(业务不明)
+- [notify]/homework  api.getHomeworkById{category}科目为0 是目标为所有科目数据, 结果为空.
 - [notify]/order 订单状态未定义, 义务需求不清晰
 - [notify]所有页面setting全局设置都还未载入(footlinks等)
 - [requirement]所有页面form表单校验完善
@@ -101,3 +103,5 @@
 - [notify] api失败回调应写明哪个部分出错(参考:/billRecord api.getSchoolDepart)
 - [notify] 做了分页缓存的页面, 如果带有修改或者上传数据功能, 应该在上传或者修改数据之后, 对缓存进行清空
 - [notify] 检查所有分页依赖的cache的数据
+- [notify] 检查页面是否有多余的复制部分, 删...
+- [notify] 检查页面所有文字信息是否有误

@@ -51,7 +51,7 @@
               <a-col>
                 <a-button type="primary"
                           @click="onAdd">
-                  新增收费项目
+                  新增通知
                 </a-button>
               </a-col>
             </a-row>
@@ -90,7 +90,7 @@
     </transition>
     <a-modal class="add-modal"
              :visible="addForm.isVisible"
-             title="新增缴费项目"
+             title="新增通知"
              okText="确定"
              cancelText="取消"
              @cancel="cancelAdd"
