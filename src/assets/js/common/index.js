@@ -1,4 +1,6 @@
 // localStorage的 get, set, remove
+import "./checkReExp"
+
 export const getStore = val => {
   if (!val) return;
   return JSON.parse(window.localStorage.getItem(val));

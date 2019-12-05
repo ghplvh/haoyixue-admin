@@ -10,6 +10,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   layout="inline"
                   @submit="onSearch">
@@ -56,6 +57,7 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `table -->
           <a-table class="table"
                    :columns="table.columns"
                    :dataSource="table.list"
@@ -96,6 +98,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="班级"
@@ -104,10 +107,10 @@
                       'className',
                       {
                         initialValue: searchForm.className,
-                        rules: [{ required: true, message: '请选择学校' }]
+                        rules: [{ required: true, message: '请选择班级' }]
                       }
                     ]"
-                    placeholder="请选择学校"
+                    placeholder="请选择班级"
                     showArrow>
             <a-select-option style="width:100px;"
                              v-for="(item, index) in searchForm.classList"
@@ -213,7 +216,8 @@ export default {
         // 分页依赖
         pagination: {
           current: 1,
-          total: 1
+          total: 1,
+          pageSize: 10
         },
         // 表格loading
         isLoading: false,
@@ -303,14 +307,9 @@ export default {
           userId: this.$store.state.account.userInfo.userId
         }
       ).then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 0 && res.data) {
-          this.searchForm.className = res.data[0].className;
+          this.searchForm.className = res ?.data[0] ?.className || ""
           this.searchForm.classList = res.data;
         } else {
           this.searchForm.classList = [];
@@ -334,8 +333,8 @@ export default {
       this.table.list = [];
       // 接口参数
       let data = {
-        pageSize: 10,
         pageNum: this.table.pagination.current,
+        pageSize: this.table.pagination.pageSize,
         userId: this.$store.state.account.userInfo.userId
       }
       let err
@@ -363,20 +362,15 @@ export default {
           }
           // fetch api
           await this.$api.getUserNotifications(data).then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
-              let list = res.data.pageData;
+              let list = res ?.data ?.pageData || []
               //添加key( 解决table组件渲染无key报错)
               list.forEach((item, index) => {
                 item.key = index
               });
               this.table.list = list;
-              this.table.pagination.total = res.data.dataTotal
+              this.table.pagination.total = res ?.data ?.dataTotal || 1
               // 已载入数据进行缓存
               cache.list = list
               cache.total = res.data.dataTotal
@@ -387,7 +381,7 @@ export default {
                 title: "错误",
                 content:
                   (<div>
-                    <p>获取用户列表失败</p>
+                    <p>获取通知列表失败</p>
                     <p>错误提示: {error}</p>
                   </div>)
               })

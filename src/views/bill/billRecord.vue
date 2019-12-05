@@ -10,6 +10,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   id="search-form"
                   layout="inline"
@@ -95,8 +96,9 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `table -->
           <a-table class="table"
-                   id="table"
+                   id="tabkle"
                    :columns="table.columns"
                    :dataSource="table.billList"
                    rowKey="id"
@@ -176,7 +178,8 @@ export default {
         isLoading: false,
         pagination: {
           total: 0,
-          current: 1
+          current: 1,
+          pageSize: 10
         },
         // table标题列表
         columns: [
@@ -246,7 +249,7 @@ export default {
             dataIndex: "createTime",
             scopedSlots: { customRender: "createTime" },
             align: "center",
-            width: 100
+            width: 180
           }
         ]
       }
@@ -275,14 +278,9 @@ export default {
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
-          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || "" // optional chaining
           this.searchForm.schoolList = res.data;
         } else {
           this.searchForm.schoolList = [];
@@ -307,11 +305,6 @@ export default {
           status: null
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             let list = [{ billName: "全部", id: "全部" }]
@@ -338,11 +331,6 @@ export default {
           schoolCode: this.searchForm.schoolCode
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             let list = [{ depart_name: "全部" }]
@@ -369,8 +357,8 @@ export default {
       this.table.billList = [];
       // 接口参数
       let data = {
-        pageSize: 10,
         pageNum: this.table.pagination.current,
+        pageSize: this.table.pagination.pageSize,
         orgNo: this.searchForm.schoolCode
       }
       let err
@@ -405,15 +393,10 @@ export default {
           await this.$api
             .getBillsBy(data)
             .then(res => {
-              // 接口出错 返回res为false
-              if (!res) {
-                console.log("接口出错")
-                return
-              }
               // 成功访问, 处理数据
               if (res.code === 1 && res.data) {
-                this.table.billList = res.data.pageData
-                this.table.pagination.total = res.data.dataTotal
+                this.table.billList = res ?.data ?.pageData || [] // optional chaining
+                this.table.pagination.total = res ?.data ?.dataTotal || 10 // optional chaining
                 // 已载入数据进行缓存
                 cache.list = res.data.pageData
                 cache.total = res.data.dataTotal

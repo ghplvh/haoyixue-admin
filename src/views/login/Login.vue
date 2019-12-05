@@ -10,6 +10,7 @@
         </div>
       </div>
       <div class="login">
+        <!-- `loginForm -->
         <a-form class="login-form"
                 @submit="onSubmit"
                 :form="form">
@@ -80,6 +81,7 @@
 
 <script>
 import GlobalFooter from "../../layouts/GlobalFooter";
+import { setUserInfo } from "@/router/cookie";
 
 export default {
   name: "Login",
@@ -125,7 +127,16 @@ export default {
                   this.$router.push("/exception/403");
                 } else {
                   // 暂存用户信息到seesionStorage
-                  sessionStorage.setItem("user", JSON.stringify(result));
+                  const userInfo = {
+                    userId: result.userId,
+                    account: result.account,
+                    nickName: result.nickName,
+                    headPic: result.headPic,
+                    orgNo: result.orgNo,
+                    phone: result.phone,
+                    role: result.role,
+                  }
+                  setUserInfo(userInfo)
                   // 存储用户信息到vuex
                   this.$store.commit("account/SET_USER");
                   this.$router.push("/");

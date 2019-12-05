@@ -14,6 +14,7 @@
                     @click="onAdd">
             新增新闻
           </a-button>
+          <!-- `table -->
           <a-table class="table"
                    :columns="table.columns"
                    :dataSource="table.newsList"
@@ -47,7 +48,7 @@
               <img :src="record.image_url.split(';')[0]"
                    class="table-pics"
                    @click="onTablePreview(record.image_url)"
-                   alt="商品图片">
+                   alt="图裂了">
             </template>
           </a-table>
         </a-card>
@@ -61,6 +62,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="新闻标题">
@@ -327,29 +329,37 @@ export default {
       formData.append('token', this.addForm.data.token)
       formData.append('file', file)
       await this.$api.imgUpload(formData).then(res => {
-        file.url = `http://user.duchengedu.com/${res.key}?attname=${file.name}`
-        file.status = "done"
-      })
-      this.addForm.fileList = [...this.addForm.fileList, file]
-    },
-    //api
-    async getUploadToken() {
-      this.$api.getUploadToken().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
-        if (res.code === 1 && res.data) {
-          this.addForm.data.token = res.data.token
+        if (res.code !== 966) {
+          file.url = `http://user.duchengedu.com/${res ?.key}?attname=${file.name}`
+          file.status = "done"
+          this.addForm.fileList = [...this.addForm.fileList, file]
         } else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
             title: "错误",
             content:
               (<div>
-                <p>获取缴费失败</p>
+                <p>上传图片失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
+        }
+      })
+    },
+    //api
+    async getUploadToken() {
+      this.$api.getUploadToken().then(res => {
+        // 成功访问, 处理数据
+        if (res.code === 1 && res.data) {
+          this.addForm.data.token = res ?.data ?.token || ""
+        } else {
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取token失败</p>
                 <p>错误提示: {error}</p>
               </div>)
           })
@@ -381,23 +391,18 @@ export default {
         }
         // fetch api
         await this.$api.getNews(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
-            let list = res.data.pageData;
+            let list = res ?.data ?.pageData || []
             // 去除chirldren(会渲染出多层表格), 添加key( 解决table组件渲染无key报错)
             list.forEach((item, index) => {
               item.key = index
             });
             this.table.newsList = list;
-            this.table.pagination.total = res.data.dataTotal
+            this.table.pagination.total = res ?.data ?.dataTotal || 1
             // 已载入数据进行缓存
             cache.list = list
-            cache.total = res.data.dataTotal
+            cache.total = res ?.data ?.dataTotal || 1
             this.table.cacheList.push(cache)
           } else {
             let error = res.msg || res.message || "无反馈信息"
@@ -405,7 +410,7 @@ export default {
               title: "错误",
               content:
                 (<div>
-                  <p>获取用户列表失败</p>
+                  <p>获取新闻列表失败</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })
@@ -491,9 +496,6 @@ export default {
 }
 .ant-carousel >>> .slick-thumb li.slick-active img {
   filter: grayscale(0%);
-}
-.overlay {
-  color: red;
 }
 </style>
 <style lang="less" scoped>

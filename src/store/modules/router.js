@@ -1,6 +1,11 @@
 // store.router 权限管理相关store
-import { asyncRouterMap, constantRouterMap } from "@/router";
-import { filterAsyncRouter } from "@/assets/js/common.js";
+import {
+  asyncRouterMap,
+  constantRouterMap
+} from "@/router";
+import {
+  filterAsyncRouter
+} from "@/assets/js/common";
 
 export default {
   namespaced: true,
@@ -22,10 +27,14 @@ export default {
   },
   actions: {
     // 根据roles, 异步拼接路由
-    GENERATE_ROUTES({ commit }, data) {
+    GENERATE_ROUTES({
+      commit
+    }, data) {
       // data:当前登录账号的角色数组
       return new Promise(resolve => {
-        const { roles } = data;
+        const {
+          roles
+        } = data;
         let accessedRoutes;
         accessedRoutes = filterAsyncRouter(asyncRouterMap, roles);
         commit("SET_ROUTES", accessedRoutes);

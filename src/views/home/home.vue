@@ -1,8 +1,5 @@
 <template>
-  <page-layout :desc="setting.desc"
-               :title="setting.title"
-               :linkList="setting.linkList"
-               id="home">
+  <page-layout id="home">
     <div slot="extra"
          class="extraImg">
       <img :src="setting.extraImage" />
@@ -10,6 +7,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   layout="inline"
                   @submit="onSearch">
@@ -56,6 +54,7 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `table -->
           <a-table class="table"
                    :columns="table.columns"
                    :dataSource="table.billList"
@@ -105,6 +104,7 @@
              @cancel="cancelEdit"
              @ok="saveEdit"
              :okButtonProps="{ props: { loading: editForm.isLoading } }">
+      <!-- `editForm -->
       <a-form layout="vertical"
               :form="editForm.form">
         <a-form-item label="缴费项目名称">
@@ -165,6 +165,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="学校"
@@ -258,7 +259,7 @@ export default {
         linkList: [],
         extraImage: ""
       },
-      // 查询form
+      // `searchForm查询form
       searchForm: {
         // form创建依赖
         form: this.$form.createForm(this, {
@@ -271,6 +272,7 @@ export default {
         // 查询按钮loading
         isLoading: false
       },
+      // `addForm 新增form
       addForm: {
         // 新增form依赖
         form: this.$form.createForm(this, {
@@ -283,6 +285,7 @@ export default {
         // 新增确定loading
         isLoading: false
       },
+      // `editForm 编辑form
       editForm: {
         // 修改form依赖
         form: this.$form.createForm(this, {
@@ -295,6 +298,7 @@ export default {
         // 修改确定loading
         isLoading: false
       },
+      // `table
       table: {
         // 项目列表
         billList: [],
@@ -427,14 +431,9 @@ export default {
       } else {
         // 请求接口
         await this.$api.updateBillConfig(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1) {
-            this.$message.success("修改成功");
+            this.$message.success("修改成功")
           } else {
             let error = res.msg || res.message || "无反馈信息"
             this.$error({
@@ -475,11 +474,6 @@ export default {
         // 请求接口
         await this.$api.createBillConfig(data).then(res => {
           this.addForm.billProductsList = [];
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1) {
             this.$message.success("添加成功");
@@ -511,11 +505,6 @@ export default {
           status: 0
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             this.table.billList = res.data;
@@ -525,7 +514,7 @@ export default {
               title: "错误",
               content:
                 (<div>
-                  <p>获取缴费失败</p>
+                  <p>获取缴费信息失败</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })
@@ -542,11 +531,6 @@ export default {
           orgNo: this.searchForm.schoolCode
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             this.addForm.billProductsList = res.data;
@@ -566,14 +550,9 @@ export default {
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
-          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || "" 
           this.searchForm.schoolList = res.data;
         } else {
           this.searchForm.schoolList = [];

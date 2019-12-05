@@ -3,8 +3,10 @@ import router from "../router";
 import store from "../store";
 import {
   hasPermission
-} from "@/assets/js/common.js";
-// import cookie from "js-cookie";//cookie方案引入如cookie
+} from "@/assets/js/common";
+import {
+  getUserInfo
+} from "@/router/cookie";
 
 const whiteList = [
   // 登录白名单,不需要登录就可以访问的页面
@@ -25,7 +27,8 @@ router.beforeEach((to, from, next) => {
   if (isLogin) {
     // 登录操作后，以及当刷新页面是store中的数据恢复到初始值，需要重新设置
     if (store.state.router.roles.length === 0) {
-      const role = JSON.parse(sessionStorage.getItem("user")).role;
+      // const role = JSON.parse(sessionStorage.getItem("user")).role;
+      const role = getUserInfo().role;
       let roles = [];
       roles = [...roles, role];
       store.commit("router/SET_ROLES", roles);

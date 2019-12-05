@@ -14,10 +14,10 @@
                     @click="onAdd">
             新增商品
           </a-button>
-          <!-- #table -->
+          <!-- `table -->
           <a-table class="table"
                    :columns="table.columns"
-                   :dataSource="table.billList"
+                   :dataSource="table.list"
                    rowKey="key"
                    :pagination="table.pagination"
                    @change="onPageChange"
@@ -47,7 +47,7 @@
               <img :src="record.pics"
                    class="table-pics"
                    @click="onTablePreview(record.pics)"
-                   alt="商品图片">
+                   alt="图裂了">
             </template>
           </a-table>
         </a-card>
@@ -61,6 +61,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="商品名称">
@@ -80,7 +81,7 @@
         <a-form-item label="商品价格"
                      :wrapperCol="{span:12}">
           <a-input autoFocus
-                   type="number"
+                   oninput="value=value.replace(/[^\d]/g,'')"
                    v-decorator="[
                     'price',
                     {
@@ -190,7 +191,7 @@ export default {
       },
       table: {
         // 项目列表
-        billList: [],
+        list: [],
         // 缓存
         cacheList: [],
         // 表格loading
@@ -202,7 +203,8 @@ export default {
         // 分页依赖
         pagination: {
           current: 1,
-          total: 1
+          total: 1,
+          pageSize: 5
         },
         // table标题列表
         columns: [
@@ -285,10 +287,13 @@ export default {
     },
     // 添加.保存
     async saveAdd() {
-      await this.createProduct()
+      let isSuccess = await this.createProduct()
       // 清理缓存
-      this.addForm.fileList = []
-      this.table.cacheList = []
+      if (isSuccess) {
+        this.table.cacheList = []
+        this.addForm.fileList = []
+        this.table.pagination.current = 1
+      }
       this.getUserProducts()
     },
     // 添加.取消
@@ -335,29 +340,37 @@ export default {
       formData.append('token', this.addForm.data.token)
       formData.append('file', file)
       await this.$api.imgUpload(formData).then(res => {
-        file.url = `http://user.duchengedu.com/${res.key}?attname=${file.name}`
-        file.status = "done"
-      })
-      this.addForm.fileList = [...this.addForm.fileList, file]
-    },
-    //api
-    async getUploadToken() {
-      this.$api.getUploadToken().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
-        if (res.code === 1 && res.data) {
-          this.addForm.data.token = res.data.token
+        if (res.code !== 966) {
+          file.url = `http://user.duchengedu.com/${res ?.key}?attname=${file.name}`
+          file.status = "done"
+          this.addForm.fileList = [...this.addForm.fileList, file]
         } else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
             title: "错误",
             content:
               (<div>
-                <p>获取缴费失败</p>
+                <p>上传图片失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
+        }
+      })
+    },
+    //api
+    async getUploadToken() {
+      this.$api.getUploadToken().then(res => {
+        // 成功访问, 处理数据
+        if (res.code === 1 && res.data) {
+          this.addForm.data.token = res ?.data ?.token || ""
+        } else {
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取token失败</p>
                 <p>错误提示: {error}</p>
               </div>)
           })
@@ -368,11 +381,11 @@ export default {
     async getUserProducts() {
       this.table.isLoading = true;
       // 加载前清空相关数据
-      this.table.billList = [];
+      this.table.list = [];
       // 接口参数
       let data = {
-        pageSize: 10,
-        pageNum: this.table.pagination.current
+        pageNum: this.table.pagination.current,
+        pageSize: this.table.pagination.pageSize
       }
       // 表单校验成功则继续
       // 检索缓存, 如果存在目标页面数据, 则不调用api,而使用缓存数据
@@ -380,7 +393,7 @@ export default {
         return item.pageNum === data.pageNum
       })
       if (cacheFilters.length > 0) {
-        this.table.billList = cacheFilters[0].list
+        this.table.list = cacheFilters[0].list
         this.table.pagination.total = cacheFilters[0].total
       } else {
         // 用于缓存已载入数据
@@ -389,20 +402,15 @@ export default {
         }
         // fetch api
         await this.$api.getUserProducts(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
-            let list = res.data.pageData;
+            let list = res ?.data ?.pageData || []
             // 添加key( 解决table组件渲染无key报错)
             list.forEach((item, index) => {
               item.key = index
             });
-            this.table.billList = list;
-            this.table.pagination.total = res.data.dataTotal
+            this.table.list = list;
+            this.table.pagination.total = res ?.data ?.dataTotal || 1
             // 已载入数据进行缓存
             cache.list = list
             cache.total = res.data.dataTotal
@@ -413,7 +421,7 @@ export default {
               title: "错误",
               content:
                 (<div>
-                  <p>获取用户列表失败</p>
+                  <p>获取商品列表失败</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })
@@ -427,7 +435,8 @@ export default {
       this.addForm.isLoading = true;
       // 接口参数
       let data
-      let err;
+      let err
+      let isSuccess = false
       // 表单数据添加到参数中
       this.addForm.form.validateFields((error, values) => {
         err = error;
@@ -437,7 +446,7 @@ export default {
           discountPrice: 0,
           productName: values.productName,
           pics: this.pics,
-          price: values.price,
+          price: values.price - 0,
           desc: values.desc
         };
       });
@@ -445,21 +454,17 @@ export default {
       if (!err) {
         // 请求接口
         await this.$api.createProduct(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1) {
-            this.$message.success("提交成功");
+            this.$message.success("提交成功")
+            isSuccess = true
           } else {
             let error = res.msg || res.message || "无反馈信息"
             this.$error({
               title: "错误",
               content:
                 (<div>
-                  <p>修改用户信息失败</p>
+                  <p>添加商品失败</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })
@@ -467,9 +472,10 @@ export default {
         });
         // 成功访问, 处理数据
         this.addForm.data = {};
-        this.addForm.isVisible = false;
+        this.addForm.isVisible = false
       }
-      this.addForm.isLoading = false;
+      this.addForm.isLoading = false
+      return isSuccess
     },
     // 初始数据
     async initData() {

@@ -10,6 +10,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   layout="inline"
                   @submit="onSearch">
@@ -56,6 +57,7 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `table -->
           <a-table class="table"
                    id="table"
                    :columns="table.columns"
@@ -67,6 +69,7 @@
                       slot-scope="text">
               <a-tooltip placement="bottomRight"
                          :title="text"
+                         overlayClassName="overlay"
                          :autoAdjustOverflow="true">
                 <p class="desc">
                   {{text.replace(/\\n/g,'')}}
@@ -94,6 +97,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="学校"
@@ -148,7 +152,7 @@
         </a-form-item>
         <a-form-item label="项目价格"
                      :wrapperCol="{span:12}">
-          <a-input type="number"
+          <a-input oninput="value=value.replace(/[^\d]/g,'')"
                    v-decorator="[
                     'price',
                     {
@@ -163,7 +167,7 @@
         </a-form-item>
         <a-form-item label="项目折扣格"
                      :wrapperCol="{span:12}">
-          <a-input type="number"
+          <a-input oninput="value=value.replace(/[^\d]/g,'')"
                    v-decorator="[
                     'discountPrice',
                     {
@@ -315,11 +319,11 @@ export default {
         data = {
           sendId: 1,
           type: 98,
-          price: values.price,
+          price: values.price - 0,
           orgNo: values.schoolCode,
           productName: values.productName,
           desc: values.desc,
-          discountPrice: values.discountPrice
+          discountPrice: values.discountPrice - 0
         };
       });
       // 表单校验
@@ -328,11 +332,6 @@ export default {
       } else {
         // 请求接口
         await this.$api.createBillProduct(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1) {
             this.$message.success("添加成功");
@@ -363,11 +362,6 @@ export default {
           orgNo: this.searchForm.schoolCode
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             this.table.billProductsList = res.data;
@@ -388,14 +382,9 @@ export default {
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
-          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || ""
           this.searchForm.schoolList = res.data;
         } else {
           this.searchForm.schoolList = [];
@@ -445,6 +434,23 @@ export default {
     }
   }
 }
+.overlay .ant-tooltip-inner {
+  overflow: auto;
+  height: 200px;
+}
+.overlay .ant-tooltip-inner::-webkit-scrollbar {
+  width: 4px;
+}
+.overlay .ant-tooltip-inner::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255);
+}
+.overlay .ant-tooltip-inner::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
 </style>
 
 <style lang="less" scoped>
@@ -463,5 +469,32 @@ export default {
   img {
     width: 100%;
   }
+}
+</style>
+
+<style scoped>
+.ant-carousel >>> .slick-dots {
+  height: auto;
+}
+.ant-carousel >>> .slick-slide img {
+  border: 5px solid #fff;
+  display: block;
+  margin: auto;
+  max-width: 80%;
+}
+.ant-carousel >>> .slick-thumb {
+  bottom: -45px;
+}
+.ant-carousel >>> .slick-thumb li {
+  width: 60px;
+  height: 45px;
+}
+.ant-carousel >>> .slick-thumb li img {
+  width: 100%;
+  height: 100%;
+  filter: grayscale(100%);
+}
+.ant-carousel >>> .slick-thumb li.slick-active img {
+  filter: grayscale(0%);
 }
 </style>

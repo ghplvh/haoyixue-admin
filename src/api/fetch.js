@@ -3,16 +3,22 @@ import {
 } from "./env";
 
 export default async ({
+  // 请求地址
   url = "",
+  // 参数
   data = {},
+  // "GET" "POST" ...
   type = "GET",
+  // "fetch" or "ajax"
   method = "fetch",
+  // 重写./env 文件中的baseurl, 此处写完整地址
   redirectUrl = "",
-  // contentType = "application/json",
   processData = true,
+  // 表单提交数据, 会覆盖原来的data
   formData = null
 }) => {
   type = type.toUpperCase();
+  // 如果有redirectUrl, 则覆盖url
   if (redirectUrl.length > 0) {
     url = redirectUrl + url
   } else {
@@ -21,6 +27,7 @@ export default async ({
   // 此处规定get请求的参数使用时放在data中，如同post请求
   if (type == "GET") {
     let dataStr = "";
+    // 将data参数用?&拼接
     Object.keys(data).forEach(key => {
       dataStr += key + "=" + data[key] + "&";
     });
@@ -58,18 +65,29 @@ export default async ({
     }
 
     try {
+      // 请求结果
       const response = await fetch(url, requestConfig);
+      // 请求成功
       if (response.ok) {
+        // json()
         const responseJson = await response.json();
         return responseJson;
       } else {
-        return false
+        //请求失败,抛出promise
+        return new Promise(resolve => {
+          resolve({
+            code: 966,
+            url,
+            status: response.status,
+            msg: "请求服务器异常"
+          })
+        })
       }
     } catch (error) {
       throw new Error(error);
     }
   } else {
-    // 对于不支持fetch的浏览器，便自动使用 ajax + promise
+    // 对于不支持fetch的浏览器，便自动使用 ajax + promise, 兼容代码
     return new Promise((resolve, reject) => {
       let requestObj;
       if (window.XMLHttpRequest) {

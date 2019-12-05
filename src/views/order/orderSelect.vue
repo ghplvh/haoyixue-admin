@@ -10,6 +10,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   layout="inline"
                   @submit="onSearch">
@@ -39,20 +40,17 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `user-table -->
           <a-table class="table"
-                   id="user-table"
                    :pagination="table.userPagination"
                    :columns="table.userColumns"
                    :dataSource="table.userList"
                    rowKey="key"
                    bordered
                    :loading="table.isUserLoading">
-            <template v-for="col in table.userColList"
-                      :slot="col">
-            </template>
           </a-table>
+          <!-- `orderTable -->
           <a-table class="table"
-                   id="order-table"
                    :pagination="table.orderPagination"
                    :columns="table.orderColumns"
                    :dataSource="table.orderList"
@@ -60,6 +58,10 @@
                    @change="onPageChange"
                    bordered
                    :loading="table.isOrderLoading">
+            <template slot="status"
+                      slot-scope="text,record">
+              {{record.status | transformStatus}}
+            </template>
           </a-table>
         </a-card>
       </keep-alive>
@@ -69,7 +71,7 @@
 
 <script>
 import PageLayout from "@/layouts/PageLayout";
-
+const statusList = [{ status: 1, label: "未支付" }, { status: 2, label: "已付款" }, { status: 3, label: "已发货" }, { status: 4, label: "已完成" }, { status: 5, label: "已取消" }, { status: 6, label: "已退款" },]
 export default {
   name: "QueryList",
   components: { PageLayout },
@@ -183,13 +185,15 @@ export default {
         orderList: [],
         userPagination: {
           total: 0,
+          pageSize: 10,
           current: 1,
           hideOnSinglePage: true
         },
         orderPagination: {
           total: 0,
           current: 1,
-          hideOnSinglePage: true
+          hideOnSinglePage: true,
+          pageSize: 10
         },
       }
     };
@@ -229,16 +233,11 @@ export default {
       this.table.userId = "";
       let data = { account: this.searchForm.account };
       await this.$api.findUser(data).then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
-        if (res.code === 1 && res.data) {
-          this.table.userId = res.data.userId
+        if (res.code === 1) {
+          this.table.userId = res ?.data ?.userId || null
           // 加上key, 解决table组件渲染无key报错
-          let list = [...res.data.usrChildren]
+          let list = [...(res ?.data ?.usrChildren || [])]
           let rList = []
           list.forEach((item, index) => {
             item.key = index
@@ -265,7 +264,7 @@ export default {
       this.table.orderList = [];
       // 接口参数
       let data = {
-        pageSize: 10,
+        pageSize: this.table.orderPagination.pageSize,
         pageNum: this.table.orderPagination.current,
         buyerId: this.table.userId
       }
@@ -282,11 +281,6 @@ export default {
         await this.$api
           .getUserOrders(data)
           .then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
               // 加上key, 解决table组件渲染无key报错
@@ -323,6 +317,18 @@ export default {
       }
     }
   },
+  filters: {
+    transformStatus(status) {
+      const list = statusList.filter(item => {
+        return item.status === status
+      })
+      if (list.length > 0) {
+        return list[0].label
+      } else {
+        return "状态0"
+      }
+    }
+  }
 };
 </script>
 <style lang="scss">

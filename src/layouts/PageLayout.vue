@@ -36,25 +36,47 @@ import PageHeader from "../components/page/PageHeader";
 export default {
   name: "PageLayout",
   components: { PageHeader },
-  props: ["desc", "logo", "title", "avatar", "linkList", "extraImage"],
-  data () {
+  // props: ["desc", "logo", "title", "avatar", "linkList", "extraImage"],
+  props: {
+    desc: {
+      type: String,
+      default: ""
+    },
+    logo: {
+      type: String
+    },
+    title: {
+      type: String,
+      default: ""
+    },
+    avatar: {
+      type: String
+    },
+    linkList: {
+      type: Array
+    },
+    extraImage: {
+      type: String,
+    }
+  },
+  data() {
     return {
       breadcrumb: []
     };
   },
   computed: {
-    layout () {
+    layout() {
       return this.$store.state.setting.layout;
     }
   },
-  mounted () {
+  mounted() {
     this.getBreadcrumb();
   },
-  updated () {
+  updated() {
     this.getBreadcrumb();
   },
   methods: {
-    getBreadcrumb () {
+    getBreadcrumb() {
       this.breadcrumb = this.$route.matched;
     }
   }

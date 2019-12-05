@@ -1,8 +1,5 @@
 <template>
-  <page-layout :desc="setting.desc"
-               :title="setting.title"
-               :linkList="setting.linkList"
-               id="news">
+  <page-layout id="news">
     <div slot="extra"
          class="extraImg">
       <img :src="setting.extraImage" />
@@ -14,6 +11,7 @@
                     @click="onAdd">
             新增Banner
           </a-button>
+          <!-- `table -->
           <a-table class="table"
                    :columns="table.columns"
                    :dataSource="table.bannerList"
@@ -34,7 +32,7 @@
               <img :src="record.pic_url.split(';')[0]"
                    class="table-pics"
                    @click="onTablePreview(record.pic_url)"
-                   alt="商品图片">
+                   alt="图裂了">
             </template>
           </a-table>
         </a-card>
@@ -48,6 +46,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="跳转链接">
@@ -132,9 +131,6 @@ export default {
     return {
       // 全局配置
       setting: {
-        title: "",
-        desc: "",
-        linkList: [],
         extraImage: ""
       },
       addForm: {
@@ -266,29 +262,37 @@ export default {
       formData.append('token', this.addForm.data.token)
       formData.append('file', file)
       await this.$api.imgUpload(formData).then(res => {
-        file.url = `http://user.duchengedu.com/${res.key}?attname=${file.name}`
-        file.status = "done"
-      })
-      this.addForm.fileList = [...this.addForm.fileList, file]
-    },
-    //api
-    async getUploadToken() {
-      this.$api.getUploadToken().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
-        if (res.code === 1 && res.data) {
-          this.addForm.data.token = res.data.token
+        if (res.code !== 966) {
+          file.url = `http://user.duchengedu.com/${res.key}?attname=${file.name}`
+          file.status = "done"
+          this.addForm.fileList = [...this.addForm.fileList, file]
         } else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
             title: "错误",
             content:
               (<div>
-                <p>获取缴费失败</p>
+                <p>上传图片失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
+        }
+      })
+    },
+    //api
+    async getUploadToken() {
+      this.$api.getUploadToken().then(res => {
+        // 成功访问, 处理数据
+        if (res.code === 1 && res.data) {
+          this.addForm.data.token = res ?.data ?.token || "" // optional chaining
+        } else {
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取token失败</p>
                 <p>错误提示: {error}</p>
               </div>)
           })
@@ -304,11 +308,6 @@ export default {
       await this.$api
         .getHomeBanner({})
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             this.table.bannerList = res.data;
@@ -318,7 +317,7 @@ export default {
               title: "错误",
               content:
                 (<div>
-                  <p>获取缴费产品列表出错</p>
+                  <p>获取banner出错</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })

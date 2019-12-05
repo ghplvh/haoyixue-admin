@@ -11,7 +11,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
-          <!-- #searchForm -->
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   layout="inline"
                   @submit="onSearch">
@@ -52,7 +52,7 @@
               </a-col>
             </a-row>
           </a-form>
-          <!-- #table -->
+          <!-- `table -->
           <a-table class="table"
                    :columns="table.columns"
                    :dataSource="table.list"
@@ -89,13 +89,12 @@
               <img :src="record.pics.split(',')[0]"
                    class="table-pics"
                    @click="onTablePreview(record.pics)"
-                   alt="图片丢了">
+                   alt="图裂了">
             </template>
           </a-table>
         </a-card>
       </keep-alive>
     </transition>
-    <!-- #addForm -->
     <a-modal class="add-modal"
              :visible="addForm.isVisible"
              title="新增作业"
@@ -104,6 +103,7 @@
              @cancel="cancelAdd"
              @ok="saveAdd"
              :okButtonProps="{ props: { loading: addForm.isLoading } }">
+      <!-- `addForm -->
       <a-form layout="vertical"
               :form="addForm.form">
         <a-form-item label="班级"
@@ -157,7 +157,7 @@
         </a-form-item>
       </a-form>
     </a-modal>
-    <!-- #addPreview -->
+    <!-- `addPreview -->
     <a-modal :visible="addForm.isPreviewVisible"
              :footer="null"
              :width="1080"
@@ -165,7 +165,7 @@
       <img alt="图裂了"
            :src="addForm.previewImage" />
     </a-modal>
-    <!-- #tablePreview -->
+    <!-- `tablePreview -->
     <a-modal :visible="table.isPreviewVisible"
              :footer="null"
              :width="1080"
@@ -246,7 +246,7 @@ export default {
         // 预览地址
         previewImage: ''
       },
-      // #table
+      // `table
       table: {
         // 项目列表
         list: [],
@@ -261,7 +261,8 @@ export default {
         // 分页依赖
         pagination: {
           current: 1,
-          total: 1
+          total: 1,
+          pageSize: 10
         },
         // table标题列表
         columns: [
@@ -336,7 +337,11 @@ export default {
     },
     // 添加.保存
     async saveAdd() {
-      await this.createHomework()
+      let isSuccess = await this.createHomework()
+      if (isSuccess) {
+        this.table.cacheLIst = []
+        this.table.pagination.current = 1
+      }
       this.getUserHomeworks()
     },
     // 添加.取消
@@ -392,7 +397,8 @@ export default {
       this.addForm.isLoading = true;
       // 接口参数
       let data
-      let err;
+      let err
+      let isSuccess = false
       // 表单数据添加到参数中
       this.addForm.form.validateFields((error, values) => {
         err = error;
@@ -408,21 +414,17 @@ export default {
       if (!err) {
         // 请求接口
         await this.$api.createHomework(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1) {
-            this.$message.success("提交成功");
+            this.$message.success("新增成功");
+            isSuccess = true
           } else {
             let error = res.msg || res.message || "无反馈信息"
             this.$error({
               title: "错误",
               content:
                 (<div>
-                  <p>修改用户信息失败</p>
+                  <p>新增作业失败</p>
                   <p>错误提示: {error}</p>
                 </div>)
             })
@@ -435,6 +437,7 @@ export default {
         this.table.cacheList = []
       }
       this.addForm.isLoading = false;
+      return isSuccess
     },
     //api
     async imgUpload(file) {
@@ -442,29 +445,37 @@ export default {
       formData.append('token', this.addForm.data.token)
       formData.append('file', file)
       await this.$api.imgUpload(formData).then(res => {
-        file.url = `http://user.duchengedu.com/${res.key}?attname=${file.name}`
-        file.status = "done"
-      })
-      this.addForm.fileList = [...this.addForm.fileList, file]
-    },
-    //api
-    async getUploadToken() {
-      this.$api.getUploadToken().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
-        if (res.code === 1 && res.data) {
-          this.addForm.data.token = res.data.token
+        if (res.code !== 966) {
+          file.url = `http://user.duchengedu.com/${res ?.key || ""}?attname=${file.name}`
+          file.status = "done"
+          this.addForm.fileList = [...this.addForm.fileList, file]
         } else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
             title: "错误",
             content:
               (<div>
-                <p>获取缴费失败</p>
+                <p>上传图片失败</p>
+                <p>错误提示: {error}</p>
+              </div>)
+          })
+        }
+      })
+    },
+    //api
+    async getUploadToken() {
+      this.$api.getUploadToken().then(res => {
+        // 成功访问, 处理数据
+        if (res.code === 1 && res.data) {
+          this.addForm.data.token = res.data ?.token || ""
+        } else {
+          let error = res.msg || res.message || "无反馈信息"
+          this.$error({
+            title: "错误",
+            content:
+              (<div>
+                <p>获取token失败</p>
                 <p>错误提示: {error}</p>
               </div>)
           })
@@ -479,14 +490,9 @@ export default {
           userId: this.$store.state.account.userInfo.userId
         }
       ).then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 0 && res.data) {
-          this.searchForm.className = res.data[0].className;
+          this.searchForm.className = res ?.data[0] ?.className || ""
           this.searchForm.classList = res.data;
         } else {
           this.searchForm.classList = [];
@@ -510,7 +516,7 @@ export default {
       this.table.list = [];
       // 接口参数
       let data = {
-        pageSize: 10,
+        pageSize: this.table.pagination.pageSize,
         pageNum: this.table.pagination.current,
         userId: this.$store.state.account.userInfo.userId,
         // 0.通用1.语文2.数学3.英语4.地理5.生物6.历史7.政治8.物理9.化学
@@ -543,20 +549,15 @@ export default {
           }
           // fetch api
           await this.$api.getUserHomeworks(data).then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
-              let list = res.data.pageData;
+              let list = res ?.data ?.pageData || []
               //添加key( 解决table组件渲染无key报错)
               list.forEach((item, index) => {
                 item.key = index
               });
               this.table.list = list
-              this.table.pagination.total = res.data.dataTotal
+              this.table.pagination.total = res.data ?.dataTotal || 1
               // 已载入数据进行缓存
               cache.list = list
               cache.total = res.data.dataTotal
@@ -567,7 +568,7 @@ export default {
                 title: "错误",
                 content:
                   (<div>
-                    <p>获取用户列表失败</p>
+                    <p>获取作业列表失败</p>
                     <p>错误提示: {error}</p>
                   </div>)
               })

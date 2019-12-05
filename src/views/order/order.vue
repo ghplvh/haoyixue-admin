@@ -10,6 +10,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   id="search-form"
                   layout="inline"
@@ -95,6 +96,7 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `table -->
           <a-table class="table"
                    id="table"
                    :columns="table.columns"
@@ -104,29 +106,11 @@
                    :pagination="table.pagination"
                    @change="onPageChange"
                    :loading="table.isLoading">
-            <template v-for="col in [
-                      'id',
-                      'billId',
-                      'orgNo',
-                      'orgName',
-                      'depart',
-                      'studentName',
-                      'contact',
-                      'orderNo',
-                      'payment',
-                      'createTime']"
-                      :slot="col"
-                      slot-scope="text, record">
-              <div :key="col">
-                <template v-if="col === 'payment'">
-                  <template v-if="record.payment === 1">
-                    已付款
-                  </template>
-                  <template v-else>
-                    未付款
-                  </template>
+            <template slot="payment">
+              <div>
+                <template>
+                  已付款
                 </template>
-                <template v-else>{{ text }}</template>
               </div>
             </template>
           </a-table>
@@ -179,7 +163,8 @@ export default {
         // 换页依赖
         pagination: {
           total: 0,
-          current: 1
+          current: 1,
+          pageSize: 10
         },
         // table表头
         columns: [
@@ -231,8 +216,8 @@ export default {
           },
           {
             title: "订单状态",
-            dataIndex: "",
-            scopedSlots: { customRender: "" },
+            dataIndex: "payment",
+            scopedSlots: { customRender: "payment" },
             align: "center"
           }
         ]
@@ -262,14 +247,9 @@ export default {
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
-          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || ""
           this.searchForm.schoolList = res.data;
         } else {
           this.searchForm.schoolList = [];
@@ -293,11 +273,6 @@ export default {
           orgNo: this.searchForm.schoolCode,
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             let list = [{ productName: "全部", id: "全部" }]
@@ -324,11 +299,6 @@ export default {
           schoolCode: this.searchForm.schoolCode
         })
         .then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             let list = [{ depart_name: "全部" }]
@@ -355,8 +325,8 @@ export default {
       this.table.productList = [];
       // 接口参数
       let data = {
-        pageSize: 10,
         pageNum: this.table.pagination.current,
+        pageSize: this.table.pagination.pageSize,
         orgNo: this.searchForm.schoolCode,
         status: 2
       }
@@ -392,15 +362,10 @@ export default {
           await this.$api
             .getOrders(data)
             .then(res => {
-              // 接口出错 返回res为false
-              if (!res) {
-                console.log("接口出错")
-                return
-              }
               // 成功访问, 处理数据
               if (res.code === 1 && res.data) {
                 // 加上key, 解决table组件渲染无key报错
-                let list = [...res.data.pageData]
+                let list = [...(res ?.data ?.pageData || [])]
                 list.forEach((item, index) => {
                   item.key = index
                 })

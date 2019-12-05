@@ -10,6 +10,7 @@
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
+          <!-- `searchForm -->
           <a-form :form="searchForm.form"
                   layout="inline"
                   @submit="onSearch">
@@ -39,7 +40,7 @@
                 </a-form-item>
               </a-col>
               <a-col>
-                <a-form-item label="项目状态">
+                <a-form-item label="角色">
                   <a-radio-group name="role"
                                  v-decorator="[
                       'role',
@@ -61,6 +62,7 @@
               <a-col>
                 <a-form-item label="账户">
                   <a-input @change="onAccountChange"
+                           oninput="value=value.replace(/[^\d]/g,'')"
                            v-decorator="['account', { initialValue: '' }]" />
                 </a-form-item>
               </a-col>
@@ -76,6 +78,7 @@
               </a-col>
             </a-row>
           </a-form>
+          <!-- `table -->
           <a-table class="table"
                    :pagination="table.pagination"
                    :columns="table.columns"
@@ -122,6 +125,7 @@
         </a-card>
       </keep-alive>
     </transition>
+    <!-- `editForm -->
     <a-modal class="change-modal"
              :visible="editForm.isVisible"
              title="更新缴费项目"
@@ -156,7 +160,7 @@
           </a-form-item>
         </a-col>
         <a-col>
-          <a-form-item label="项目状态">
+          <a-form-item label="角色">
             <a-radio-group name="role"
                            v-decorator="[
                       'role',
@@ -233,7 +237,18 @@ export default {
         // 修改按钮依赖数据
         data: {}
       },
+      // `table
       table: {
+        // 表格loading
+        isLoading: false,
+        // 用户列表
+        list: [],
+        cacheList: [],
+        pagination: {
+          total: 0,
+          current: 1,
+          pageSize: 10
+        },
         // table标题列表
         columns: [
           {
@@ -290,16 +305,7 @@ export default {
             scopedSlots: { customRender: "operation" },
             align: "center"
           }
-        ],
-        // 表格loading
-        isLoading: false,
-        // 用户列表
-        list: [],
-        cacheList: [],
-        pagination: {
-          total: 0,
-          current: 1
-        }
+        ]
       }
     };
   },
@@ -309,7 +315,7 @@ export default {
       e.preventDefault();
       this.searchForm.isLoading = true;
       this.table.pagination.current = 1
-      if (this.searchForm.account.length > 0) {
+      if (this.searchForm.account ?.length || -1 > 0) {
         await this.findUser();
       } else {
         await this.getUsers();
@@ -337,9 +343,12 @@ export default {
     },
     // 修改.保存
     async saveEdit() {
-      await this.updateUserInfo()
+      let isSuccess = await this.updateUserInfo()
+      if (isSuccess) {
+        this.table.cacheList = []
+        this.table.pagination.current = 1
+      }
       // 清空缓存, 否则会导致修改的信息不呈现
-      this.table.cacheList = []
       this.getUsers();
     },
     // 修改.取消
@@ -357,6 +366,7 @@ export default {
       // 接口参数
       let data;
       let err;
+      let isSuccess
       // 表单数据添加到参数中
       this.editForm.form.validateFields((error, values) => {
         err = error;
@@ -373,14 +383,10 @@ export default {
       } else {
         // 请求接口
         await this.$api.updateUserInfo(data).then(res => {
-          // 接口出错 返回res为false
-          if (!res) {
-            console.log("接口出错")
-            return
-          }
           // 成功访问, 处理数据
           if (res.code === 1) {
             this.$message.success("修改成功");
+            isSuccess = true
           } else {
             let error = res.msg || res.message || "无反馈信息"
             this.$error({
@@ -398,7 +404,7 @@ export default {
         this.editForm.isLoading = false;
         this.editForm.isVisible = false;
       }
-
+      return isSuccess
     },
     // api
     async getUsers() {
@@ -407,9 +413,10 @@ export default {
       this.table.list = [];
       // 接口参数
       let data = {
-        pageSize: 10,
+        pageSize: this.table.pagination.pageSize,
         pageNum: this.table.pagination.current
       }
+      let isSuccess = false
       let err
       this.searchForm.form.validateFields((error, values) => {
         err = error
@@ -436,24 +443,20 @@ export default {
           }
           // fetch api
           await this.$api.getUsers(data).then(res => {
-            // 接口出错 返回res为false
-            if (!res) {
-              console.log("接口出错")
-              return
-            }
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
-              let list = res.data.pageData;
+              isSuccess = true
+              let list = res ?.data ?.pageData || []
               // 去除chirldren(会渲染出多层表格), 添加key( 解决table组件渲染无key报错)
               list.forEach((item, index) => {
                 item.children && delete item.children;
                 item.key = index
               });
               this.table.list = list;
-              this.table.pagination.total = res.data.dataTotal
+              this.table.pagination.total = res ?.data ?.dataTotal || 1
               // 已载入数据进行缓存
               cache.list = list
-              cache.total = res.data.dataTotal
+              cache.total = res ?.data ?.dataTotal || 1
               this.table.cacheList.push(cache)
             } else {
               let error = res.msg || res.message || "无反馈信息"
@@ -471,6 +474,7 @@ export default {
       }
 
       this.table.isLoading = false;
+      return isSuccess
     },
     // api
     async findUser() {
@@ -479,16 +483,12 @@ export default {
       this.table.list = [];
       let data = { account: this.searchForm.account };
       await this.$api.findUser(data).then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
-        if (res.code === 1 && res.data) {
-          let result = res.data
-          result.children && delete result.children;
-          this.table.list.push(result);
+        if (res.code === 1) {
+          let result = res ?.data || null
+          result ?.children && delete result.children
+          result && this.table.list.push(result)
+          this.table.pagination.total = 1
         } else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
@@ -506,15 +506,10 @@ export default {
     // api
     async findSchoolList() {
       await this.$api.findSchoolList().then(res => {
-        // 接口出错 返回res为false
-        if (!res) {
-          console.log("接口出错")
-          return
-        }
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.searchForm.schoolList = res.data;
-          this.searchForm.schoolCode = res.data[0].schoolCode;
+          this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || ""
         } else {
           this.searchForm.schoolList = [];
           this.searchForm.schoolCode = "";
