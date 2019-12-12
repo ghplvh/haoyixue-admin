@@ -97,6 +97,12 @@ export const constantRouterMap = [{
         icon: "profile"
       },
       {
+        path: "/sync",
+        name: "同步数据",
+        component: () => import("@/views/sync/sync.vue"),
+        icon: "sync"
+      },
+      {
         path: "/attendance",
         name: "考勤",
         component: () => import("@/views/attendance/attendance.vue"),

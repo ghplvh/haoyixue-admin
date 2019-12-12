@@ -29,7 +29,7 @@
             </template>
             <template slot="pic_url"
                       slot-scope="text, record">
-              <img :src="record.pic_url.split(';')[0]"
+              <img :src="record.pic_url && record.pic_url.split(';')[0] || ''"
                    class="table-pics"
                    @click="onTablePreview(record.pic_url)"
                    alt="图裂了">
@@ -327,12 +327,14 @@ export default {
     },
     // 初始数据
     async initData() {
-      this.getUploadToken()
+      await this.getUploadToken()
       this.getHomeBanner()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+    await this.initData()
+    this.$npDone()
   }
 };
 </script>

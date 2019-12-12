@@ -71,7 +71,7 @@
 
 <script>
 import PageLayout from "@/layouts/PageLayout";
-const statusList = [{ status: 1, label: "未支付" }, { status: 2, label: "已付款" }, { status: 3, label: "已发货" }, { status: 4, label: "已完成" }, { status: 5, label: "已取消" }, { status: 6, label: "已退款" },]
+const statusList = [{ status: 0, label: "未支付" }, { status: 1, label: "未支付" }, { status: 2, label: "已付款" }, { status: 3, label: "已发货" }, { status: 4, label: "已完成" }, { status: 5, label: "已取消" }, { status: 6, label: "已退款" },]
 export default {
   name: "QueryList",
   components: { PageLayout },
@@ -100,14 +100,14 @@ export default {
         userColumns: [
           {
             title: "学校编号",
-            dataIndex: "org_no",
-            scopedSlots: { customRender: "org_no" },
+            dataIndex: "orgNo",
+            scopedSlots: { customRender: "orgNo" },
             align: "center"
           },
           {
             title: "班级编号",
-            dataIndex: "depart_name",
-            scopedSlots: { customRender: "depart_name" },
+            dataIndex: "departName",
+            scopedSlots: { customRender: "departName" },
             align: "center"
           },
           {
@@ -118,23 +118,16 @@ export default {
           },
           {
             title: "学生姓名",
-            dataIndex: "student_name",
-            scopedSlots: { customRender: "student_name" },
+            dataIndex: "studentName",
+            scopedSlots: { customRender: "studentName" },
             align: "center"
           },
           {
             title: "学号",
-            dataIndex: "work_no",
-            scopedSlots: { customRender: "work_no" },
+            dataIndex: "workNo",
+            scopedSlots: { customRender: "workNo" },
             align: "center"
           }
-        ],
-        userColList: [
-          "org_no",
-          "depart_name",
-          "identity",
-          "student_name",
-          "work_no"
         ],
         //订单表头
         orderColumns: [
@@ -267,6 +260,7 @@ export default {
         pageSize: this.table.orderPagination.pageSize,
         pageNum: this.table.orderPagination.current,
         buyerId: this.table.userId
+        // buyerid: this.table.userId
       }
       let err
       // 表单数据添加到参数中
@@ -284,17 +278,17 @@ export default {
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
               // 加上key, 解决table组件渲染无key报错
-              let list = [...res.data.pageData]
+              let list = [...res ?.data ?.pageData]
               let rList = []
               list.forEach((item, index) => {
                 let obj =
                 {
-                  productName: item.product.productName,
-                  orgNo: item.product.orgNo,
-                  orderNo: item.orderNo,
-                  price: item.product.price / 100,
-                  createTime: item.createTime,
-                  status: item.status,
+                  productName: item ?.product ?.productName || "",
+                  orgNo: item ?.product ?.orgNo || "",
+                  orderNo: item ?.orderNo || "",
+                  price: item ?.product ?.price / 100 || "",
+                  createTime: item ?.createTime || "",
+                  status: item ?.status || "",
                   key: index
                 }
                 rList = [...rList, obj]
@@ -325,7 +319,7 @@ export default {
       if (list.length > 0) {
         return list[0].label
       } else {
-        return "状态0"
+        return "未知状态"
       }
     }
   }

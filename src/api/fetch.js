@@ -71,6 +71,10 @@ export default async ({
       if (response.ok) {
         // json()
         const responseJson = await response.json();
+        let obj = {
+          url,
+          responseJson
+        }
         return responseJson;
       } else {
         //请求失败,抛出promise

@@ -3,30 +3,36 @@
     <div :class="['page-header-wide', layout]">
       <div class="breadcrumb">
         <a-breadcrumb>
-          <a-breadcrumb-item
-            :key="item.path"
-            v-for="(item, index) in breadcrumb"
-          >
-            <span v-if="index === 0"
-              ><a href="/">{{ item.name }}</a></span
-            >
+          <a-breadcrumb-item :key="item.path"
+                             v-for="(item, index) in breadcrumb">
+            <span v-if="index === 0"><a href="#">{{ item.name }}</a></span>
             <span v-else>{{ item.name }}</span>
           </a-breadcrumb-item>
         </a-breadcrumb>
       </div>
       <div class="detail">
-        <div v-if="avatar" class="avatar"><a-avatar :src="avatar" /></div>
+        <div v-if="avatar"
+             class="avatar">
+          <a-avatar :src="avatar" />
+        </div>
         <div class="main">
           <div class="row">
-            <img v-if="logo" :src="logo" class="logo" />
-            <h1 v-if="title" class="title">{{ title }}</h1>
-            <div class="action"><slot name="action"></slot></div>
+            <img v-if="logo"
+                 :src="logo"
+                 class="logo" />
+            <h1 v-if="title"
+                class="title">{{ title }}</h1>
+            <div class="action">
+              <slot name="action"></slot>
+            </div>
           </div>
           <div class="row">
-            <div v-if="this.$slots.content" class="content">
+            <div v-if="this.$slots.content"
+                 class="content">
               <slot name="content"></slot>
             </div>
-            <div v-if="this.$slots.extra" class="extra">
+            <div v-if="this.$slots.extra"
+                 class="extra">
               <slot name="extra"></slot>
             </div>
           </div>

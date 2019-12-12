@@ -1,5 +1,7 @@
 import fetch from "./fetch.js";
-
+import {
+  formatDate
+} from "../assets/js/common/formatDate"
 export const api = {
   // 1. /login
   loginV2: ({
@@ -33,16 +35,11 @@ export const api = {
       type: "POST"
     }),
   // 4. 获取某学校的缴费项目(商品) /home, /billProduct, /order
-  getBillProductsByOrg: ({
-      orgNo
-    }) =>
-    fetch({
-      url: "/app/product/getBillProductsByOrg",
-      data: {
-        orgNo
-      },
-      type: "POST"
-    }),
+  getBillProductsByOrg: data => fetch({
+    url: "/app/product/getBillProductsByOrg",
+    data,
+    type: "POST"
+  }),
   // 5. 更新某学校缴费"活动" /home
   updateBillConfig: ({
       id,
@@ -261,7 +258,7 @@ export const api = {
       pageNum
     }) =>
     fetch({
-      url: "/app/notification/getInform",
+      url: "/app/getUserNotifications",
       data: {
         clazz,
         pageSize,
@@ -340,7 +337,7 @@ export const api = {
         pageSize,
         pageNum
       },
-      type: "GET"
+      type: "POST"
     }),
   // 27. 图片上传 /mall
   imgUpload: data =>
@@ -357,7 +354,12 @@ export const api = {
   getUserNotifications: data => fetch({
     data,
     type: "POST",
-    redirectUrl: "https://duchengedu.com/ws-study/app/notification/getUserNotifications"
+    url: "/app/notification/getUserNotifications"
+    // redirectUrl: "https://duchengedu.com/ws-study/app/notification/getUserNotifications"
   }),
-
+  syncSchoolData: data => fetch({
+    url: `/syncStu/syncStuBySchoolCode?schoolCode=${data.schoolCode}`,
+    data: {},
+    type: "POST",
+  }),
 };

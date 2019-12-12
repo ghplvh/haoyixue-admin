@@ -425,8 +425,11 @@ export default {
       this.getBillsBy()
     },
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   }
 };
 </script>

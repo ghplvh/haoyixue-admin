@@ -1,0 +1,34 @@
+{
+"url":"https://duchengedu.com/ws-study/app/product/getBillProductsByOrg","responseJson":{
+"code":1,"msg":"success","data":[{
+"id":29,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"基础通讯功能包","desc":"1.进出校门智能考勤；\\n2.学校及生活服务消费充值；\\n3.家校互通收发通知作业成绩；\\n4.公共电话通讯首次开通赠送20元话费","pics":"http://product.duchengedu.com/%E5%95%86%E5%93%81001.jpg","pictures":["http://product.duchengedu.com/%E5%95%86%E5%93%81001.jpg"],"price":800,"discountPrice":800,"createTime":"2018-11-21 14:18:24","updateTime":"2018-11-21 14:18:24","orgNo":"00000768"}
+,{
+"id":30,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"学习空间站服务包","desc":"1.建立学生电子档案作业考试资料整理存档；\\n2.结合课堂作业考试通过数据分析每期综合评价报告","pics":"http://product.duchengedu.com/shang%E5%95%86%E5%93%812.png","pictures":["http://product.duchengedu.com/shang%E5%95%86%E5%93%812.png"],"price":3900,"discountPrice":3900,"createTime":"2018-11-21 14:18:29","updateTime":"2018-11-21 14:18:29","orgNo":"00000768"}
+,{
+"id":43,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"教辅材料服务功能包","desc":"1.结合老师教学计划和学生知识点掌握情况定制智能作业；\\n2.提供名校课外辅导材料","pics":"http://product.duchengedu.com/%E5%95%86%E5%93%81003.jpg","pictures":["http://product.duchengedu.com/%E5%95%86%E5%93%81003.jpg"],"price":2900,"discountPrice":2900,"createTime":"2018-11-21 14:18:33","updateTime":"2018-11-21 14:18:33","orgNo":"00000768"}
+,{
+"id":44,"senderId":0,"state":0,"saleSum":0,"type":98,"productName":"个性定制服务包","desc":"1.提供学校要求定制各类校服；学习用品等；\\n2.结合学校综合测评定制针对性学习、培训计划","pics":"http://product.duchengedu.com/%E5%95%86%E5%93%814.png","pictures":["http://product.duchengedu.com/%E5%95%86%E5%93%814.png"],"price":99999999,"discountPrice":99999999,"createTime":"2018-11-21 14:18:36","updateTime":"2018-11-21 14:18:36","orgNo":"00000768"}
+,{
+"id":45,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"基础通讯功能包<学期包>","desc":"1.进出校门智能考勤；\\n2.学校及生活服务消费充值；\\n3.家校互通收发通知作业成绩；\\n4.公共电话通讯首次开通赠送20元话费","pics":"http://product.duchengedu.com/%E5%95%86%E5%93%81b001.jpg","pictures":["http://product.duchengedu.com/%E5%95%86%E5%93%81b001.jpg"],"price":3500,"discountPrice":3500,"createTime":"2018-11-21 14:18:41","updateTime":"2018-11-21 14:18:41","orgNo":"00000768"}
+,{
+"id":46,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"多功能校园智能卡","desc":"多功能校园智能卡","pics":"http://product.duchengedu.com/xiaoyuanka.png","pictures":["http://product.duchengedu.com/xiaoyuanka.png"],"price":3000,"discountPrice":3000,"createTime":"2018-11-21 14:18:44","updateTime":"2018-11-21 14:18:44","orgNo":"00000768"}
+,{
+"id":47,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"基础通讯功能包<包年>","desc":"1.进出校门智能考勤；\\n2.学校及生活服务消费充值；\\n3.家校互通收发通知作业成绩；\\n4.公共电话通讯首次开通赠送20元话费","pics":"http://product.duchengedu.com/%E5%95%86%E5%93%81001.jpg","pictures":["http://product.duchengedu.com/%E5%95%86%E5%93%81001.jpg"],"price":7000,"discountPrice":7000,"createTime":"2018-11-21 14:18:47","updateTime":"2018-11-21 14:18:47","orgNo":"00000768"}
+,{
+"id":48,"senderId":0,"state":0,"saleSum":0,"type":0,"productName":"补交费用40","desc":"补交费用40元","pics":"http://product.duchengedu.com/bjfy.jpg","pictures":["http://product.duchengedu.com/bjfy.jpg"],"price":4000,"discountPrice":4000,"createTime":"2018-11-21 14:18:51","updateTime":"2018-11-21 14:18:51","orgNo":"00000768"}
+,{
+"id":50,"senderId":1,"state":0,"saleSum":0,"type":98,"productName":"w","desc":"w","pics":null,"pictures":null,"price":1,"discountPrice":1,"createTime":"2019-11-12 09:24:54","updateTime":null,"orgNo":"00000768"}
+,{
+"id":51,"senderId":1,"state":0,"saleSum":0,"type":98,"productName":"123","desc":"213","pics":null,"pictures":null,"price":213,"discountPrice":213,"createTime":"2019-11-19 16:43:42","updateTime":null,"orgNo":"00000768"}
+,{
+"id":52,"senderId":1,"state":0,"saleSum":0,"type":98,"productName":"q","desc":"q","pics":null,"pictures":null,"price":1,"discountPrice":1,"createTime":"2019-11-25 08:54:40","updateTime":null,"orgNo":"00000768"}
+,{
+"id":53,"senderId":1,"state":0,"saleSum":0,"type":98,"productName":"e","desc":"e","pics":null,"pictures":null,"price":1,"discountPrice":1,"createTime":"2019-11-25 14:45:09","updateTime":null,"orgNo":"00000768"}
+,{
+"id":54,"senderId":0,"state":0,"saleSum":0,"type":98,"productName":"测试","desc":"长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试长文字测试","pics":null,"pictures":null,"price":12,"discountPrice":12,"createTime":"2019-11-25 15:14:28","updateTime":null,"orgNo":"00000768"}
+,{
+"id":75,"senderId":0,"state":0,"saleSum":0,"type":98,"productName":"测试0011","desc":"哇呜呜呜呜呜呜呜呜呜","pics":null,"pictures":null,"price":12,"discountPrice":21,"createTime":"2019-12-05 16:44:59","updateTime":null,"orgNo":"00000768"}
+,{
+"id":76,"senderId":0,"state":0,"saleSum":0,"type":98,"productName":"测试````````````","desc":"测试````````````测试````````````测试````````````测试````````````","pics":null,"pictures":null,"price":21,"discountPrice":12,"createTime":"2019-12-06 14:10:24","updateTime":null,"orgNo":"00000768"}
+]}
+}

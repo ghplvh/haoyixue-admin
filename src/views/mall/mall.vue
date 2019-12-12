@@ -479,12 +479,15 @@ export default {
     },
     // 初始数据
     async initData() {
-      this.getUploadToken()
+      await this.getUploadToken()
       this.getUserProducts()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   },
   computed: {
     pics() {

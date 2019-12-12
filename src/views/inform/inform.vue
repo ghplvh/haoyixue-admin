@@ -335,7 +335,8 @@ export default {
       let data = {
         pageNum: this.table.pagination.current,
         pageSize: this.table.pagination.pageSize,
-        userId: this.$store.state.account.userInfo.userId
+        userId: this.$store.state.account.userInfo.userId,
+        type: 1 // 1:根据班级查询, 2:根据sendId查询, 3: clazz=null查询
       }
       let err
       this.searchForm.form.validateFields((error, values) => {
@@ -389,7 +390,6 @@ export default {
           });
         }
       }
-
       this.table.isLoading = false;
     },
     // 初始数据
@@ -398,8 +398,11 @@ export default {
       this.getUserNotifications()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   }
 
 };

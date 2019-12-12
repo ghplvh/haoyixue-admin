@@ -61,3 +61,30 @@ export function filterAsyncRouter(asyncRouterMap, roles) {
   });
   return accessedRouters;
 }
+
+// 对象的map函数, fn参数为(key, value)
+export const objMap = (obj, fn) => {
+  if (typeof fn !== "function") {
+    throw new TypeError(`${fn} is not a function !`);
+  }
+  return JSON.parse(JSON.stringify(obj, fn));
+}
+// 修改obj的key, obj 目标对象, map[Object] 映射对象
+export const formatObjKey = (obj, map) => {
+  const res = {}
+  let entries = Object.entries(map)
+  entries.forEach(item => {
+    res[item[1]] = obj[item[0]]
+  })
+  return res
+}
+
+// 修改obj的key, obj 目标对象, map[Object] 映射对象
+export const formatObjKeyByDel = (obj, map) => {
+  let entries = Object.entries(map)
+  entries.forEach(item => {
+    obj[item[1]] = obj[item[0]]
+    delete obj[item[0]]
+  })
+  return obj
+}

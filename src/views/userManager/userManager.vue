@@ -271,8 +271,8 @@ export default {
           },
           {
             title: "手机号码",
-            dataIndex: "account",
-            scopedSlots: { customRender: "account" },
+            dataIndex: "phone",
+            scopedSlots: { customRender: "phone" },
             align: "center"
           },
           {
@@ -530,8 +530,10 @@ export default {
       this.getUsers()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+    await this.initData()
+    this.$npDone()
   }
 };
 </script>

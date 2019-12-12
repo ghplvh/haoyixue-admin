@@ -526,12 +526,14 @@ export default {
     async getBillProductsByOrg() {
       // 加载前清空相关数据
       this.addForm.billProductsList = [];
+
       await this.$api
         .getBillProductsByOrg({
           orgNo: this.searchForm.schoolCode
         })
         .then(res => {
-          // 成功访问, 处理数据
+          // 成功访问, 处理数据]
+          console.log('resss', res)
           if (res.code === 1 && res.data) {
             this.addForm.billProductsList = res.data;
           } else {
@@ -576,8 +578,11 @@ export default {
       this.getBillProductsByOrg();
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   }
 
 };

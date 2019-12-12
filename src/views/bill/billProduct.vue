@@ -122,6 +122,7 @@
         </a-form-item>
         <a-form-item label="项目名称">
           <a-input autoFocus
+                   :maxLength="20"
                    v-decorator="[
                     'productName',
                     {
@@ -407,8 +408,11 @@ export default {
       this.getBillProductsByOrg()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   }
 };
 </script>

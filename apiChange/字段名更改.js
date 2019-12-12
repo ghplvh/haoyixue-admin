@@ -1,0 +1,60 @@
+t_product：获取商品的接口吧
+	product_name
+	sender_id
+	discount_price
+	create_time
+	update_time
+	sale_sum
+	org_no
+t_bill:
+	bill_id
+	org_no
+	org_name
+	student_name
+	order_no
+	create_time
+t_bill_config:
+	org_no
+	bill_name
+	bill_object
+	create_time
+	update_time
+t_clock:
+	user_id
+	user_name
+	group_id
+	clock_in
+	clock_in_address
+	clock_in_note
+	clock_out
+	clock_out_address
+	clock_out_note
+	create_time
+	am_or_pm
+t_clock_config:
+	org_no
+	school_id
+	clock_in_time
+	clock_out_time
+	create_time
+t_homework:
+	sender_id
+	org_no
+	class_id
+t_notification:
+	sender_id
+	org_no
+	create_time
+t_order:
+	order_no
+	buyer_id
+	seller_id
+	product_id
+	product_num
+	order_price
+	pay_channel
+	order_type
+	update_time
+	create_time
+	
+	

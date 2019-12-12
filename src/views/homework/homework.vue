@@ -268,9 +268,9 @@ export default {
         columns: [
           {
             title: "日期",
-            dataIndex: "create_time",
+            dataIndex: "createTime",
             width: 180,
-            scopedSlots: { customRender: "create_time" },
+            scopedSlots: { customRender: "createTime" },
             align: "center"
           },
           {
@@ -586,8 +586,11 @@ export default {
       this.getUserHomeworks()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   },
   computed: {
     pics() {

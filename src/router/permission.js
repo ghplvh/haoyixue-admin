@@ -18,16 +18,13 @@ const whiteList = [
 ];
 
 router.beforeEach((to, from, next) => {
-  // const shiroCookie = cookie.get("userInfo");
   if (store.state.account.userInfo && !store.state.account.userInfo.userId) {
-    // 刷新页面以后vuex数据丢失, 从seesionStorage获取用户信息
     store.commit("account/SET_USER");
   }
   const isLogin = store.state.account.isLogin;
   if (isLogin) {
     // 登录操作后，以及当刷新页面是store中的数据恢复到初始值，需要重新设置
     if (store.state.router.roles.length === 0) {
-      // const role = JSON.parse(sessionStorage.getItem("user")).role;
       const role = getUserInfo().role;
       let roles = [];
       roles = [...roles, role];

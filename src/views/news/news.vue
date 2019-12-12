@@ -43,11 +43,11 @@
                 </p>
               </a-tooltip>
             </template>
-            <template slot="image_url"
+            <template slot="imageUrl"
                       slot-scope="text, record">
-              <img :src="record.image_url.split(';')[0]"
+              <img :src="record.imageUrl && record.imageUrl.split(';')[0] || ''"
                    class="table-pics"
-                   @click="onTablePreview(record.image_url)"
+                   @click="onTablePreview(record.imageUrl)"
                    alt="图裂了">
             </template>
           </a-table>
@@ -202,7 +202,8 @@ export default {
         // 分页依赖
         pagination: {
           current: 1,
-          total: 1
+          total: 1,
+          pageSize: 4
         },
         // table标题列表
         columns: [
@@ -229,28 +230,28 @@ export default {
             title: "新闻图片",
             align: "center",
             width: 100,
-            dataIndex: "image_url",
-            scopedSlots: { customRender: "image_url" }
+            dataIndex: "imageUrl",
+            scopedSlots: { customRender: "imageUrl" }
           },
           {
             title: "创建时间",
             width: 180,
-            dataIndex: "create_time",
-            scopedSlots: { customRender: "create_time" },
+            dataIndex: "createTime",
+            scopedSlots: { customRender: "createTime" },
             align: "center"
           },
           {
             title: "阅读数",
-            dataIndex: "view_count",
-            scopedSlots: { customRender: "view_count" },
+            dataIndex: "viewCount",
+            scopedSlots: { customRender: "viewCount" },
             width: 80,
             align: "center"
           },
           {
             title: "收藏数",
             width: 80,
-            dataIndex: "collect_count",
-            scopedSlots: { customRender: "collect_count" },
+            dataIndex: "collectCount",
+            scopedSlots: { customRender: "collectCount" },
             align: "center"
           },
           {
@@ -373,7 +374,7 @@ export default {
       this.table.newsList = [];
       // 接口参数
       let data = {
-        pageSize: 10,
+        pageSize: this.table.pagination.pageSize,
         pageNum: this.table.pagination.current
       }
       // 表单校验成功则继续
@@ -421,12 +422,15 @@ export default {
     },
     // 初始数据
     async initData() {
-      this.getUploadToken()
+      await this.getUploadToken()
       this.getNews()
     }
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+
+    await this.initData()
+    this.$npDone()
   }
 };
 </script>

@@ -52,12 +52,14 @@
   - [view] /inform [api][✔][dom][✔][script][✔]
   - [view] /homework [api][✔][dom][✔][script][✔] 
   - [dev] 接口数据处理进行可选链（Optional Chaining）改写, 需配置babel.config.js 插件plugins: ["@babel/plugin-proposal-optional-chaining"]
+  - [dev] 添加路由跳转loading插件NProgress
 
 # commit -m
-
+- 2019-12-12 
+  - [api] api迁移, 全部接口调整
+  - [dev] 添加路由跳转loading插件NProgress
 
 - 2019-12-05 
-
   - [dev] 重写fecth接口400等异常处理, 抛出异常promise,code:966
   - [notify][✔]login 的userinfo现在暂存sessionStorage, 按需更改成cookie
   - [dev] 接口数据处理进行可选链（Optional Chaining）改写, 需配置babel.config.js 插件plugins: ["@babel/plugin-proposal-optional-chaining"]

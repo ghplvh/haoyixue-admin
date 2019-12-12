@@ -399,8 +399,10 @@ export default {
       this.getOrders()
     },
   },
-  mounted() {
-    this.initData()
+  async mounted() {
+    this.$npStart()
+    await this.initData()
+    this.$npDone()
   }
 };
 </script>
