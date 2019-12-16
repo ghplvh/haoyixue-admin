@@ -17,27 +17,28 @@
             <a-row type="flex"
                    align="middle">
               <a-col>
-                <a-form-item label="学校"
-                             v-if="searchForm.schoolList.length > 0">
-                  <a-select v-decorator="[
+                <a-spin :spinning="searchForm.isSchoolLoading">
+                  <a-form-item label="学校">
+                    <a-select v-decorator="[
                               'school',
                               {
                                 initialValue: searchForm.schoolCode,
                                 rules: [{ required: true, message: '请选择学校' }]
                               }
                             ]"
-                            @change="onSchoolChange"
-                            placeholder="请选择学校"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.schoolList"
-                                     :key="index"
-                                     :title="item.schoolName"
-                                     :value="item.schoolCode">
-                      {{ item.schoolName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              @change="onSchoolChange"
+                              placeholder="请选择学校"
+                              showArrow>
+                      <a-select-option style="width:100px;"
+                                       v-for="(item, index) in searchForm.schoolList"
+                                       :key="index"
+                                       :title="item.schoolName"
+                                       :value="item.schoolCode">
+                        {{ item.schoolName }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
@@ -212,7 +213,8 @@ export default {
         // 学校code
         schoolCode: "",
         // 查询按钮loading
-        isLoading: false
+        isLoading: false,
+        isSchoolLoading: false
       },
       addForm: {
         // 新增form依赖
@@ -336,16 +338,6 @@ export default {
           // 成功访问, 处理数据
           if (res.code === 1) {
             this.$message.success("添加成功");
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>创建缴费项目失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
         this.addForm.isLoading = false;
@@ -366,41 +358,21 @@ export default {
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             this.table.billProductsList = res.data;
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>获取缴费产品列表出错</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
       this.table.isLoading = false;
     },
     // api
     async findSchoolList() {
+      this.searchForm.isSchoolLoading = true
       await this.$api.findSchoolList().then(res => {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || ""
           this.searchForm.schoolList = res.data;
-        } else {
-          this.searchForm.schoolList = [];
-          this.searchForm.schoolCode = "";
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取学校列表出错</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
+      this.searchForm.isSchoolLoading = false
     },
     // 初始化数据
     async initData() {

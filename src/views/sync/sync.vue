@@ -9,6 +9,7 @@
         <a-card class="content">
           <a-list itemLayout="horizontal"
                   split
+                  :loading="list.isLoading"
                   :dataSource="list.data">
             <a-list-item slot="renderItem"
                          slot-scope="item">
@@ -128,16 +129,6 @@ export default {
           syncModal.interval = setInterval(() => {
             syncModal.count -= 1
           }, 1000)
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>同步失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
       sync.isLoading = false;
@@ -145,25 +136,15 @@ export default {
     },
     // api
     async findSchoolList() {
+      this.list.isLoading = true
       await this.$api.findSchoolList().then(res => {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.list.schoolCode = res ?.data[0] ?.schoolCode || "" 
           this.list.data = res.data;
-        } else {
-          this.list.data = [];
-          this.list.schoolCode = "";
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取学校列表失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
+      this.list.isLoading = false
     },
     // 初始数据
     async initData() {

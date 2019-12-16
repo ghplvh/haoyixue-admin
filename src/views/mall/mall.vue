@@ -345,16 +345,6 @@ export default {
           file.url = `http://user.duchengedu.com/${res ?.key}?attname=${file.name}`
           file.status = "done"
           this.addForm.fileList = [...this.addForm.fileList, file]
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>上传图片失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       })
     },
@@ -364,17 +354,7 @@ export default {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.addForm.data.token = res ?.data ?.token || ""
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取token失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
-        }
+        } 
       })
     },
     // api
@@ -415,17 +395,7 @@ export default {
             cache.list = list
             cache.total = res.data.dataTotal
             this.table.cacheList.push(cache)
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>获取商品列表失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
-          }
+          } 
         });
       }
       this.table.isLoading = false;
@@ -458,17 +428,7 @@ export default {
           if (res.code === 1) {
             this.$message.success("提交成功")
             isSuccess = true
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>添加商品失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
-          }
+          } 
         });
         // 成功访问, 处理数据
         this.addForm.data = {};

@@ -17,27 +17,28 @@
             <a-row type="flex"
                    align="middle">
               <a-col>
-                <a-form-item style="width:100%"
-                             label="学校">
-                  <a-select v-if="searchForm.schoolList.length > 0"
-                            v-decorator="[
+                <a-spin :spinning="searchForm.isSchoolLoading">
+                  <a-form-item style="width:100%"
+                               label="学校">
+                    <a-select v-decorator="[
                               'schoolCode',
                               {
                                 initialValue: searchForm.schoolCode,
                                 rules: [{ required: true }]
                               }
                             ]"
-                            placeholder="请选择学校"
-                            @change='onSchoolChange'
-                            showArrow>
-                    <a-select-option v-for="(item, index) in searchForm.schoolList"
-                                     :key="index"
-                                     :title="item.schoolName"
-                                     :value="item.schoolCode">
-                      {{ item.schoolName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              placeholder="请选择学校"
+                              @change='onSchoolChange'
+                              showArrow>
+                      <a-select-option v-for="(item, index) in searchForm.schoolList"
+                                       :key="index"
+                                       :title="item.schoolName"
+                                       :value="item.schoolCode">
+                        {{ item.schoolName }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col>
                 <a-form-item label="角色">
@@ -119,6 +120,9 @@
                 <span>
                   <a @click="() => onEdit(record.userId)">修改</a>
                 </span>
+                <span>
+                  <a @click="() => onBind(record)">绑定班级</a>
+                </span>
               </div>
             </template>
           </a-table>
@@ -139,8 +143,7 @@
         <a-col>
           <a-form-item :wrapperCol="{span:12}"
                        label="学校">
-            <a-select v-if="searchForm.schoolList.length > 0"
-                      v-decorator="[
+            <a-select v-decorator="[
                         'orgno',
                         {
                           initialValue: searchForm.schoolCode,
@@ -193,6 +196,72 @@
         </a-col>
       </a-form>
     </a-modal>
+    <!-- `bindForm -->
+    <a-modal :visible="bindForm.isVisible"
+             title="更新缴费项目"
+             okText="确定"
+             cancelText="取消"
+             @cancel="cancelEdit"
+             @ok="saveEdit"
+             :okButtonProps="{ props: { loading: bindForm.isLoading } }">
+      <a-form layout="vertical"
+              :form="bindForm.form">
+        <a-col>
+          <a-form-item :wrapperCol="{span:12}"
+                       label="学校">
+            <a-select v-decorator="[
+                        'orgno',
+                        {
+                          initialValue: searchForm.schoolCode,
+                          rules: [{ required: true }]
+                        }
+                      ]"
+                      placeholder="请选择学校"
+                      showArrow>
+              <a-select-option v-for="(item, index) in searchForm.schoolList"
+                               :key="index"
+                               :title="item.schoolName"
+                               :value="item.schoolCode">
+                {{ item.schoolName }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col>
+          <a-form-item label="角色">
+            <a-radio-group name="role"
+                           v-decorator="[
+                      'role',
+                      {
+                        rules: [
+                          {
+                            required: true
+                          }
+                        ],
+                        initialValue: bindForm.data.role
+                      }
+                    ]">
+              <a-radio :value="1">家长</a-radio>
+              <a-radio :value="2">老师</a-radio>
+              <a-radio :value="3">管理员</a-radio>
+            </a-radio-group>
+          </a-form-item>
+        </a-col>
+        <a-col>
+          <a-form-item label="手机号码"
+                       :wrapperCol="{span:12}">
+            <a-input oninput="value=value.replace(/[^\d]/g,'')"
+                     v-decorator="['phone', {
+                        rules: [
+                          {
+                            required: true,
+                            message: '请输入手机号码'
+                          },
+                        ], initialValue: bindForm.data.phone }]" />
+          </a-form-item>
+        </a-col>
+      </a-form>
+    </a-modal>
   </page-layout>
 </template>
 
@@ -223,12 +292,25 @@ export default {
         // 学校code
         schoolCode: "",
         // 查询账户
-        account: ""
+        account: "",
+        isSchoolLoading: false
       },
       editForm: {
         // 修改form依赖
         form: this.$form.createForm(this, {
           name: "changeForm"
+        }),
+        // 修改确定loading
+        isLoading: false,
+        // 是否显示修改form
+        isVisible: false,
+        // 修改按钮依赖数据
+        data: {}
+      },
+      bindForm: {
+        // 修改form依赖
+        form: this.$form.createForm(this, {
+          name: "bindFrom"
         }),
         // 修改确定loading
         isLoading: false,
@@ -351,6 +433,8 @@ export default {
       // 清空缓存, 否则会导致修改的信息不呈现
       this.getUsers();
     },
+    onBind(id) {
+    },
     // 修改.取消
     cancelEdit() {
       this.editForm.data = {};
@@ -387,16 +471,6 @@ export default {
           if (res.code === 1) {
             this.$message.success("修改成功");
             isSuccess = true
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>修改用户信息失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
         // 成功访问, 处理数据
@@ -458,16 +532,6 @@ export default {
               cache.list = list
               cache.total = res ?.data ?.dataTotal || 1
               this.table.cacheList.push(cache)
-            } else {
-              let error = res.msg || res.message || "无反馈信息"
-              this.$error({
-                title: "错误",
-                content:
-                  (<div>
-                    <p>获取用户列表失败</p>
-                    <p>错误提示: {error}</p>
-                  </div>)
-              })
             }
           });
         }
@@ -489,41 +553,54 @@ export default {
           result ?.children && delete result.children
           result && this.table.list.push(result)
           this.table.pagination.total = 1
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>查询用户失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
       this.table.isLoading = false;
     },
     // api
     async findSchoolList() {
+      this.searchForm.isSchoolLoading = true
       await this.$api.findSchoolList().then(res => {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.searchForm.schoolList = res.data;
           this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || ""
-        } else {
-          this.searchForm.schoolList = [];
-          this.searchForm.schoolCode = "";
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取学校列表列表失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
+      this.searchForm.isSchoolLoading = false
+    },
+    // api
+    async getTeacherClazzList(id) {
+      this.bindForm.isSchoolLoading = true
+      const data = {
+        userId: id
+      }
+      await this.$api.getTeacherClazzList(data).then(res => {
+        // 成功访问, 处理数据
+        if (res.code === 1 && res.data) {
+          this.bindForm.schoolList = res.data;
+          this.bindForm.schoolCode = res ?.data[0] ?.schoolCode || ""
+        }
+      });
+      this.bindForm.isSchoolLoading = false
+    },
+    // api
+    async getSchoolDeparts() {
+      this.bindForm.isDepartLoading = true
+      await this.$api
+        .getSchoolDeparts({
+          schoolCode: this.bindForm.schoolCode
+        })
+        .then(res => {
+          // 成功访问, 处理数据
+          if (res.code === 1 && res.data) {
+            let list = [{ depart_name: "全部" }]
+            list = [...list, ...res.data]
+            this.bindForm.departmentList = list;
+          }
+        });
+      this.bindForm.isDepartLoading = false
+      this.bindForm.form.setFieldsValue({ depart_name: "全部" })
     },
     async initData() {
       await this.findSchoolList()

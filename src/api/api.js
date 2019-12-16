@@ -341,12 +341,14 @@ export const api = {
     fetch({
       formData: data,
       type: "POST",
-      redirectUrl: "https://upload.qiniup.com"
+      redirectUrl: "https://upload.qiniup.com",
+      onFail: () => {}
     }),
   getClassByUserId: data => fetch({
+    url: "/forLeave/getClassByUserId",
     data,
     type: "POST",
-    redirectUrl: "https://duchengedu.com/wechatHyx/forLeave/getClassByUserId"
+    // redirectUrl: "https://duchengedu.com/wechatHyx/forLeave/getClassByUserId"
   }),
   getUserNotifications: data => fetch({
     data,

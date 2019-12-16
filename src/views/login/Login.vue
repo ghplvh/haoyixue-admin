@@ -127,7 +127,7 @@ export default {
   },
   methods: {
     onSubmit(e) {
-      // e.preventDefault();
+      e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
           this.logging = true;
@@ -138,9 +138,9 @@ export default {
             })
             .then(res => {
               this.logging = false;
-              const result = res.data;
               if (res.code === 1) {
-                // 权限小于1 则直接拒绝访问
+                const result = res ?.data
+              // 权限小于1 则直接拒绝访问
                 if (result.role <= 1) {
                   this.$router.push("/exception/403");
                 } else {
@@ -159,21 +159,8 @@ export default {
                   this.$store.commit("account/SET_USER");
                   this.$router.push("/");
                 }
-              } else {
-                this.error = res.msg;
-                let error = res.msg || res.message || "无反馈信息"
-                this.$error({
-                  title: "错误",
-                  content:
-                    (<div>
-                      <p>登录失败</p>
-                      <p>错误提示: {error}</p>
-                    </div>)
-                })
               }
             });
-        } else {
-          console.log("登录出错", err);
         }
       });
     },

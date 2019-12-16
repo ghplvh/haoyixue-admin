@@ -1,4 +1,7 @@
 import fetch from "./fetch.js";
+import {
+  Modal
+} from "ant-design-vue"
 export const api = {
   // 1. /login
   loginV2: ({
@@ -10,6 +13,12 @@ export const api = {
       data: {
         account,
         password
+      },
+      onFail: function (res) {
+        Modal.error({
+          title: '登录失败',
+          content: res.message || res.msg
+        })
       },
       method: "POST"
     }),
@@ -334,12 +343,15 @@ export const api = {
       baseUrl: "https://upload.qiniup.com",
       header: {
         "Content-Type": "multipart/form-data"
-      }
+      },
+      onFail: () => {}
     }),
   getClassByUserId: data => fetch({
     data,
+    code: 0,
     method: "POST",
-    baseUrl: "https://duchengedu.com/wechatHyx/forLeave/getClassByUserId"
+    // baseUrl: "https://duchengedu.com/wechatHyx/forLeave/getClassByUserId",
+    url: "/forLeave/getClassByUserId"
   }),
   getUserNotifications: data => fetch({
     data,
@@ -350,5 +362,6 @@ export const api = {
     url: `/syncStu/syncStuBySchoolCode?schoolCode=${data.schoolCode}`,
     data: {},
     method: "POST",
+    code: 0
   }),
 };

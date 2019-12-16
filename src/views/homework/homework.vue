@@ -18,21 +18,22 @@
             <a-row type="flex"
                    align="middle">
               <a-col>
-                <a-form-item label="班级"
-                             v-if="searchForm.classList.length > 0">
-                  <a-select v-decorator="['clazz',{initialValue: searchForm.className,
+                <a-spin :spinning="searchForm.isClassLoading">
+                  <a-form-item label="班级">
+                    <a-select v-decorator="['clazz',{initialValue: searchForm.className,
                               rules: [{ required: true, message: '请选择班级' }]}]"
-                            placeholder="请选择班级"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.classList"
-                                     :key="index"
-                                     :title="item.className"
-                                     :value="item.className">
-                      {{ item.className }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              placeholder="请选择班级"
+                              showArrow>
+                      <a-select-option style="width:100px;"
+                                       v-for="(item, index) in searchForm.classList"
+                                       :key="index"
+                                       :title="item.className"
+                                       :value="item.className">
+                        {{ item.className }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
@@ -221,7 +222,8 @@ export default {
         // 学校code
         className: "",
         // 查询按钮loading
-        isLoading: false
+        isLoading: false,
+        isClassLoading: false
       },
       // #addForm
       addForm: {
@@ -418,16 +420,6 @@ export default {
           if (res.code === 1) {
             this.$message.success("新增成功");
             isSuccess = true
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>新增作业失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
         // 成功访问, 处理数据
@@ -450,16 +442,6 @@ export default {
           file.url = `http://user.duchengedu.com/${res ?.key || ""}?attname=${file.name}`
           file.status = "done"
           this.addForm.fileList = [...this.addForm.fileList, file]
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>上传图片失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       })
     },
@@ -469,21 +451,12 @@ export default {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.addForm.data.token = res.data ?.token || ""
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取token失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       })
     },
     // api
     async getClassByUserId() {
+      this.searchForm.isClassLoading = true
       await this.$api.getClassByUserId(
         {
           type: 1,
@@ -494,20 +467,9 @@ export default {
         if (res.code === 0 && res.data) {
           this.searchForm.className = res ?.data[0] ?.className || ""
           this.searchForm.classList = res.data;
-        } else {
-          this.searchForm.classList = [];
-          this.searchForm.className = "";
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取学校列表失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
+      this.searchForm.isClassLoading = false
     },
     // api
     async getUserHomeworks() {
@@ -562,16 +524,6 @@ export default {
               cache.list = list
               cache.total = res.data.dataTotal
               this.table.cacheList.push(cache)
-            } else {
-              let error = res.msg || res.message || "无反馈信息"
-              this.$error({
-                title: "错误",
-                content:
-                  (<div>
-                    <p>获取作业列表失败</p>
-                    <p>错误提示: {error}</p>
-                  </div>)
-              })
             }
           });
         }

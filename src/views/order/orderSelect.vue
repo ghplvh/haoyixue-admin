@@ -236,17 +236,7 @@ export default {
             item.key = index
           })
           this.table.userList = list
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取用户失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
-        }
+        } 
       });
       this.table.isUserLoading = false;
     },
@@ -295,16 +285,6 @@ export default {
               })
               this.table.orderList = rList
               this.table.orderPagination.total = res.data.dataTotal
-            } else {
-              let error = res.msg || res.message || "无反馈信息"
-              this.$error({
-                title: "错误",
-                content:
-                  (<div>
-                    <p>获取用户订单列表失败</p>
-                    <p>错误提示: {error}</p>
-                  </div>)
-              })
             }
           });
         this.table.isOrderLoading = false;

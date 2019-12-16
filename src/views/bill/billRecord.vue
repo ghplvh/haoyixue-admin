@@ -18,71 +18,74 @@
             <a-row type="flex"
                    align="middle">
               <a-col>
-                <a-form-item label="学校"
-                             v-if="searchForm.schoolList.length > 0">
-                  <a-select v-decorator="[
+                <a-spin :spinning="searchForm.isSchoolLoading">
+                  <a-form-item label="学校">
+                    <a-select v-decorator="[
                               'schoolCode',
                               {
                                 initialValue: searchForm.schoolCode,
                                 rules: [{ required: true, message: '请选择学校' }]
                               }
                             ]"
-                            @change="onSchoolChange"
-                            placeholder="请选择学校"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.schoolList"
-                                     :key="index"
-                                     :title="item.schoolName"
-                                     :value="item.schoolCode">
-                      {{ item.schoolName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              @change="onSchoolChange"
+                              placeholder="请选择学校"
+                              showArrow>
+                      <a-select-option style="width:100px;"
+                                       v-for="(item, index) in searchForm.schoolList"
+                                       :key="index"
+                                       :title="item.schoolName"
+                                       :value="item.schoolCode">
+                        {{ item.schoolName }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col>
-                <a-form-item label="项目"
-                             v-if="searchForm.billList.length > 0">
-                  <a-select v-decorator="[
+                <a-spin :spinning="searchForm.isBillLoading">
+                  <a-form-item label="项目">
+                    <a-select v-decorator="[
                               'billId',
                               {
                                 initialValue: '全部',
                                 rules: [{ required: true, message: '请选择项目' }]
                               }
                             ]"
-                            placeholder="请选择项目"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.billList"
-                                     :key="index"
-                                     :title="item.billName"
-                                     :value="item.id">
-                      {{ item.billName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              placeholder="请选择项目"
+                              showArrow>
+                      <a-select-option style="width:100px;"
+                                       v-for="(item, index) in searchForm.billList"
+                                       :key="index"
+                                       :title="item.billName"
+                                       :value="item.id">
+                        {{ item.billName }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col>
-                <a-form-item label="部门"
-                             v-if="searchForm.departmentList.length > 0">
-                  <a-select v-decorator="[
+                <a-spin :spinning="searchForm.isDepartLoading">
+                  <a-form-item label="部门">
+                    <a-select v-decorator="[
                               'depart_name',
                               {
                                 initialValue: '全部',
                                 rules: [{ required: true, message: '请选择部门' }]
                               }
                             ]"
-                            placeholder="请选择部门"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.departmentList"
-                                     :key="index"
-                                     :title="item.depart_name"
-                                     :value="item.depart_name">
-                      {{ item.depart_name }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              placeholder="请选择部门"
+                              showArrow>
+                      <a-select-option style="width:100px;"
+                                       v-for="(item, index) in searchForm.departmentList"
+                                       :key="index"
+                                       :title="item.depart_name"
+                                       :value="item.depart_name">
+                        {{ item.depart_name }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
@@ -168,7 +171,10 @@ export default {
         // 部门列表
         departmentList: [],
         // 查询按钮loading
-        isLoading: false
+        isLoading: false,
+        isSchoolLoading: false,
+        isDepartLoading: false,
+        isBillLoading: false
       },
       table: {
         // 项目列表
@@ -277,28 +283,19 @@ export default {
     },
     // api
     async findSchoolList() {
+      this.searchForm.isSchoolLoading = true
       await this.$api.findSchoolList().then(res => {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.searchForm.schoolCode = res ?.data[0] ?.schoolCode || "" // optional chaining
           this.searchForm.schoolList = res.data;
-        } else {
-          this.searchForm.schoolList = [];
-          this.searchForm.schoolCode = "";
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取学校列表出错</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
+      this.searchForm.isSchoolLoading = false
     },
     // api
     async getBillConfigBy() {
+      this.searchForm.isBillLoading = true
       await this.$api
         .getBillConfigBy({
           orgNo: this.searchForm.schoolCode,
@@ -310,22 +307,14 @@ export default {
             let list = [{ billName: "全部", id: "全部" }]
             list = [...list, ...res.data]
             this.searchForm.billList = list;
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>获取缴费信息失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
+      this.searchForm.isBillLoading = false
       this.searchForm.form.setFieldsValue({ billId: "全部" })
     },
     // api
     async getSchoolDeparts() {
+      this.searchForm.isDepartLoading = true
       await this.$api
         .getSchoolDeparts({
           schoolCode: this.searchForm.schoolCode
@@ -336,18 +325,9 @@ export default {
             let list = [{ depart_name: "全部" }]
             list = [...list, ...res.data]
             this.searchForm.departmentList = list;
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>获取部门失败</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
+      this.searchForm.isDepartLoading = false
       this.searchForm.form.setFieldsValue({ depart_name: "全部" })
     },
     // api
@@ -401,16 +381,6 @@ export default {
                 cache.list = res.data.pageData
                 cache.total = res.data.dataTotal
                 this.table.cacheList.push(cache)
-              } else {
-                let error = res.msg || res.message || "无反馈信息"
-                this.$error({
-                  title: "错误",
-                  content:
-                    (<div>
-                      <p>获取缴费列表失败</p>
-                      <p>错误提示: {error}</p>
-                    </div>)
-                })
               }
             });
         }

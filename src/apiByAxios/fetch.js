@@ -3,6 +3,18 @@ import {
 } from "./config.js";
 import axios from 'axios'
 
+import {
+  notification
+} from 'ant-design-vue'
+
+// 服务器报错提示款, 可以根据框架修改此函数, msg为抛出信息
+function message(msg) {
+  notification.open({
+    message: "服务器请求异常",
+    description: "提示:" + msg
+  })
+}
+
 async function axiosFetch(config) {
   let result
   await axios(config).then(res => {
@@ -29,7 +41,7 @@ export default async ({
   maxContentLength = 10000,
   responseType = "json",
   validateStatus = (status) => {
-    return status >= 200 && status < 499; // 默认的
+    return status >= 200 && status < 9999; // 默认的
   },
   onUploadProgress = () => {},
   onDownloadProgress = () => {},
@@ -40,7 +52,9 @@ export default async ({
   headers = {},
   code = 1,
   onSuccess = function (res) {},
-  onFail = function (res) {},
+  onFail = function (res) {
+    message(res.message || res.msg)
+  },
 }) => {
   let _baseUrl = baseUrl || defaultBaseUrl
   // 如果有redirectUrl, 则覆盖url
@@ -106,6 +120,7 @@ export default async ({
     cancelToken,
     onSuccess,
     onFail,
+    code,
     // 下面为未启用属性, 如要用, 请拿出来
     fasjfaslkjflaskjfaslkjflkasjflask: {
 
@@ -165,39 +180,33 @@ export default async ({
     }
 
   }
+  return await axiosFetch(requestConfig)
 
-  try {
-    // 请求结果
-    // const response = await fetch(url, requestConfig);
-    return await axiosFetch(requestConfig)
-    // 请求成功
-    // if (response.ok) {
-    //   // json()
-    //   const responseJson = await response.json();
-    //   let obj = {
-    //     url,
-    //     responseJson
-    //   }
-    //   return responseJson;
-    // } else {
-    //   //请求失败,抛出promise
-    //   return new Promise(resolve => {
-    //     resolve({
-    //       code: 966,
-    //       url,
-    //       status: response.status,
-    //       msg: "请求服务器异常"
-    //     })
-    //   })
-    // }
-  } catch (error) {
-    // throw new Error(error);
-    return new Promise(resolve => {
-      resolve({
-        code: 966,
-        url,
-        msg: error.toJSON().message
-      })
-    })
-  }
+  // try {
+  // 请求结果
+  // const response = await fetch(url, requestConfig);
+  // return await axiosFetch(requestConfig)
+  // 请求成功
+  // if (response.ok) {
+  //   // json()
+  //   const responseJson = await response.json();
+  //   let obj = {
+  //     url,
+  //     responseJson
+  //   }
+  //   return responseJson;
+  // } else {
+  //   //请求失败,抛出promise
+  //   return new Promise(resolve => {
+  //     resolve({
+  //       code: 966,
+  //       url,
+  //       status: response.status,
+  //       msg: "请求服务器异常"
+  //     })
+  //   })
+  // }
+  // } catch (error) {
+  //   message('访问的服务器出现内部错误500')
+  // }
 };

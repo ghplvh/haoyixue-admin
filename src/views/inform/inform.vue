@@ -17,27 +17,28 @@
             <a-row type="flex"
                    align="middle">
               <a-col>
-                <a-form-item label="班级"
-                             v-if="searchForm.classList.length > 0">
-                  <a-select v-decorator="[
+                <a-spin :spinning="searchForm.isClassLoading">
+                  <a-form-item label="班级">
+                    <a-select v-decorator="[
                               'clazz',
                               {
                                 initialValue: searchForm.className,
                                 rules: [{ required: true, message: '请选择班级' }]
                               }
                             ]"
-                            @change="onClassChange"
-                            placeholder="请选择班级"
-                            showArrow>
-                    <a-select-option style="width:100px;"
-                                     v-for="(item, index) in searchForm.classList"
-                                     :key="index"
-                                     :title="item.className"
-                                     :value="item.className">
-                      {{ item.className }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
+                              @change="onClassChange"
+                              placeholder="请选择班级"
+                              showArrow>
+                      <a-select-option style="width:100px;"
+                                       v-for="(item, index) in searchForm.classList"
+                                       :key="index"
+                                       :title="item.className"
+                                       :value="item.className">
+                        {{ item.className }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-spin>
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
@@ -182,7 +183,8 @@ export default {
         // 学校code
         className: "",
         // 查询按钮loading
-        isLoading: false
+        isLoading: false,
+        isClassLoading: false
       },
       addForm: {
         // 新增form依赖
@@ -300,6 +302,7 @@ export default {
     },
     // api
     async getClassByUserId() {
+      this.searchForm.isClassLoading = true
       await this.$api.getClassByUserId(
         {
           type: 1,
@@ -310,20 +313,9 @@ export default {
         if (res.code === 0 && res.data) {
           this.searchForm.className = res ?.data[0] ?.className || ""
           this.searchForm.classList = res.data;
-        } else {
-          this.searchForm.classList = [];
-          this.searchForm.className = "";
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取学校列表失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       });
+      this.searchForm.isClassLoading = false
     },
     // api
     async getUserNotifications() {
@@ -375,16 +367,6 @@ export default {
               cache.list = list
               cache.total = res.data.dataTotal
               this.table.cacheList.push(cache)
-            } else {
-              let error = res.msg || res.message || "无反馈信息"
-              this.$error({
-                title: "错误",
-                content:
-                  (<div>
-                    <p>获取通知列表失败</p>
-                    <p>错误提示: {error}</p>
-                  </div>)
-              })
             }
           });
         }

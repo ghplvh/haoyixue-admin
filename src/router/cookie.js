@@ -6,8 +6,7 @@ let getUserInfo
 let setUserInfo
 let removeUserInfo
 
-if (process.env.NODE_ENV == "development") {
-  console.log("production")
+if (process.env.NODE_ENV == "production") {
   getUserInfo = () => {
     let user = Cookies.get(userInfo)
     if (user) user = JSON.parse(user)
@@ -24,8 +23,7 @@ if (process.env.NODE_ENV == "development") {
     return Cookies.remove(userInfo)
   }
 
-} else if (process.env.NODE_ENV == "production") {
-  console.log("dev", sessionStorage)
+} else if (process.env.NODE_ENV == "development") {
   getUserInfo = () => {
     if (!userInfo) return;
     return JSON.parse(sessionStorage.getItem(userInfo));

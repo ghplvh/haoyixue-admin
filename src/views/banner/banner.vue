@@ -268,17 +268,6 @@ export default {
           file.status = "done"
           this.addForm.fileList = [...this.addForm.fileList, file]
         }
-        else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>上传图片失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
-        }
       })
     },
     //api
@@ -287,16 +276,6 @@ export default {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.addForm.data.token = res ?.data ?.token || "" // optional chaining
-        } else {
-          let error = res.msg || res.message || "无反馈信息"
-          this.$error({
-            title: "错误",
-            content:
-              (<div>
-                <p>获取token失败</p>
-                <p>错误提示: {error}</p>
-              </div>)
-          })
         }
       })
     },
@@ -312,16 +291,6 @@ export default {
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
             this.table.bannerList = res.data;
-          } else {
-            let error = res.msg || res.message || "无反馈信息"
-            this.$error({
-              title: "错误",
-              content:
-                (<div>
-                  <p>获取banner出错</p>
-                  <p>错误提示: {error}</p>
-                </div>)
-            })
           }
         });
       this.table.isLoading = false;
