@@ -13,12 +13,12 @@ let imgBaseUrl = "";
 
 if (process.env.NODE_ENV == "development") {
   imgBaseUrl = "";
-  // baseUrl = "https://duchengedu.com/ws-study";
-  baseUrl = "http://192.168.0.162:9666"; //小象的接口
+  baseUrl = "https://duchengedu.com/ws-study";
+  // baseUrl = "http://192.168.0.162:9666"; //小象的接口
   // baseUrl = "http://192.168.0.176:9666"; //进哥的接口
 } else if (process.env.NODE_ENV == "production") {
-  // baseUrl = "https://duchengedu.com/ws-study";
-  baseUrl = "http://192.168.0.162:9666"; //小象的接口
+  baseUrl = "https://duchengedu.com/ws-study";
+  // baseUrl = "http://192.168.0.162:9666"; //小象的接口
   // baseUrl = "http://192.168.0.176:9666"; //进哥的接口
 }
 

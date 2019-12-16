@@ -190,6 +190,7 @@
         </a-form-item>
         <a-form-item label="缴费项目名称">
           <a-input autoFocus
+                   oninput="value=value.substr(0,20)"
                    v-decorator="[
               'billName',
               {
@@ -411,23 +412,26 @@ export default {
     },
     // api
     async updateBillConfig() {
-      this.editForm.isLoading = true;
+      const { editForm } = this
+      editForm.isLoading = true;
       // 接口参数
       let data;
       let err;
       // 表单数据添加到参数中
-      this.editForm.form.validateFields((error, values) => {
+      editForm.form.validateFields((error, values) => {
         err = error;
+        const { blilName, status, description } = values
+        const { id } = editForm.data
         data = {
-          id: this.editForm.data.id,
-          billName: values.billName,
-          status: values.status,
-          description: values.description
+          id,
+          billName,
+          status,
+          description
         }
       })
       // 表单校验
       if (err) {
-        this.editForm.isLoading = false;
+        editForm.isLoading = false;
       } else {
         // 请求接口
         await this.$api.updateBillConfig(data).then(res => {
@@ -446,9 +450,9 @@ export default {
             })
           }
         });
-        this.editForm.data = {};
-        this.editForm.isLoading = false;
-        this.editForm.isVisible = false;
+        editForm.data = {};
+        editForm.isLoading = false;
+        editForm.isVisible = false;
       }
     },
     // api
@@ -533,7 +537,6 @@ export default {
         })
         .then(res => {
           // 成功访问, 处理数据]
-          console.log('resss', res)
           if (res.code === 1 && res.data) {
             this.addForm.billProductsList = res.data;
           } else {
@@ -578,12 +581,105 @@ export default {
       this.getBillProductsByOrg();
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
-
     await this.initData()
     this.$npDone()
-  }
+  },
+  mounted() {
+    // const deepClone = (obj, hash = new WeakMap()) => {
+    //   // 防止循环引用
+    //   if (hash.has(obj)) return (hash.get(obj));
+
+    //   if (Object.prototype.toString.call(obj) === "[object Object]") {
+    //     return Object.fromEntries(Object.entries(obj).map(
+    //       ([k, v]) => ([k, deepClone(v)])
+    //     ))
+    //   }
+    //   if (Object.prototype.toString.call(obj) === "[object Array]") {
+    //     return obj.map(i => (deepClone(i)))
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object Boolean]") {
+    //     return new Boolean(obj.valueOf())
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object Number]") {
+    //     return new Number(obj.valueOf())
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object String]") {
+    //     return new String(obj.valueOf())
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object RegExp]") {
+    //     return new RegExp(obj.valueOf())
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object Null]") {
+    //     return null
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object Undefined]") {
+    //     return undefined
+    //   }
+
+    //   if (Object.prototype.toString.call(obj) === "[object Undefined]") {
+    //     return undefined
+    //   }
+
+
+
+    // else if (Object.prototype.toString.call(obj) !== "[object Object]")
+    //   return obj.map(deepClone);
+    // return Object.fromEntries(Object.entries(obj).map(
+    //   ([k, v]) => ([k, deepClone(v)])
+    // ));
+    // }
+
+    //   const typeOf = i => {
+    //   return Object.prototype.toString.call(i)
+    // }
+    //   const obj1 = { a: 1, b: 2, c: 3 }
+    //   const nul = null
+    //   const arr = []
+    //   const obj = {}
+    //   const und = undefined
+    //   const num = 0
+    //   const str = '123'
+    //   const bool = true
+    //   const fal = false
+    //   const reg = /a/
+    //   const func = function (a) { return a }
+    //   const err = new Error()
+    //   const date = new Date()
+    //   console.log('obj1', typeOf(obj1))
+    //   console.log('nul', typeOf(nul))
+    //   console.log('arr', typeOf(arr))
+    //   console.log('obj', typeOf(obj))
+    //   console.log('und', typeOf(und))
+    //   console.log('num', typeOf(num))
+    //   console.log('str', typeOf(str))
+    //   console.log('bool', typeOf(bool))
+    //   console.log('fal', typeOf(fal))
+    //   console.log('reg', typeOf(reg))
+    //   console.log('func', typeOf(func))
+    //   console.log('err', typeOf(err))
+    //   console.log('date', typeOf(date))
+
+    var obj = {
+      a: function () {
+        return 1
+      },
+      b: Symbol('b')
+    }
+    let b = obj.a
+    console.log('b1', b)
+    console.log('obj1', obj)
+    delete obj.a
+    console.log('obj', obj)
+    console.log("b2", b)
+  },
 
 };
 </script>

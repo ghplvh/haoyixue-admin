@@ -393,13 +393,14 @@ export default {
     },
     // 初始化数据
     async initData() {
+      this.table.isLoading = true
       await this.findSchoolList()
-      await this.getBillProductsByOrg()
-      await this.getSchoolDeparts()
+      this.getSchoolDeparts()
+      this.getBillProductsByOrg()
       this.getOrders()
     },
   },
-  async mounted() {
+  async created() {
     this.$npStart()
     await this.initData()
     this.$npDone()

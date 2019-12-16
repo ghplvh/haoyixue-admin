@@ -67,6 +67,7 @@ export default async ({
     try {
       // 请求结果
       const response = await fetch(url, requestConfig);
+      console.log('response', response)
       // 请求成功
       if (response.ok) {
         // json()
@@ -78,6 +79,7 @@ export default async ({
         return responseJson;
       } else {
         //请求失败,抛出promise
+
         return new Promise(resolve => {
           resolve({
             code: 966,

@@ -270,7 +270,6 @@ export default {
     // 查询
     async onSearch(e) {
       e.preventDefault();
-      console.log('onSearch')
       this.searchForm.isLoading = true;
       await this.getUserNotifications();
       this.searchForm.isLoading = false;
@@ -398,7 +397,7 @@ export default {
       this.getUserNotifications()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
 
     await this.initData()

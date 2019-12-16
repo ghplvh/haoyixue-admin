@@ -483,7 +483,7 @@ export default {
       this.getUserProducts()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
 
     await this.initData()

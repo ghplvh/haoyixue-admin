@@ -267,7 +267,8 @@ export default {
           file.url = `http://user.duchengedu.com/${res.key}?attname=${file.name}`
           file.status = "done"
           this.addForm.fileList = [...this.addForm.fileList, file]
-        } else {
+        }
+        else {
           let error = res.msg || res.message || "无反馈信息"
           this.$error({
             title: "错误",
@@ -331,7 +332,7 @@ export default {
       this.getHomeBanner()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
     await this.initData()
     this.$npDone()

@@ -1,3 +1,4 @@
+
 # 资源
 - 账号:
 
@@ -61,7 +62,7 @@
 
 - 2019-12-05 
   - [dev] 重写fecth接口400等异常处理, 抛出异常promise,code:966
-  - [notify][✔]login 的userinfo现在暂存sessionStorage, 按需更改成cookie
+  - [notify][✔] login 的userinfo现在暂存sessionStorage, 按需更改成cookie
   - [dev] 接口数据处理进行可选链（Optional Chaining）改写, 需配置babel.config.js 插件plugins: ["@babel/plugin-proposal-optional-chaining"]
   - [dev] 上线准备, 业务外问题处理完毕
   

@@ -419,15 +419,15 @@ export default {
     },
     // 初始化数据
     async initData() {
+      this.table.isLoading = true
       await this.findSchoolList()
       await this.getBillConfigBy()
       await this.getSchoolDeparts()
       this.getBillsBy()
     },
   },
-  async mounted() {
+  async created() {
     this.$npStart()
-
     await this.initData()
     this.$npDone()
   }

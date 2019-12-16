@@ -170,7 +170,7 @@ export default {
       await this.findSchoolList()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
     await this.initData()
     this.$npDone()

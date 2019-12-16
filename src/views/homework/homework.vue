@@ -586,7 +586,7 @@ export default {
       this.getUserHomeworks()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
 
     await this.initData()

@@ -14,14 +14,14 @@
         <a-form class="login-form"
                 @submit="onSubmit"
                 :form="form">
-          <a-alert type="error"
+          <!-- <a-alert type="error"
                    :closable="true"
                    v-if="error"
                    :message="error"
                    @close="closeAlert"
                    showIcon
-                   style="margin-bottom: 24px;" />
-          <a-form-item>
+                   style="margin-bottom: 24px;" /> -->
+          <!-- <a-form-item label="1">
             <a-input v-decorator="[
                 'account',
                 {
@@ -39,8 +39,8 @@
               <a-icon slot="prefix"
                       type="user" />
             </a-input>
-          </a-form-item>
-          <a-form-item>
+          </a-form-item> -->
+          <!-- <a-form-item label="2">
             <a-input v-decorator="[
                 'password',
                 {
@@ -48,7 +48,6 @@
                     {
                       required: true,
                       message: '请输入密码',
-                      whitespace: true
                     }
                   ]
                 }
@@ -59,11 +58,30 @@
               <a-icon slot="prefix"
                       type="lock" />
             </a-input>
+          </a-form-item> -->
+
+          <a-form-item>
+            <a-input type="account"
+                     size="large"
+                     placeholder="请输入密码"
+                     v-decorator="['account',{rules: [{required: true,message: '请输入账户名',whitespace: true}]}]">
+              <a-icon slot="prefix"
+                      type="user" />
+            </a-input>
           </a-form-item>
-          <div>
+          <a-form-item>
+            <a-input type="password"
+                     size="large"
+                     placeholder="请输入密码"
+                     v-decorator="['password',{rules: [{required: true,message: '请输入密码',whitespce:true}]}]">
+              <a-icon slot="prefix"
+                      type="lock" />
+            </a-input>
+          </a-form-item>
+          <!-- <div>
             <a-checkbox :checked="true">自动登录</a-checkbox>
             <a style="float: right">忘记密码</a>
-          </div>
+          </div> -->
           <a-form-item>
             <a-button :loading="logging"
                       style="width: 100%;margin-top: 24px"
@@ -109,7 +127,7 @@ export default {
   },
   methods: {
     onSubmit(e) {
-      e.preventDefault();
+      // e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
           this.logging = true;

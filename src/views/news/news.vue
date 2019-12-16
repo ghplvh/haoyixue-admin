@@ -426,7 +426,7 @@ export default {
       this.getNews()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
 
     await this.initData()

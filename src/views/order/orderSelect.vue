@@ -60,7 +60,7 @@
                    :loading="table.isOrderLoading">
             <template slot="status"
                       slot-scope="text,record">
-              {{record.status | transformStatus}}
+              {{record.status | transformStatus(record.status)}}
             </template>
           </a-table>
         </a-card>
@@ -288,7 +288,7 @@ export default {
                   orderNo: item ?.orderNo || "",
                   price: item ?.product ?.price / 100 || "",
                   createTime: item ?.createTime || "",
-                  status: item ?.status || "",
+                  status: item ?.status || 0,
                   key: index
                 }
                 rList = [...rList, obj]
@@ -319,7 +319,7 @@ export default {
       if (list.length > 0) {
         return list[0].label
       } else {
-        return "未知状态"
+        return "未支付"
       }
     }
   }

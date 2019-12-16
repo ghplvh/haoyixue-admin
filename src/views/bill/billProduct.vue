@@ -408,7 +408,7 @@ export default {
       this.getBillProductsByOrg()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
 
     await this.initData()

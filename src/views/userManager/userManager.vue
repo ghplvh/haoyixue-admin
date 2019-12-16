@@ -136,13 +136,12 @@
              :okButtonProps="{ props: { loading: editForm.isLoading } }">
       <a-form layout="vertical"
               :form="editForm.form">
-
         <a-col>
           <a-form-item :wrapperCol="{span:12}"
                        label="学校">
             <a-select v-if="searchForm.schoolList.length > 0"
                       v-decorator="[
-                        'orgNo',
+                        'orgno',
                         {
                           initialValue: searchForm.schoolCode,
                           rules: [{ required: true }]
@@ -182,7 +181,8 @@
         <a-col>
           <a-form-item label="手机号码"
                        :wrapperCol="{span:12}">
-            <a-input v-decorator="['phone', {
+            <a-input oninput="value=value.replace(/[^\d]/g,'')"
+                     v-decorator="['phone', {
                         rules: [
                           {
                             required: true,
@@ -265,8 +265,8 @@ export default {
           },
           {
             title: "学校编码",
-            dataIndex: "orgNo",
-            scopedSlots: { customRender: "orgNo" },
+            dataIndex: "orgno",
+            scopedSlots: { customRender: "orgno" },
             align: "center"
           },
           {
@@ -374,7 +374,7 @@ export default {
           userId: this.editForm.data.userId,
           phone: values.phone,
           role: values.role,
-          orgNo: values.orgNo
+          orgno: values.orgno
         };
       });
       // 表单校验
@@ -420,7 +420,7 @@ export default {
       let err
       this.searchForm.form.validateFields((error, values) => {
         err = error
-        data.orgNo = values.schoolCode;
+        data.orgno = values.schoolCode;
         data.role = values.role;
       });
       // 表单校验成功则继续
@@ -429,7 +429,7 @@ export default {
         const cacheFilters = this.table.cacheList.filter(item => {
           return item.pageNum === data.pageNum
             && item.role === data.role
-            && item.orgNo === data.orgNo
+            && item.orgno === data.orgno
         })
         if (cacheFilters.length > 0) {
           this.table.list = cacheFilters[0].list
@@ -439,7 +439,7 @@ export default {
           let cache = {
             pageNum: data.pageNum,
             role: data.role,
-            orgNo: data.orgNo
+            orgno: data.orgno
           }
           // fetch api
           await this.$api.getUsers(data).then(res => {
@@ -530,7 +530,7 @@ export default {
       this.getUsers()
     }
   },
-  async mounted() {
+  async created() {
     this.$npStart()
     await this.initData()
     this.$npDone()

@@ -88,3 +88,53 @@ export const formatObjKeyByDel = (obj, map) => {
   })
   return obj
 }
+// target中的属性与值全部在obj中存在且相等
+export const isInclude = ({
+  target,
+  obj
+}) => {
+  let entries = Object.entries(target)
+  return entries.every(item => {
+    return item[1] === obj[item[0]]
+  })
+}
+
+// const obj1 = { a: 1, b: 2, c: 3 }
+// const nul = null
+// const arr = []
+// const obj = {}
+// const und = undefined
+// const num = 0
+// const str = '123'
+// const bool = true
+// const fal = false
+// const reg = /a/
+// const func = function (a) { return a }
+// const err = new Error()
+// console.log('obj1', typeOf(obj1))
+// console.log('nul', typeOf(nul))
+// console.log('arr', typeOf(arr))
+// console.log('obj', typeOf(obj))
+// console.log('und', typeOf(und))
+// console.log('num', typeOf(num))
+// console.log('str', typeOf(str))
+// console.log('bool', typeOf(bool))
+// console.log('fal', typeOf(fal))
+// console.log('reg', typeOf(reg))
+// console.log('func', typeOf(func))
+// console.log('err', typeOf(err))
+// 
+export const typeOf = i => {
+  return Object.prototype.toString.call(i)
+}
+
+// deepClone
+export const deepClone = (obj) => {
+  if (typeof obj !== "object")
+    return obj;
+  else if (Array.isArray(obj))
+    return obj.map(deepClone);
+  return Object.fromEntries(Object.entries(obj).map(
+    ([k, v]) => ([k, deepClone(v)])
+  ));
+}

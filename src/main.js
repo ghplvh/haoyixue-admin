@@ -4,9 +4,13 @@ import router from "./router";
 import store from "./store";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
+// import {
+//   api
+// } from "./api/api.js"
 import {
   api
-} from "./api/api.js";
+} from "./apiByAxios/api.js"
+
 import "./router/permission";
 import {
   formatObjKey

@@ -1,7 +1,4 @@
 import fetch from "./fetch.js";
-import {
-  formatDate
-} from "../assets/js/common/formatDate"
 export const api = {
   // 1. /login
   loginV2: ({
