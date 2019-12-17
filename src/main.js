@@ -6,11 +6,10 @@ import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 // import {
 //   api
-// } from "./api/api.js"
+// } from "./apiByAxios/api.js"
 import {
   api
-} from "./apiByAxios/api.js"
-
+} from './apiDesign/api'
 import "./router/permission";
 import {
   formatObjKey
