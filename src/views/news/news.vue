@@ -67,6 +67,7 @@
               :form="addForm.form">
         <a-form-item label="新闻标题">
           <a-input autoFocus
+                   oninput="value=value.substr(0,20)"
                    v-decorator="[
                     'newsTitle',
                     {

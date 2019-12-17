@@ -160,20 +160,10 @@ export const api = {
       method: "POST"
     }),
   // 13. 获取用户  /userManager
-  getUsers: ({
-      pageSize,
-      orgNo,
-      pageNum,
-      role
-    }) =>
+  getUsers: (data) =>
     fetch({
       url: "/app/user/getUsers",
-      data: {
-        pageSize,
-        orgNo,
-        pageNum,
-        role
-      },
+      data,
       method: "POST"
     }),
   // 14. 更新用户信息  /userManager
@@ -205,16 +195,10 @@ export const api = {
       method: "POST"
     }),
   // 16. 给账号绑定班级  /userManager
-  addClassRelationV3: ({
-      userId,
-      classList
-    }) =>
+  addClassRelationV3: data =>
     fetch({
       url: "/app/user/addClassRelationV3",
-      data: {
-        userId,
-        classList
-      },
+      data,
       method: "POST"
     }),
   // 17. 删除账号绑定班级  /userManager

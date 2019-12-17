@@ -66,6 +66,7 @@
               :form="addForm.form">
         <a-form-item label="商品名称">
           <a-input autoFocus
+                   oninput="value=value.substr(0,20)"
                    v-decorator="[
                     'productName',
                     {
@@ -354,7 +355,7 @@ export default {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
           this.addForm.data.token = res ?.data ?.token || ""
-        } 
+        }
       })
     },
     // api
@@ -395,7 +396,7 @@ export default {
             cache.list = list
             cache.total = res.data.dataTotal
             this.table.cacheList.push(cache)
-          } 
+          }
         });
       }
       this.table.isLoading = false;
@@ -428,7 +429,7 @@ export default {
           if (res.code === 1) {
             this.$message.success("提交成功")
             isSuccess = true
-          } 
+          }
         });
         // 成功访问, 处理数据
         this.addForm.data = {};

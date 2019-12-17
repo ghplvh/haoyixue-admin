@@ -120,7 +120,7 @@
                 <span>
                   <a @click="() => onEdit(record.userId)">修改</a>
                 </span>
-                <span>
+                <span style="margin-left:12px;">
                   <a @click="() => onBind(record)">绑定班级</a>
                 </span>
               </div>
@@ -132,7 +132,7 @@
     <!-- `editForm -->
     <a-modal class="change-modal"
              :visible="editForm.isVisible"
-             title="更新缴费项目"
+             title="修改用户信息"
              okText="确定"
              cancelText="取消"
              @cancel="cancelEdit"
@@ -198,68 +198,38 @@
     </a-modal>
     <!-- `bindForm -->
     <a-modal :visible="bindForm.isVisible"
-             title="更新缴费项目"
+             title="修改班级信息"
              okText="确定"
              cancelText="取消"
-             @cancel="cancelEdit"
-             @ok="saveEdit"
+             @cancel="bindForm.isVisible = false"
+             @ok="saveBind"
              :okButtonProps="{ props: { loading: bindForm.isLoading } }">
+      <a-card hoverable
+              style="width: 100%">
+        <a-card-meta :title="bindForm.data.nickName || '###'">
+          <a-avatar slot="avatar"
+                    :src="bindForm.data.headPic" />
+          <template slot="description">
+            <h4><span style="font-weight:800;margin-right:8px;">学校名称:</span> {{bindForm.data.orgName || "#####"}}</h4>
+            <h4><span style="font-weight:800;margin-right:8px;">手机号码:</span> {{bindForm.data.phone|| "################"}}</h4>
+            <h4><span style="font-weight:800;margin-right:8px;">角色:</span> {{bindForm.data.roleName||"###"}}</h4>
+          </template>
+        </a-card-meta>
+      </a-card>
       <a-form layout="vertical"
+              style="margin-top:20px;"
               :form="bindForm.form">
-        <a-col>
-          <a-form-item :wrapperCol="{span:12}"
-                       label="学校">
-            <a-select v-decorator="[
-                        'orgno',
-                        {
-                          initialValue: searchForm.schoolCode,
-                          rules: [{ required: true }]
-                        }
-                      ]"
-                      placeholder="请选择学校"
-                      showArrow>
-              <a-select-option v-for="(item, index) in searchForm.schoolList"
-                               :key="index"
-                               :title="item.schoolName"
-                               :value="item.schoolCode">
-                {{ item.schoolName }}
-              </a-select-option>
-            </a-select>
-          </a-form-item>
-        </a-col>
-        <a-col>
-          <a-form-item label="角色">
-            <a-radio-group name="role"
-                           v-decorator="[
-                      'role',
-                      {
-                        rules: [
-                          {
-                            required: true
-                          }
-                        ],
-                        initialValue: bindForm.data.role
-                      }
-                    ]">
-              <a-radio :value="1">家长</a-radio>
-              <a-radio :value="2">老师</a-radio>
-              <a-radio :value="3">管理员</a-radio>
-            </a-radio-group>
-          </a-form-item>
-        </a-col>
-        <a-col>
-          <a-form-item label="手机号码"
-                       :wrapperCol="{span:12}">
-            <a-input oninput="value=value.replace(/[^\d]/g,'')"
-                     v-decorator="['phone', {
-                        rules: [
-                          {
-                            required: true,
-                            message: '请输入手机号码'
-                          },
-                        ], initialValue: bindForm.data.phone }]" />
-          </a-form-item>
-        </a-col>
+        <a-form-item label="班级:"
+                     style="width: 100%">
+          <a-checkbox-group v-decorator="['clazz',{initialValue: bindForm.clazzList}]"
+                            class="overlay">
+            <a-checkbox :value="item.depart_name"
+                        v-for="(item, index) in bindForm.departmentList"
+                        :key="index">
+              {{item.depart_name}}
+            </a-checkbox>
+          </a-checkbox-group>
+        </a-form-item>
       </a-form>
     </a-modal>
   </page-layout>
@@ -267,6 +237,15 @@
 
 <script>
 import PageLayout from "@/layouts/PageLayout";
+const roleMap = ["家长", "老师", "管理员"]
+// 数组差集a-b
+function difference(a, b) {
+  if (!(a instanceof Array) || !(b instanceof Array)) {
+    console.error('参数不是数组！')
+    return false
+  }
+  return a.filter(function (v) { return b.indexOf(v) === -1 })
+}
 
 export default {
   name: "QueryList",
@@ -308,16 +287,17 @@ export default {
         data: {}
       },
       bindForm: {
-        // 修改form依赖
+        // form依赖
         form: this.$form.createForm(this, {
           name: "bindFrom"
         }),
-        // 修改确定loading
         isLoading: false,
-        // 是否显示修改form
+        // 是否显示form
         isVisible: false,
-        // 修改按钮依赖数据
-        data: {}
+        // 按钮依赖数据
+        data: {},
+        departmentList: [],
+        clazzList: []
       },
       // `table
       table: {
@@ -402,6 +382,7 @@ export default {
       } else {
         await this.getUsers();
       }
+      this.getSchoolDeparts()
       this.searchForm.isLoading = false;
     },
     // 学校改变 
@@ -433,16 +414,58 @@ export default {
       // 清空缓存, 否则会导致修改的信息不呈现
       this.getUsers();
     },
-    onBind(id) {
-    },
     // 修改.取消
     cancelEdit() {
       this.editForm.data = {};
       this.editForm.isVisible = false;
     },
+    onBind(record) {
+      record.orgName = this.searchForm.schoolList.filter(item => {
+        return item.schoolCode === record.orgno
+      })[0].schoolName
+      record.roleName = roleMap[record.role - 1]
+      this.bindForm.data = record
+      this.getTeacherClazzList()
+      this.bindForm.isVisible = true
+    },
+    async saveBind() {
+      this.bindForm.isLoading = true
+      await this.updateClazzList()
+      this.bindForm.isLoading = false
+    },
     onPageChange(pagination) {
       this.table.pagination.current = pagination.current
       this.getUsers()
+    },
+    // api
+    async updateClazzList() {
+      const beforeList = this.bindForm.clazzList
+      let afterList = []
+      this.bindForm.form.validateFields((err, value) => {
+        afterList = value.clazz
+      })
+      // 计算删除的班级
+      const deleteList = difference(beforeList, afterList)
+      // 计算新增的班级
+      const addList = difference(afterList, beforeList)
+      await this.$api.addClassRelationV3({
+        userId: this.bindForm.data.userId,
+        classList: addList
+      }).then(res => {
+        // 成功访问, 处理数据
+      });
+      await this.$api.deleteClassRelationV2({
+        userId: this.bindForm.data.userId,
+        classList: deleteList
+      }).then(res => {
+        // 成功访问, 处理数据
+        if (res.code === 1) {
+          this.$message.success("修改成功");
+          this.bindForm.isVisible = false;
+          this.table.cacheList = []
+          this.getUsers()
+        }
+      });
     },
     // api
     async updateUserInfo() {
@@ -552,6 +575,9 @@ export default {
           let result = res ?.data || null
           result ?.children && delete result.children
           result && this.table.list.push(result)
+          this.searchForm.schoolCode = result.orgno
+          // this.searchForm.form.setFieldsValue({ schoolCode: this.searchForm.schoolCode })
+          this.searchForm.form.resetFields(['schoolCode'])
           this.table.pagination.total = 1
         }
       });
@@ -570,41 +596,40 @@ export default {
       this.searchForm.isSchoolLoading = false
     },
     // api
-    async getTeacherClazzList(id) {
+    async getTeacherClazzList() {
       this.bindForm.isSchoolLoading = true
       const data = {
-        userId: id
+        userId: this.bindForm.data.userId
       }
       await this.$api.getTeacherClazzList(data).then(res => {
         // 成功访问, 处理数据
         if (res.code === 1 && res.data) {
-          this.bindForm.schoolList = res.data;
-          this.bindForm.schoolCode = res ?.data[0] ?.schoolCode || ""
+          this.bindForm.clazzList = res.data
+          this.bindForm.form.resetFields(['clazz'])
         }
       });
       this.bindForm.isSchoolLoading = false
     },
     // api
     async getSchoolDeparts() {
-      this.bindForm.isDepartLoading = true
+      const data = {}
+      this.searchForm.form.validateFields((error, values) => {
+        data.schoolCode = values.schoolCode;
+      })
       await this.$api
-        .getSchoolDeparts({
-          schoolCode: this.bindForm.schoolCode
-        })
+        .getSchoolDeparts(data)
         .then(res => {
           // 成功访问, 处理数据
           if (res.code === 1 && res.data) {
-            let list = [{ depart_name: "全部" }]
-            list = [...list, ...res.data]
-            this.bindForm.departmentList = list;
+            this.bindForm.departmentList = res.data;
           }
         });
-      this.bindForm.isDepartLoading = false
       this.bindForm.form.setFieldsValue({ depart_name: "全部" })
     },
     async initData() {
       await this.findSchoolList()
       this.getUsers()
+      this.getSchoolDeparts()
     }
   },
   async created() {
@@ -630,6 +655,24 @@ export default {
   .ant-select {
     width: 200px;
   }
+}
+.overlay {
+  width: 100%;
+  overflow-y: auto;
+  height: 270px;
+}
+.overlay::-webkit-scrollbar {
+  width: 4px;
+}
+.overlay::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.24);
+}
+.overlay::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255);
+  border-radius: 0;
 }
 </style>
 

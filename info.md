@@ -56,6 +56,10 @@
   - [dev] 添加路由跳转loading插件NProgress
 
 # commit -m
+- 2019-12-17 
+  - [bug] 所有新增接口中标题字数限制20
+  - [dev] /userManager 绑定班级功能
+  
 - 2019-12-12 
   - [api] api迁移, 全部接口调整
   - [dev] 添加路由跳转loading插件NProgress

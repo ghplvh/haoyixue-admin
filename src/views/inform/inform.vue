@@ -124,6 +124,7 @@
         </a-form-item>
         <a-form-item label="通知标题">
           <a-input autoFocus
+                   oninput="value=value.substr(0,20)"
                    v-decorator="[
               'title',
               {
