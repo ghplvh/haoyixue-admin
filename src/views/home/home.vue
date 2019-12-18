@@ -1,5 +1,5 @@
 <template>
-  <page-layout id="home">
+  <page-layout id="home-page">
     <div slot="extra"
          class="extraImg">
       <img :src="setting.extraImage" />
@@ -542,7 +542,7 @@ export default {
 </script>
 <style lang="scss">
 @import "../../assets/style/mixin.scss";
-#home {
+#home-page {
   .ant-form-item-label label {
     font-weight: 800;
     font-size: 14px;

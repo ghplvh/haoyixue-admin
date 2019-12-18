@@ -309,7 +309,7 @@ export default {
         pagination: {
           total: 0,
           current: 1,
-          pageSize: 10
+          pageSize: 30
         },
         // table标题列表
         columns: [

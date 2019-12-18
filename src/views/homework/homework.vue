@@ -481,8 +481,8 @@ export default {
         pageSize: this.table.pagination.pageSize,
         pageNum: this.table.pagination.current,
         userId: this.$store.state.account.userInfo.userId,
-        // 0.通用1.语文2.数学3.英语4.地理5.生物6.历史7.政治8.物理9.化学
-        category: 0,
+        // 0.通用1.语文2.数学3.英语4.地理5.生物6.历史7.政治8.物理9.化学  不传, 返回所有科目
+        // category: 1,
       }
       let err
       this.searchForm.form.validateFields((error, values) => {
@@ -511,6 +511,7 @@ export default {
           }
           // fetch api
           await this.$api.getUserHomeworks(data).then(res => {
+            console.log('getHomeworks', res)
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
               let list = res ?.data ?.pageData || []

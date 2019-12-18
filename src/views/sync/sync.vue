@@ -54,7 +54,6 @@
 
 <script>
 import PageLayout from "@/layouts/PageLayout";
-import { formatObjKey } from "@/assets/js/common";
 
 export default {
   name: "QueryList",
