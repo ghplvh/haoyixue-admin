@@ -380,7 +380,7 @@ export default {
       this.getBillProductsByOrg()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
 
     await this.initData()

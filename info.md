@@ -56,6 +56,11 @@
   - [dev] 添加路由跳转loading插件NProgress
 
 # commit -m
+- 2019-12-20 
+  - [bug] /userManager findSchool, 数据为空时, 应判断Object.keys(res.data).length > 0
+  - [dev] /billRecord, /order loading效果时间点修改
+- 2019-12-18 
+  - [bug] sideMenu生成的a标签href="#..."导致页面跳转后,滚动条滚动
 - 2019-12-17 
   - [bug] 所有新增接口中标题字数限制20
   - [dev] /userManager 绑定班级功能

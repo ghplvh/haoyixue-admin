@@ -1,39 +1,53 @@
 <template>
-  <page-layout :desc="setting.desc"
-               :title="setting.title"
-               :linkList="setting.linkList"
-               id="user-manager">
-    <div slot="extra"
-         class="extraImg">
+  <page-layout
+    :desc="setting.desc"
+    :title="setting.title"
+    :linkList="setting.linkList"
+    id="user-manager"
+  >
+    <div
+      slot="extra"
+      class="extraImg"
+    >
       <img :src="setting.extraImage" />
     </div>
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
           <!-- `searchForm -->
-          <a-form :form="searchForm.form"
-                  layout="inline"
-                  @submit="onSearch">
-            <a-row type="flex"
-                   align="middle">
+          <a-form
+            :form="searchForm.form"
+            layout="inline"
+            @submit="onSearch"
+          >
+            <a-row
+              type="flex"
+              align="middle"
+            >
               <a-col>
                 <a-spin :spinning="searchForm.isSchoolLoading">
-                  <a-form-item style="width:100%"
-                               label="学校">
-                    <a-select v-decorator="[
+                  <a-form-item
+                    style="width:100%"
+                    label="学校"
+                  >
+                    <a-select
+                      v-decorator="[
                               'schoolCode',
                               {
                                 initialValue: searchForm.schoolCode,
                                 rules: [{ required: true }]
                               }
                             ]"
-                              placeholder="请选择学校"
-                              @change='onSchoolChange'
-                              showArrow>
-                      <a-select-option v-for="(item, index) in searchForm.schoolList"
-                                       :key="index"
-                                       :title="item.schoolName"
-                                       :value="item.schoolCode">
+                      placeholder="请选择学校"
+                      @change='onSchoolChange'
+                      showArrow
+                    >
+                      <a-select-option
+                        v-for="(item, index) in searchForm.schoolList"
+                        :key="index"
+                        :title="item.schoolName"
+                        :value="item.schoolCode"
+                      >
                         {{ item.schoolName }}
                       </a-select-option>
                     </a-select>
@@ -42,8 +56,9 @@
               </a-col>
               <a-col>
                 <a-form-item label="角色">
-                  <a-radio-group name="role"
-                                 v-decorator="[
+                  <a-radio-group
+                    name="role"
+                    v-decorator="[
                       'role',
                       {
                         rules: [
@@ -53,7 +68,8 @@
                         ],
                         initialValue: 1
                       }
-                    ]">
+                    ]"
+                  >
                     <a-radio :value="1">家长</a-radio>
                     <a-radio :value="2">老师</a-radio>
                     <a-radio :value="3">管理员</a-radio>
@@ -62,17 +78,21 @@
               </a-col>
               <a-col>
                 <a-form-item label="账户">
-                  <a-input @change="onAccountChange"
-                           oninput="value=value.replace(/[^\d]/g,'')"
-                           v-decorator="['account', { initialValue: '' }]" />
+                  <a-input
+                    @change="onAccountChange"
+                    oninput="value=value.replace(/[^\d]/g,'')"
+                    v-decorator="['account', { initialValue: '' }]"
+                  />
                 </a-form-item>
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
-                  <a-button type="primary"
-                            html-type="submit"
-                            :loading="searchForm.isLoading"
-                            :disabled="searchForm.isLoading">
+                  <a-button
+                    type="primary"
+                    html-type="submit"
+                    :loading="searchForm.isLoading"
+                    :disabled="searchForm.isLoading"
+                  >
                     查询
                   </a-button>
                 </a-form-item>
@@ -80,15 +100,18 @@
             </a-row>
           </a-form>
           <!-- `table -->
-          <a-table class="table"
-                   :pagination="table.pagination"
-                   :columns="table.columns"
-                   :dataSource="table.list"
-                   rowKey="userId"
-                   @change="onPageChange"
-                   bordered
-                   :loading="table.isLoading">
-            <template v-for="col in [
+          <a-table
+            class="table"
+            :pagination="table.pagination"
+            :columns="table.columns"
+            :dataSource="table.list"
+            rowKey="userId"
+            @change="onPageChange"
+            bordered
+            :loading="table.isLoading"
+          >
+            <template
+              v-for="col in [
                 'id',
                 'schoolCode',
                 'billName',
@@ -97,8 +120,9 @@
                 'createTime',
                 'updateTime'
               ]"
-                      :slot="col"
-                      slot-scope="text, record">
+              :slot="col"
+              slot-scope="text, record"
+            >
               <div :key="col">
                 <template v-if="col === 'role'">
                   <template v-if="record.role === 1">
@@ -114,8 +138,10 @@
                 <template v-else>{{ text }}</template>
               </div>
             </template>
-            <template slot="operation"
-                      slot-scope="text, record">
+            <template
+              slot="operation"
+              slot-scope="text, record"
+            >
               <div class="editable-row-operations">
                 <span>
                   <a @click="() => onEdit(record.userId)">修改</a>
@@ -130,32 +156,42 @@
       </keep-alive>
     </transition>
     <!-- `editForm -->
-    <a-modal class="change-modal"
-             :visible="editForm.isVisible"
-             title="修改用户信息"
-             okText="确定"
-             cancelText="取消"
-             @cancel="cancelEdit"
-             @ok="saveEdit"
-             :okButtonProps="{ props: { loading: editForm.isLoading } }">
-      <a-form layout="vertical"
-              :form="editForm.form">
+    <a-modal
+      class="change-modal"
+      :visible="editForm.isVisible"
+      title="修改用户信息"
+      okText="确定"
+      cancelText="取消"
+      @cancel="cancelEdit"
+      @ok="saveEdit"
+      :okButtonProps="{ props: { loading: editForm.isLoading } }"
+    >
+      <a-form
+        layout="vertical"
+        :form="editForm.form"
+      >
         <a-col>
-          <a-form-item :wrapperCol="{span:12}"
-                       label="学校">
-            <a-select v-decorator="[
+          <a-form-item
+            :wrapperCol="{span:12}"
+            label="学校"
+          >
+            <a-select
+              v-decorator="[
                         'orgno',
                         {
                           initialValue: searchForm.schoolCode,
                           rules: [{ required: true }]
                         }
                       ]"
-                      placeholder="请选择学校"
-                      showArrow>
-              <a-select-option v-for="(item, index) in searchForm.schoolList"
-                               :key="index"
-                               :title="item.schoolName"
-                               :value="item.schoolCode">
+              placeholder="请选择学校"
+              showArrow
+            >
+              <a-select-option
+                v-for="(item, index) in searchForm.schoolList"
+                :key="index"
+                :title="item.schoolName"
+                :value="item.schoolCode"
+              >
                 {{ item.schoolName }}
               </a-select-option>
             </a-select>
@@ -163,8 +199,9 @@
         </a-col>
         <a-col>
           <a-form-item label="角色">
-            <a-radio-group name="role"
-                           v-decorator="[
+            <a-radio-group
+              name="role"
+              v-decorator="[
                       'role',
                       {
                         rules: [
@@ -174,7 +211,8 @@
                         ],
                         initialValue: editForm.data.role
                       }
-                    ]">
+                    ]"
+            >
               <a-radio :value="1">家长</a-radio>
               <a-radio :value="2">老师</a-radio>
               <a-radio :value="3">管理员</a-radio>
@@ -182,33 +220,43 @@
           </a-form-item>
         </a-col>
         <a-col>
-          <a-form-item label="手机号码"
-                       :wrapperCol="{span:12}">
-            <a-input oninput="value=value.replace(/[^\d]/g,'')"
-                     v-decorator="['phone', {
+          <a-form-item
+            label="手机号码"
+            :wrapperCol="{span:12}"
+          >
+            <a-input
+              oninput="value=value.replace(/[^\d]/g,'')"
+              v-decorator="['phone', {
                         rules: [
                           {
                             required: true,
                             message: '请输入手机号码'
                           },
-                        ], initialValue: editForm.data.phone }]" />
+                        ], initialValue: editForm.data.phone }]"
+            />
           </a-form-item>
         </a-col>
       </a-form>
     </a-modal>
     <!-- `bindForm -->
-    <a-modal :visible="bindForm.isVisible"
-             title="修改班级信息"
-             okText="确定"
-             cancelText="取消"
-             @cancel="bindForm.isVisible = false"
-             @ok="saveBind"
-             :okButtonProps="{ props: { loading: bindForm.isLoading } }">
-      <a-card hoverable
-              style="width: 100%">
+    <a-modal
+      :visible="bindForm.isVisible"
+      title="修改班级信息"
+      okText="确定"
+      cancelText="取消"
+      @cancel="bindForm.isVisible = false"
+      @ok="saveBind"
+      :okButtonProps="{ props: { loading: bindForm.isLoading } }"
+    >
+      <a-card
+        hoverable
+        style="width: 100%"
+      >
         <a-card-meta :title="bindForm.data.nickName || '###'">
-          <a-avatar slot="avatar"
-                    :src="bindForm.data.headPic" />
+          <a-avatar
+            slot="avatar"
+            :src="bindForm.data.headPic"
+          />
           <template slot="description">
             <h4><span style="font-weight:800;margin-right:8px;">学校名称:</span> {{bindForm.data.orgName || "#####"}}</h4>
             <h4><span style="font-weight:800;margin-right:8px;">手机号码:</span> {{bindForm.data.phone|| "################"}}</h4>
@@ -216,16 +264,24 @@
           </template>
         </a-card-meta>
       </a-card>
-      <a-form layout="vertical"
-              style="margin-top:20px;"
-              :form="bindForm.form">
-        <a-form-item label="班级:"
-                     style="width: 100%">
-          <a-checkbox-group v-decorator="['clazz',{initialValue: bindForm.clazzList}]"
-                            class="overlay">
-            <a-checkbox :value="item.depart_name"
-                        v-for="(item, index) in bindForm.departmentList"
-                        :key="index">
+      <a-form
+        layout="vertical"
+        style="margin-top:20px;"
+        :form="bindForm.form"
+      >
+        <a-form-item
+          label="班级:"
+          style="width: 100%"
+        >
+          <a-checkbox-group
+            v-decorator="['clazz',{initialValue: bindForm.clazzList}]"
+            class="overlay"
+          >
+            <a-checkbox
+              :value="item.depart_name"
+              v-for="(item, index) in bindForm.departmentList"
+              :key="index"
+            >
               {{item.depart_name}}
             </a-checkbox>
           </a-checkbox-group>
@@ -309,7 +365,7 @@ export default {
         pagination: {
           total: 0,
           current: 1,
-          pageSize: 30
+          pageSize: 10
         },
         // table标题列表
         columns: [
@@ -572,12 +628,14 @@ export default {
       await this.$api.findUser(data).then(res => {
         // 成功访问, 处理数据
         if (res.code === 1) {
-          let result = res ?.data || null
-          result ?.children && delete result.children
-          result && this.table.list.push(result)
-          this.searchForm.schoolCode = result.orgno
-          // this.searchForm.form.setFieldsValue({ schoolCode: this.searchForm.schoolCode })
-          this.searchForm.form.resetFields(['schoolCode'])
+          let result = res ?.data || {}
+          if (Object.keys(result).length > 0) {
+            result ?.children && delete result.children
+            result && this.table.list.push(result)
+            this.searchForm.schoolCode = result.orgno
+            // this.searchForm.form.setFieldsValue({ schoolCode: this.searchForm.schoolCode })
+            this.searchForm.form.resetFields(['schoolCode'])
+          }
           this.table.pagination.total = 1
         }
       });
@@ -632,7 +690,7 @@ export default {
       this.getSchoolDeparts()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
     await this.initData()
     this.$npDone()

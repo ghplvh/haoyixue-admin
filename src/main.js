@@ -4,17 +4,10 @@ import router from "./router";
 import store from "./store";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
-// import {
-//   api
-// } from "./apiByAxios/api.js"
 import {
   api
-} from './apiDesign/api'
+} from "./apiByAxios/api.js"
 import "./router/permission";
-import {
-  formatObjKey
-} from "./assets/js/common"
-
 
 
 //引入nprogress
@@ -31,7 +24,6 @@ router.beforeEach((to, from, next) => {
 
 Vue.config.productionTip = false;
 Vue.prototype.$api = api;
-Vue.prototype.$formatObjKey = formatObjKey;
 
 Vue.use(Antd);
 

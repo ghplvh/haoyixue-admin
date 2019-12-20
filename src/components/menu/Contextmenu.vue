@@ -1,13 +1,14 @@
 <template>
-  <a-menu
-    :style="style"
-    class="contextmenu"
-    v-show="visible"
-    @click="handleClick"
-    :selectedKeys="selectedKeys"
-  >
-    <a-menu-item :key="item.key" v-for="item in itemList">
-      <a-icon role="menuitemicon" v-if="item.icon" :type="item.icon" />{{
+  <a-menu :style="style"
+          class="contextmenu"
+          v-show="visible"
+          @click="handleClick"
+          :selectedKeys="selectedKeys">
+    <a-menu-item :key="item.key"
+                 v-for="item in itemList">
+      <a-icon role="menuitemicon"
+              v-if="item.icon"
+              :type="item.icon" />{{
         item.text
       }}
     </a-menu-item>
@@ -45,7 +46,7 @@ export default {
       };
     }
   },
-  created() {
+  activated() {
     window.addEventListener("mousedown", e => this.closeMenu(e));
     window.addEventListener("contextmenu", e => this.setPosition(e));
   },

@@ -150,7 +150,7 @@ export default {
       await this.findSchoolList()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
     await this.initData()
     this.$npDone()

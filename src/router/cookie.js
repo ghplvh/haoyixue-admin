@@ -6,7 +6,8 @@ let getUserInfo
 let setUserInfo
 let removeUserInfo
 
-if (process.env.NODE_ENV == "production") {
+if (true) {
+  // if (process.env.NODE_ENV == "production") {
   getUserInfo = () => {
     let user = Cookies.get(userInfo)
     if (user) user = JSON.parse(user)

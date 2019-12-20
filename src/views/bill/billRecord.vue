@@ -1,40 +1,52 @@
 <template>
-  <page-layout :desc="setting.desc"
-               :title="setting.title"
-               :linkList="setting.linkList"
-               id="bill-record">
-    <div slot="extra"
-         class="extraImg">
+  <page-layout
+    :desc="setting.desc"
+    :title="setting.title"
+    :linkList="setting.linkList"
+    id="bill-record"
+  >
+    <div
+      slot="extra"
+      class="extraImg"
+    >
       <img :src="setting.extraImage" />
     </div>
     <transition name="page-toggle">
       <keep-alive>
         <a-card class="content">
           <!-- `searchForm -->
-          <a-form :form="searchForm.form"
-                  id="search-form"
-                  layout="inline"
-                  @submit="onSearch">
-            <a-row type="flex"
-                   align="middle">
+          <a-form
+            :form="searchForm.form"
+            id="search-form"
+            layout="inline"
+            @submit="onSearch"
+          >
+            <a-row
+              type="flex"
+              align="middle"
+            >
               <a-col>
                 <a-spin :spinning="searchForm.isSchoolLoading">
                   <a-form-item label="学校">
-                    <a-select v-decorator="[
+                    <a-select
+                      v-decorator="[
                               'schoolCode',
                               {
                                 initialValue: searchForm.schoolCode,
                                 rules: [{ required: true, message: '请选择学校' }]
                               }
                             ]"
-                              @change="onSchoolChange"
-                              placeholder="请选择学校"
-                              showArrow>
-                      <a-select-option style="width:100px;"
-                                       v-for="(item, index) in searchForm.schoolList"
-                                       :key="index"
-                                       :title="item.schoolName"
-                                       :value="item.schoolCode">
+                      @change="onSchoolChange"
+                      placeholder="请选择学校"
+                      showArrow
+                    >
+                      <a-select-option
+                        style="width:100px;"
+                        v-for="(item, index) in searchForm.schoolList"
+                        :key="index"
+                        :title="item.schoolName"
+                        :value="item.schoolCode"
+                      >
                         {{ item.schoolName }}
                       </a-select-option>
                     </a-select>
@@ -44,20 +56,24 @@
               <a-col>
                 <a-spin :spinning="searchForm.isBillLoading">
                   <a-form-item label="项目">
-                    <a-select v-decorator="[
+                    <a-select
+                      v-decorator="[
                               'billId',
                               {
                                 initialValue: '全部',
                                 rules: [{ required: true, message: '请选择项目' }]
                               }
                             ]"
-                              placeholder="请选择项目"
-                              showArrow>
-                      <a-select-option style="width:100px;"
-                                       v-for="(item, index) in searchForm.billList"
-                                       :key="index"
-                                       :title="item.billName"
-                                       :value="item.id">
+                      placeholder="请选择项目"
+                      showArrow
+                    >
+                      <a-select-option
+                        style="width:100px;"
+                        v-for="(item, index) in searchForm.billList"
+                        :key="index"
+                        :title="item.billName"
+                        :value="item.id"
+                      >
                         {{ item.billName }}
                       </a-select-option>
                     </a-select>
@@ -67,20 +83,24 @@
               <a-col>
                 <a-spin :spinning="searchForm.isDepartLoading">
                   <a-form-item label="部门">
-                    <a-select v-decorator="[
+                    <a-select
+                      v-decorator="[
                               'depart_name',
                               {
                                 initialValue: '全部',
                                 rules: [{ required: true, message: '请选择部门' }]
                               }
                             ]"
-                              placeholder="请选择部门"
-                              showArrow>
-                      <a-select-option style="width:100px;"
-                                       v-for="(item, index) in searchForm.departmentList"
-                                       :key="index"
-                                       :title="item.depart_name"
-                                       :value="item.depart_name">
+                      placeholder="请选择部门"
+                      showArrow
+                    >
+                      <a-select-option
+                        style="width:100px;"
+                        v-for="(item, index) in searchForm.departmentList"
+                        :key="index"
+                        :title="item.depart_name"
+                        :value="item.depart_name"
+                      >
                         {{ item.depart_name }}
                       </a-select-option>
                     </a-select>
@@ -89,10 +109,12 @@
               </a-col>
               <a-col style="flex-grow:1">
                 <a-form-item>
-                  <a-button type="primary"
-                            html-type="submit"
-                            :loading="searchForm.isLoading"
-                            :disabled="searchForm.isLoading">
+                  <a-button
+                    type="primary"
+                    html-type="submit"
+                    :loading="searchForm.isLoading"
+                    :disabled="searchForm.isDisabled"
+                  >
                     查询
                   </a-button>
                 </a-form-item>
@@ -100,16 +122,19 @@
             </a-row>
           </a-form>
           <!-- `table -->
-          <a-table class="table"
-                   id="tabkle"
-                   :columns="table.columns"
-                   :dataSource="table.billList"
-                   rowKey="id"
-                   bordered
-                   :pagination="table.pagination"
-                   @change="onPageChange"
-                   :loading="table.isLoading">
-            <template v-for="col in [
+          <a-table
+            class="table"
+            id="tabkle"
+            :columns="table.columns"
+            :dataSource="table.billList"
+            rowKey="id"
+            bordered
+            :pagination="table.pagination"
+            @change="onPageChange"
+            :loading="table.isLoading"
+          >
+            <template
+              v-for="col in [
                       'id',
                       'billId',
                       'orgNo',
@@ -120,8 +145,9 @@
                       'orderNo',
                       'payment',
                       'createTime']"
-                      :slot="col"
-                      slot-scope="text, record">
+              :slot="col"
+              slot-scope="text, record"
+            >
               <div :key="col">
                 <template v-if="col === 'payment'">
                   <template v-if="record.payment === 1">
@@ -172,6 +198,7 @@ export default {
         departmentList: [],
         // 查询按钮loading
         isLoading: false,
+        isDisabled: false,
         isSchoolLoading: false,
         isDepartLoading: false,
         isBillLoading: false
@@ -271,10 +298,11 @@ export default {
       this.searchForm.isLoading = false;
     },
     // 学校改变 
-    onSchoolChange(value, option) {
+    async onSchoolChange(value, option) {
+      this.searchForm.isDisabled = true
       this.searchForm.schoolCode = value
-      this.getBillConfigBy()
-      this.getSchoolDeparts()
+      await Promise.all([this.getBillConfigBy(), this.getSchoolDeparts()])
+      this.searchForm.isDisabled = false
     },
     // 页号改变
     async onPageChange(pagination) {
@@ -390,13 +418,16 @@ export default {
     // 初始化数据
     async initData() {
       this.table.isLoading = true
+      this.searchForm.isDisabled = true
+      this.searchForm.isBillLoading = true
+      this.searchForm.isDepartLoading = true
       await this.findSchoolList()
-      await this.getBillConfigBy()
-      await this.getSchoolDeparts()
+      await Promise.all([this.getBillConfigBy(), this.getSchoolDeparts()])
+      this.searchForm.isDisabled = false
       this.getBillsBy()
     },
   },
-  async created() {
+  async activated() {
     this.$npStart()
     await this.initData()
     this.$npDone()

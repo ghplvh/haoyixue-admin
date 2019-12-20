@@ -511,7 +511,6 @@ export default {
           }
           // fetch api
           await this.$api.getUserHomeworks(data).then(res => {
-            console.log('getHomeworks', res)
             // 成功访问, 处理数据
             if (res.code === 1 && res.data) {
               let list = res ?.data ?.pageData || []
@@ -539,7 +538,7 @@ export default {
       this.getUserHomeworks()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
 
     await this.initData()

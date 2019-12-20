@@ -14,7 +14,7 @@
                 :menuData="menuData"
                 :collapsed="collapsed"
                 :collapsible="true" />
-    <a-layout>
+    <a-layout style="overflow:auto;height:100vh">
       <global-header :menuData="menuData"
                      :collapsed="collapsed"
                      @toggleCollapse="toggleCollapse" />
@@ -96,6 +96,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .global-layout {
-  min-height: 100vh;
+  overflow: hidden;
 }
 </style>

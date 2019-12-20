@@ -397,7 +397,7 @@ export default {
       this.getNews()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
 
     await this.initData()

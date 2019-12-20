@@ -1,13 +1,17 @@
 <template>
-  <page-layout :desc="desc" :title="title" :linkList="linkList">
-    <div slot="extra" class="extraImg">
+  <page-layout :desc="desc"
+               :title="title"
+               :linkList="linkList">
+    <div slot="extra"
+         class="extraImg">
       <img :src="extraImage" />
     </div>
     <transition name="page-toggle">
       <keep-alive v-if="multipage">
         <router-view ref="page" />
       </keep-alive>
-      <router-view ref="page" v-else />
+      <router-view ref="page"
+                   v-else />
     </transition>
   </page-layout>
 </template>

@@ -20,8 +20,11 @@
  **/
 import Menu from "ant-design-vue/es/menu";
 import Icon from "ant-design-vue/es/icon";
-
-const { Item, SubMenu } = Menu;
+import Vue from "vue";
+const {
+  Item,
+  SubMenu
+} = Menu;
 
 // 默认菜单图标数组，如果菜单没配置图标，则会设置从该数组随机取一个图标配置
 const iconArr = [
@@ -90,35 +93,33 @@ export default {
         this.openKeys = this.cachedOpenKeys;
       }
     },
-    $route: function() {
+    $route: function () {
       this.updateMenu();
     }
   },
   methods: {
-    renderIcon: function(h, icon) {
-      return icon === "none"
-        ? null
-        : h(Icon, {
-            props: {
-              type:
-                icon !== undefined
-                  ? icon
-                  : iconArr[Math.floor(Math.random() * iconArr.length)]
-            }
-          });
+    renderIcon: function (h, icon) {
+      return icon === "none" ?
+        null :
+        h(Icon, {
+          props: {
+            type: icon !== undefined ?
+              icon : iconArr[Math.floor(Math.random() * iconArr.length)]
+          }
+        });
     },
-    renderMenuItem: function(h, menu, pIndex, index) {
+    renderMenuItem: function (h, menu, pIndex, index) {
       return h(
-        Item,
-        {
+        Item, {
           key: menu.path ? menu.path : "item_" + pIndex + "_" + index
         },
         [
           h(
-            "a",
-            {
-              attrs: {
-                href: "#" + menu.path
+            "div", {
+              on: {
+                click: e => {
+                  this.$router.push(menu.path)
+                }
               }
             },
             [this.renderIcon(h, menu.icon), h("span", [menu.name])]
@@ -126,12 +127,11 @@ export default {
         ]
       );
     },
-    renderSubMenu: function(h, menu, pIndex, index) {
+    renderSubMenu: function (h, menu, pIndex, index) {
       var this2_ = this;
       var subItem = [
         h(
-          "span",
-          {
+          "span", {
             slot: "title"
           },
           [this.renderIcon(h, menu.icon), h("span", [menu.name])]
@@ -139,28 +139,27 @@ export default {
       ];
       var itemArr = [];
       var pIndex_ = pIndex + "_" + index;
-      menu.children.forEach(function(item, i) {
+      menu.children.forEach(function (item, i) {
         itemArr.push(this2_.renderItem(h, item, pIndex_, i));
       });
       return h(
-        SubMenu,
-        {
+        SubMenu, {
           key: menu.path ? menu.path : "submenu_" + pIndex + "_" + index
         },
         subItem.concat(itemArr)
       );
     },
-    renderItem: function(h, menu, pIndex, index) {
+    renderItem: function (h, menu, pIndex, index) {
       if (!menu.invisible) {
-        return menu.children
-          ? this.renderSubMenu(h, menu, pIndex, index)
-          : this.renderMenuItem(h, menu, pIndex, index);
+        return menu.children ?
+          this.renderSubMenu(h, menu, pIndex, index) :
+          this.renderMenuItem(h, menu, pIndex, index);
       }
     },
-    renderMenu: function(h, menuTree) {
+    renderMenu: function (h, menuTree) {
       var this2_ = this;
       var menuArr = [];
-      menuTree.forEach(function(menu, i) {
+      menuTree.forEach(function (menu, i) {
         menuArr.push(this2_.renderItem(h, menu, "0", i));
       });
       return menuArr;
@@ -182,15 +181,14 @@ export default {
       routes.forEach(item => {
         openKeys.push(item.path);
       });
-      this.collapsed || this.mode === "horizontal"
-        ? (this.cachedOpenKeys = openKeys)
-        : (this.openKeys = openKeys);
+      this.collapsed || this.mode === "horizontal" ?
+        (this.cachedOpenKeys = openKeys) :
+        (this.openKeys = openKeys);
     }
   },
   render(h) {
     return h(
-      Menu,
-      {
+      Menu, {
         props: {
           theme: this.$props.theme,
           mode: this.$props.mode,

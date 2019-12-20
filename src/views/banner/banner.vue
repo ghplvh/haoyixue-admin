@@ -301,7 +301,7 @@ export default {
       this.getHomeBanner()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
     await this.initData()
     this.$npDone()

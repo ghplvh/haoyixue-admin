@@ -444,7 +444,7 @@ export default {
       this.getUserProducts()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
 
     await this.initData()

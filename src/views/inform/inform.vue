@@ -380,7 +380,7 @@ export default {
       this.getUserNotifications()
     }
   },
-  async created() {
+  async activated() {
     this.$npStart()
 
     await this.initData()

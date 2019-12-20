@@ -1,23 +1,20 @@
 <template>
-  <a-layout-sider
-    :class="[theme, 'sider', isMobile ? null : 'shadow']"
-    width="256px"
-    :collapsible="collapsible"
-    v-model="collapsed"
-    :trigger="null"
-  >
+  <a-layout-sider :class="[theme, 'sider', isMobile ? null : 'shadow']"
+                  width="256px"
+                  style="height:100vh;overflow-y:auto;"
+                  :collapsible="collapsible"
+                  v-model="collapsed"
+                  :trigger="null">
     <div :class="['logo', theme]">
-      <router-link to="/">
+      <router-link to="/home">
         <img src="../../assets/logo.png" />
         <h1>{{ systemName }}</h1>
       </router-link>
     </div>
-    <i-menu
-      :theme="theme"
-      :collapsed="collapsed"
-      :menuData="menuData"
-      @select="onSelect"
-    />
+    <i-menu :theme="theme"
+            :collapsed="collapsed"
+            :menuData="menuData"
+            @select="onSelect" />
   </a-layout-sider>
 </template>
 
